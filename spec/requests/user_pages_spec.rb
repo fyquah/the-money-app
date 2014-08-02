@@ -4,6 +4,43 @@ describe "UserPages" do
 	let(:base_title){ "Money App" }
 	subject { page }
 
+	describe "Edit Page" do
+		let(:user){ FactoryGirl.create :user }
+		before do
+			visit edit_user_path(user)
+		end
+
+		it { should have_title "#{base_title} | Update Profile" }
+		it { should have_button "Update Profile" }
+
+		describe "Update with valid information" do
+			before(:each) do
+				fill_in "Name" , with: "Blue Panda" 
+				click_button "Update Profile" 
+			end
+
+			it { should have_content "Updated your credentials!" }
+			it "should not change User count" do
+				expect do
+					fill_in "Name" , with: "Blue Panda" 
+					click_button "Update Profile"
+				end.not_to change(User , :count)
+			end
+		end
+
+		describe "Update with some really strange information" do
+			before(:each) do
+				fill_in "Email" , with: "damn this world"  
+				fill_in "Password" , with: "1"
+				fill_in "Password Confirmation" , with: "10"
+				click_button "Update Profile"
+			end
+
+			it { should have_content "errors" }
+			it { should have_title "#{base_title} | Update Profile"}
+		end
+	end
+
 	describe "Sign up page" do
 		before { visit "/users/new" }
 		it { should have_title "#{base_title} | Sign Up" }

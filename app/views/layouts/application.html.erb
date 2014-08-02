@@ -3,11 +3,11 @@
 <head>
   <title><%= full_title yield(:title) %></title>
   <% flash.each do |hash , value| %>
-  	<% if hash == :success %>
+  	<% if hash.downcase.to_sym == :success %>
   		<div class='alert alert-success'><%= value %></div>
-  	<% elsif hash == :notice %>
+  	<% elsif hash.downcase.to_sym == :notice %>
   		<div class='alert alert-info'><%= value %></div>
-  	<% elsif hash == :error %>
+  	<% elsif hash.downcase.to_sym == :error %>
   		<div class='alert alert-danger'><%= value %></div>
   	<% end %>
   <% end %>

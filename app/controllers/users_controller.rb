@@ -24,8 +24,14 @@ class UsersController < ApplicationController
 	end
 
 	def update
-
-	end
+    @user = User.find params[:id]
+    if @user.update_attributes user_params
+  		flash[:success] = "Updated your credentials!" 
+      redirect_to edit_user_path(@user)
+    else
+      render 'edit'
+	   end
+  end
 
 	private
 		def user_params
