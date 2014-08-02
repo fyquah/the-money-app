@@ -1,7 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Money</title>
+  <title><%= full_title yield(:title) %></title>
+  <% flash.each do |hash , value| %>
+  	<% if hash == :success %>
+  		<div class='alert alert-success'><%= value %></div>
+  	<% elsif hash == :notice %>
+  		<div class='alert alert-info'><%= value %></div>
+  	<% elsif hash == :error %>
+  		<div class='alert alert-danger'><%= value %></div>
+  	<% end %>
+  <% end %>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
