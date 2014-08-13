@@ -7,16 +7,17 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-  <% flash.each do |hash , value| %>
-    <% if hash.downcase.to_sym == :success %>
-      <div class='alert alert-success'><%= value %></div>
-    <% elsif hash.downcase.to_sym == :notice %>
-      <div class='alert alert-info'><%= value %></div>
-    <% elsif hash.downcase.to_sym == :error %>
-      <div class='alert alert-danger'><%= value %></div>
-    <% end %>
-  <% end %>
+  <%= render "shared/header_bar" %>
   <div class='container'>
+    <% flash.each do |hash , value| %>
+      <% if hash.downcase.to_sym == :success %>
+        <div class='alert alert-success'><%= value %></div>
+      <% elsif hash.downcase.to_sym == :notice %>
+        <div class='alert alert-info'><%= value %></div>
+      <% elsif hash.downcase.to_sym == :error %>
+        <div class='alert alert-danger'><%= value %></div>
+      <% end %>
+    <% end %>
     <%= yield %>
   </div>
 </body>

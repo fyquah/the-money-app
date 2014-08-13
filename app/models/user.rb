@@ -17,7 +17,7 @@ class User < ActiveRecord::Base
   end
 
   def self.digest token
-    Digest::SHA1.hexdigest token
+    Digest::SHA1.hexdigest token.to_s
   end
 
   private
