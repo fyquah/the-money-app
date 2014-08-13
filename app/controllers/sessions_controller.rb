@@ -4,8 +4,12 @@ class SessionsController < ApplicationController
   end
 
   def create
+    if current_user
+      flash[:notice] = "You are already logged in!"
+      redirect_to root_url
+    end
+    
     user = User.find_by(:email => params[:email])
-    puts user
     if user && user.authenticate(params[:password])
       sign_in user
       flash[:success] = "Log in successful!"

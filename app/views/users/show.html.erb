@@ -1,0 +1,12 @@
+<% provide :title , "My Profile" %>
+<div class='row'>
+  <div class='col-xs-12 col-sm-offset-2 col-sm-8'>
+    <h1>My profile</h1>
+      <p><strong>Email: </strong> <%= @user.email %></p>
+      <p><strong>Name: </strong> <%= @user.name %></p>
+      <a class="btn btn-primary" href="/users/<%= @user.id %>/edit">Update my profile</a>
+  </div>
+</div>
+<div class='row'>
+  
+</div>
