@@ -4,9 +4,10 @@ Rails.application.routes.draw do
   get 'transactions/create'
 
   root "static_pages#index"
-  get "static_pages/index"
+
   match "signin" , :to => "sessions#new" , :via => "get"
   match "signout" , :to => "sessions#destroy" , :via => "delete"
+  match "about" , :to => "static_pages#about" , :via => "get"
   resources :users , only: [:new , :edit, :create , :update , :show]
   resources :sessions , only: [:create , :destroy]
   resources :transactions , :only => [:new , :create , :destroy]
