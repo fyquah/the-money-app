@@ -27,6 +27,7 @@ class User < ActiveRecord::Base
     total_income - total_expenditure
   end
 
+  # Class methods
   def self.new_remember_token
     SecureRandom.urlsafe_base64
   end
@@ -35,6 +36,7 @@ class User < ActiveRecord::Base
     Digest::SHA1.hexdigest token.to_s
   end
 
+  # Private methods
   private
     def create_remember_token
       self.remember_token = self.class.digest(self.class.new_remember_token)

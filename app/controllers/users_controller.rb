@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
 	# GET pages to render requests
   before_action :signed_in_users_only , only: [:show , :edit , :update]
-  before_action :authenticated_users_only , only: [:edit , :update , :show]
+  before_action :authenticated_users_only , only: [:edit , :update]
 
 	def new
 		@user = User.new

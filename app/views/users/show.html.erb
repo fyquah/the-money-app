@@ -1,10 +1,18 @@
 <% provide :title , "My Profile" %>
 <div class='row'>
   <div class='col-xs-12 col-sm-offset-2 col-sm-8'>
-    <h1>My profile</h1>
+    <h1>My monetary profile</h1>
       <p><strong>Email: </strong> <%= @user.email %></p>
       <p><strong>Name: </strong> <%= @user.name %></p>
+      <p><strong>Balance: </strong><%= '%.2f' % @user.balance %></p>
+      <% if @user.balance < 0 %>
+        <p class='alert alert-danger'>You have an overdraft account!</p>
+      <% end %>
       <a class="btn btn-primary" href="/users/<%= @user.id %>/edit">Update my profile</a>
+      <% if current_user? @user %>
+        <a href="/transactions/new?type=expenditure" class="btn btn-default">Add expenditure</a>
+        <a href="/transactions/new?type=income" class="btn btn-info">Add income</a>
+      <% end %>
   </div>
 </div>
 <div class='row'>

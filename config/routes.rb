@@ -1,10 +1,16 @@
 Rails.application.routes.draw do
+  get 'transactions/new'
+
+  get 'transactions/create'
+
   root "static_pages#index"
   get "static_pages/index"
   match "signin" , :to => "sessions#new" , :via => "get"
   match "signout" , :to => "sessions#destroy" , :via => "delete"
   resources :users , only: [:new , :edit, :create , :update , :show]
   resources :sessions , only: [:create , :destroy]
+  resources :transactions , :only => [:new , :create , :destroy]
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

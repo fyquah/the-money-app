@@ -1,0 +1,30 @@
+<% provide :title , "New Record" %>
+<div class='row'>
+  <div class='col-xs-12 col-sm-offset-2 col-sm-8'>
+    <h1>Add a <%= @transaction.transaction_type || "transaction" %> to your account</h1>
+    <%= form_for(@transaction) do |f| %>
+      <%= render "shared/error_messages" , object: f.object %>
+      <% if @transaction.transaction_type %>
+        <div style='display: none'>
+          <input name='transaction[transaction_type]' id='transaction_transaction_transaction_type' type='hidden' value='<%= @transaction.transaction_type %>'  />
+        </div>
+      <% else %>
+        <div class='form-group'>
+          <%= f.label :transaction_type , "Transaction Type" %>
+          <%= f.select :transaction_type , ["income" , "expenditure"] , { :include_blank => true } ,  :class => "form-control" %>
+        </div>
+      <% end %>
+      <div class='form-group'>
+        <%= f.label :description , "Description of your #{@transaction.transaction_type || 'transaction'}" %>
+        <%= f.text_area :description , :class => "form-control" %>
+      </div>
+      <div class='form-group'>
+        <%= f.label :amount %>
+        <%= f.text_field :amount , :class => "form-control" %>
+      </div>
+      <div class='form-group'>
+        <%= f.submit "Create #{@transaction.transaction_type || 'transaction'}" , :class =>"btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
