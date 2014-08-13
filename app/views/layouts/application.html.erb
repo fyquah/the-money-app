@@ -2,22 +2,22 @@
 <html>
 <head>
   <title><%= full_title yield(:title) %></title>
-  <% flash.each do |hash , value| %>
-  	<% if hash.downcase.to_sym == :success %>
-  		<div class='alert alert-success'><%= value %></div>
-  	<% elsif hash.downcase.to_sym == :notice %>
-  		<div class='alert alert-info'><%= value %></div>
-  	<% elsif hash.downcase.to_sym == :error %>
-  		<div class='alert alert-danger'><%= value %></div>
-  	<% end %>
-  <% end %>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
 </head>
 <body>
-
-<%= yield %>
-
+  <% flash.each do |hash , value| %>
+    <% if hash.downcase.to_sym == :success %>
+      <div class='alert alert-success'><%= value %></div>
+    <% elsif hash.downcase.to_sym == :notice %>
+      <div class='alert alert-info'><%= value %></div>
+    <% elsif hash.downcase.to_sym == :error %>
+      <div class='alert alert-danger'><%= value %></div>
+    <% end %>
+  <% end %>
+  <div class='container'>
+    <%= yield %>
+  </div>
 </body>
 </html>

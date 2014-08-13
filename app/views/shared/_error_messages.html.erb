@@ -1,8 +1,10 @@
 <% unless object.errors.empty? %>
 	<div class='alert alert-danger'>
-		<li style='list-style-type : none'>You have <strong><%= pluralize(object.errors.full_messages.size , "error" , "errors") %></strong></li>
-		<% object.errors.full_messages.each do |err| %>
-			<li style='list-style-type : none'><%= err %></li>
-		<% end %>
+    <ul>
+  		<li style='list-style-type : none'>You have <strong><%= pluralize(object.errors.full_messages.size , "error" , "errors") %></strong></li>
+  		<% object.errors.full_messages.each do |err| %>
+  			<li style='list-style-type : none'><%= err %></li>
+  		<% end %>
+    </ul>
 	</div>
 <% end %>
