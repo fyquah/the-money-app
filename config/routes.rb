@@ -10,7 +10,11 @@ Rails.application.routes.draw do
   match "about" , :to => "static_pages#about" , :via => "get"
   resources :users , only: [:new , :edit, :create , :update , :show]
   resources :sessions , only: [:create , :destroy]
+
+  # For transactions
   resources :transactions , :only => [:new , :create , :destroy]
+  match "incomes" , :to => "transactions#incomes", :via => "get"
+  match "expenditures" , :to => "transactions#expenditures" , :via => "get"
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
 	# GET pages to render requests
   before_action :signed_in_users_only , only: [:show , :edit , :update]
-  before_action :authenticated_users_only , only: [:edit , :update]
+  before_action :authorized_users_only , only: [:edit , :update]
 
 	def new
 		@user = User.new
@@ -42,7 +42,7 @@ class UsersController < ApplicationController
 			params.require(:user).permit :name , :email , :password , :password_confirmation
 		end
 
-    def authenticated_users_only
+    def authorized_users_only
       @user = User.find(params[:id])
       unless current_user? @user
         flash[:error] = "You are not authorized to naviagate to that page"

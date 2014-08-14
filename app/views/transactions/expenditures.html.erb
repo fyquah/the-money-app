@@ -1,0 +1,14 @@
+<div class='row'>
+  <div class='col-xs-12'>
+    <%= will_paginate @records, renderer: BootstrapPagination::Rails %>
+      <% @records.each do |record| %>
+        <div class='row'>
+          <div class='col-xs-2'><%= record.created_at.in_time_zone("Kuala Lumpur") %></div>
+          <div class='col-xs-5'><%= record.description %></div>
+          <div class='col-xs-3'><%= record.pretty_amount %></div>
+          <div class='col-xs-2'><%= link_to "delete" , { :controller => "transactions" , :action => "destroy" , :id => record.id.to_s } , :method => "delete", :class => "btn btn-danger" , :data => { :confirm => "Are you sure?" } %></div>
+        </div>
+      <% end %>
+    <%= will_paginate @records, renderer: BootstrapPagination::Rails %>
+  </div>
+</div>

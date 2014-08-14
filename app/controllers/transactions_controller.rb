@@ -22,6 +22,24 @@ class TransactionsController < ApplicationController
     end
   end
 
+  def destroy
+
+  end
+
+  def edit
+  end
+
+  def update
+  end
+
+  def expenditures
+    @records = current_user.expenditures.paginate :page => params[:page]
+  end
+
+  def incomes
+    @records = current_user.incomes.paginate :page => params[:page]
+  end
+
   private
     def transactions_params
       @transcations_params ||= params.require("transaction").permit :transaction_type , :description , :amount
