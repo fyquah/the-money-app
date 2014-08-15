@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   resources :sessions , only: [:create , :destroy]
 
   # For transactions
-  resources :transactions , :only => [:new , :create , :destroy]
+  resources :account_records , :only => [:new , :edit , :create , :destroy , :update]
   match "incomes" , :to => "transactions#incomes", :via => "get"
   match "expenditures" , :to => "transactions#expenditures" , :via => "get"
 
