@@ -4,7 +4,7 @@ describe AccountingTransaction do
   let(:user){ FactoryGirl.create :user }
   let(:sample_expenditure_options){ { :account_name => "income_tax" , :amount => 1000 , :description => "paid income tax of 1000 dollars"} }
   let(:sample_income_options){ { :account_name => "lottery" , :amount => 1000 , :description => "won lottery of 1000 dollars"} }
-  let(:paired_record_options) do
+  let(:paired_records_options) do
     {
       :description => "This is the test paired record option",
       :credit_record => {
@@ -133,7 +133,7 @@ describe AccountingTransaction do
 
   describe "when creating a new paired record" do
     before do
-      @accounting_transaction.build_paired_record(paired_record_options)
+      @accounting_transaction.build_paired_records(paired_records_options)
       user.save
     end
 
@@ -145,7 +145,7 @@ describe AccountingTransaction do
 
   describe "when destroying a transaction " do
     before do
-      @accounting_transaction.build_paired_record(paired_record_options)
+      @accounting_transaction.build_paired_records(paired_records_options)
       user.save
       @accounting_transaction.destroy
     end

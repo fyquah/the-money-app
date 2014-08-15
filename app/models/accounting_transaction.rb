@@ -16,7 +16,7 @@ class AccountingTransaction < ActiveRecord::Base
     debit_records.inject(0 , &self.class.records_sum) + credit_records.inject(0 , &self.class.records_sum) == 0
   end
 
-  def build_paired_record options
+  def build_paired_records options
     self.debit_records.build(options[:debit_record])
     self.credit_records.build(options[:credit_record])
     self.description = options[:description]
@@ -24,7 +24,7 @@ class AccountingTransaction < ActiveRecord::Base
   end
 
   def build_income_records options
-    build_paired_record({
+    build_paired_records({
       :debit_record => {
         :amount => options[:amount].abs,
         :account_name => "cash",
@@ -42,7 +42,7 @@ class AccountingTransaction < ActiveRecord::Base
   end
 
   def build_expenditure_records options
-    build_paired_record({
+    build_paired_records({
       :debit_record => {
         :amount => options[:amount].abs,
         :account_name => options[:account_name],

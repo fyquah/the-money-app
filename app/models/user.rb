@@ -30,6 +30,7 @@ class User < ActiveRecord::Base
     all_records.inject({}) do |output , record|
       output[record.account_name.to_sym] ||= 0
       output[record.account_name.to_sym] += record.amount
+      output
     end
   end
 

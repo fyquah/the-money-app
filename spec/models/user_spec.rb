@@ -1,6 +1,25 @@
 require 'spec_helper'
 
 describe User do
+  let(:sample_expenditure_options){ { :account_name => "income_tax" , :amount => 1000 , :description => "paid income tax of 1000 dollars"} }
+  let(:sample_income_options){ { :account_name => "lottery" , :amount => 1000 , :description => "won lottery of 1000 dollars"} }
+  let(:paired_records_options) do
+    {
+      :description => "This is the test paired record option",
+      :credit_record => {
+        :account_name => "lottery",
+        :account_type => "equity",
+        :amount => -1000,
+        :user => @user
+      },
+      :debit_record => {
+        :account_name => "cash",
+        :account_type => "asset",
+        :amount => 1000,
+        :user => @user
+      }
+    }
+  end
 	before do 
 		@user = FactoryGirl.create :user
 	end
@@ -44,73 +63,43 @@ describe User do
  		end.to change(User , :count).by(1)
  	end
 
-  describe "when create a new account_record" do
-    describe "creating a new expenditure record" do
-      before do
-        @user.create_expenditure({ :account_name => "education" , :amount => 1000 , :description => "sent my son to tuition" })
-        @user.save
-      end
-      it "should record the expenditure accordingly in both cash and expenditure accounts" do
-        expect(@user.accounts_balance?).to eq true
-        expect(@user.debit_accounts_records.find_by(:account_name => "education").amount).to eq 1000
-        expect(@user.debit_accounts_records.find_by(:account_name => "cash").amount).to eq -1000
-      end
+  describe "accounts_are_balance? method" do
+    before do
+      @user.accounting_transactions.build.build_paired_records paired_records_options
+      @user.accounting_transactions.build.build_expenditure_records sample_expenditure_options
+      @user.accounting_transactions.build.build_income_records sample_income_options
+      @user.save
     end
 
-    describe "creating a new income record" do
-      before do
-        @user.create_income({ :account_name => "lucky draw" , :amount => 1000 , :description => "I won a lucky draw of 1000 dollars!" })
-        @user.save
-      end
-      it "should record the income in the relevant accounts" do
-        expect(@user.accounts_balance?).to eq true
-        expect(@user.credit_accounts_records.find_by(:account_name => "lucky draw").amount).to eq 1000
-        expect(@user.debit_accounts_records.find_by(:account_name => "cash").amount).to eq 1000
-      end
+    its(:accounts_are_balance?){ should eq true }
+    
+  end
+
+  describe "account amount methods" do
+    before do
+      @user.accounting_transactions.build.build_paired_records(paired_records_options)
+      @user.save
     end
 
-    describe "creating a record for the same account" do
-      before do
-        @user.create_income({ :account_name => "lucky draw" , :amount => 1000 , :description => "I won a lucky draw of 1000 dollars!" })
-        @user.create_income({ :account_name => "lucky draw" , :amount => 1000 , :description => "I won a lucky draw of 1000 dollars! again" })
-        @user.save
-
-        it "should have the a cumulative income amount in the right accounts" do
-          expect(@user.accounts_balance?).to eq true
-          expect(@user.accounts_amount[:amount]).to eq 2000
-          expect do
-            @user.accounts.find_records("lucky draw").inject(0){ |o , e| o += e.amount }
-          end.to eq 2000
-        end 
-      end
+    it "should have the accounts_amount correctly through user's accounts_amount method" do
+      accounts_amount_hash = @user.accounts_amount
+      expect(accounts_amount_hash[paired_records_options[:debit_record][:account_name].to_sym]).to eq(paired_records_options[:debit_record][:amount])  
     end
 
-    describe "creating several records" do
-      before do
-        @user.create_income({ :account_name => "pay day" , :amount => 1000 , :description => "pay day, 1000 dollars" })
-        @user.create_income({ :account_name => "lottery" , :amount => 1000 , :description => "lotter, 1000 dollars" })
-        @user.create_income({ :account_name => "summon" , :amount => 1000 , :description => "Summon, 1000 dollars" })
-        @user.create_income({ :account_name => "crap" , :amount => 1000 , :description => "Crap, 1000 dollars" })
-        @user.save
+    it "should be able to sum up several operations involving the same user's account" do
+      5.times do
+        @user.accounting_transactions.build.build_paired_records(paired_records_options)
       end
-      it "should be able to retract all accounts amounts from @user.accounts_amount" do
-        expect(@user.accounts_amount[:'pay day']).to eq 1000
-        expect(@user.accounts_amount[:'lottery']).to eq 1000
-        expect(@user.accounts_amount[:'summon']).to eq 1000
-        expect(@user.accounts_amount[:'crap']).to eq 1000
-      end
+      @user.save
+      accounts_amount_hash = @user.accounts_amount
+      expect(accounts_amount_hash[paired_records_options[:debit_record][:account_name].to_sym]).to eq(paired_records_options[:debit_record][:amount] * 6)  
     end
 
-    describe "creating accounts with strange casings" do
-      before do 
-        @user.create_expenditure({ :account_name => "crap" , :amount => 1000 , :description => "Crap, 1000 dollars" })
-        @user.create_expenditure({ :account_name => "CrAp" , :amount => 1000 , :description => "Crap, 1000 dollars" })
-        @user.save
-      end
-
-      it "should lower all casings before saving" do 
-        expect(@user.debit_accounts_records.where(:account_name => "cRaP").empty?).to eq true
-      end
+    it "should be able to total up assets from several operations" do
+      @user.accounting_transactions.build.build_income_records(sample_income_options)
+      @user.accounting_transactions.build.build_expenditure_records(sample_expenditure_options)
+      @user.save
+      expect(@user.accounts_amount[:cash]).to eq 1000
     end
   end
 end
