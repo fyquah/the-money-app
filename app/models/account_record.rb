@@ -1,6 +1,6 @@
 class AccountRecord < ActiveRecord::Base
   # Simply because it is sistem catatn bergu lol
-  has_one :pair_record , :class_name => "AccountRecord" , :foreign_key => "pair_record_id"
+  has_one :paired_record , :class_name => "AccountRecord" , :foreign_key => "paired_record_id"
 
   validates :account_type , :presence => true , :inclusion => ["debit" , "credit"]
   validates :amount, :presence => true , numericality: true
