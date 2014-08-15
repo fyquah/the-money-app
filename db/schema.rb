@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140815021138) do
+ActiveRecord::Schema.define(version: 20140815024212) do
 
   create_table "account_records", force: true do |t|
     t.text    "description"
@@ -24,17 +24,6 @@ ActiveRecord::Schema.define(version: 20140815021138) do
 
   add_index "account_records", ["paired_record_id"], name: "index_account_records_on_paired_record_id"
   add_index "account_records", ["user_id"], name: "index_account_records_on_user_id"
-
-  create_table "transactions", force: true do |t|
-    t.integer  "user_id"
-    t.string   "transaction_type"
-    t.text     "description"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.float    "amount"
-  end
-
-  add_index "transactions", ["user_id"], name: "index_transactions_on_user_id"
 
   create_table "users", force: true do |t|
     t.string   "name"

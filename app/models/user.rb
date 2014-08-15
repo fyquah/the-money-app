@@ -26,22 +26,20 @@ class User < ActiveRecord::Base
     end
   end
 
-  def method_missing method , *args
-    if method == :debit_accounts_amount
-      debit_accounts_records.inject({} , &AccountRecord.account_records_iterator)
-    elsif method == :credit_accounts_amount
-      credit_accounts_records.inject({} , &AccountRecord.account_records_iterator)
-    else
-      super
-    end
+  def debit_accounts_amount
+    debit_accounts_records.inject({} , &AccountRecord.account_records_iterator)
+  end
+
+  def credit_accounts_amount
+    credit_accounts_records.inject({} , &AccountRecord.account_records_iterator)
   end
 
   def accounts_amount
-    self.debit_accounts_amount.merge self.credit_accounts_amount
+    debit_accounts_amount.merge(credit_accounts_amount)
   end
 
   def find_records query_account_name
-    all_records.select { |x| x.account_name == query_account_name.to_s }
+    all_records.select { |x| x.account_name == query_account_name.to_s.lowercase }
   end
 
   def all_records
@@ -104,7 +102,7 @@ class User < ActiveRecord::Base
     end
 
     def create_remember_token
-      remember_token = self.class.digest(self.class.new_remember_token)
+      self.remember_token = self.class.digest(self.class.new_remember_token)
     end
 
 end
