@@ -11,19 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140815024212) do
+ActiveRecord::Schema.define(version: 20140815101215) do
 
-  create_table "account_records", force: true do |t|
-    t.text    "description"
-    t.string  "account_type"
-    t.string  "account_name"
-    t.float   "amount"
-    t.integer "user_id"
-    t.integer "paired_record_id"
+# Could not dump table "accounting_records" because of following NoMethodError
+#   undefined method `[]' for nil:NilClass
+
+  create_table "accounting_transactions", force: true do |t|
+    t.integer  "user_id"
+    t.string   "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
-
-  add_index "account_records", ["paired_record_id"], name: "index_account_records_on_paired_record_id"
-  add_index "account_records", ["user_id"], name: "index_account_records_on_user_id"
 
   create_table "users", force: true do |t|
     t.string   "name"

@@ -1,13 +1,16 @@
-class AccountRecord < ActiveRecord::Base
+class AccountingRecord < ActiveRecord::Base
   # Simply because it is sistem catatn bergu lol
-  has_one :paired_record , :class_name => "AccountRecord" , :foreign_key => "paired_record_id"
+  belongs_to :user
+  has_many :accounting_transactions , :class_name => "AccountingTransaction" , :foreign_key => "accounting_transaction_id"
 
-  validates :account_type , :presence => true , :inclusion => ["debit" , "credit"]
+  validates :account_type , :presence => true , :inclusion => ["liability" , "asset" , "equity"]
+  validates :record_type , :presence => true , :inclusion => ["debit" , "credit"]
   validates :amount, :presence => true , numericality: true
   validates :account_name , :presence => true
 
   before_save do
     account_name.downcase!
+    account_type.downcase!
   end
 
   def pretty_amount
@@ -26,3 +29,4 @@ class AccountRecord < ActiveRecord::Base
   end
 
 end
+ 

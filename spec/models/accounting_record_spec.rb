@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe AccountRecord do
+describe AccountingRecord do
   subject { @account_record = AccountRecord.new }
 
   it { should respond_to :paired_record }
