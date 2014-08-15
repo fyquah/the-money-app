@@ -1,7 +1,6 @@
 class AccountingRecord < ActiveRecord::Base
-  # Simply because it is sistem catatn bergu lol
   belongs_to :user
-  has_many :accounting_transactions , :class_name => "AccountingTransaction" , :foreign_key => "accounting_transaction_id"
+  belongs_to :accounting_transaction , :class_name => "AccountingTransaction" , :foreign_key => "accounting_transaction_id"
 
   validates :account_type , :presence => true , :inclusion => ["liability" , "asset" , "equity"]
   validates :record_type , :presence => true , :inclusion => ["debit" , "credit"]

@@ -1,14 +1,14 @@
 class AccountingTransaction < ActiveRecord::Base
   belongs_to :user
-  has_many :debit_records , ->{ where :record_type => "debit" } , :class_name => "AccountingRecord" , :foreign_key => "account_transaction_id" 
-  has_many :credit_records , ->{ where :record_type => "credit" } , :class_name => "AccountingRecord" , :foreign_key => "account_transaction_id" 
+  has_many :debit_records , ->{ where :record_type => "debit" } , :class_name => "AccountingRecord" , :foreign_key => "accounting_transaction_id" 
+  has_many :credit_records , ->{ where :record_type => "credit" } , :class_name => "AccountingRecord" , :foreign_key => "accounting_transaction_id" 
 
   # validation => must be balance before saving the transaction
   validate :account_records_must_be_able_to_balance
 
   def account_records_must_be_able_to_balance
     unless balance?
-      errors.add("accounts do not balance , debit is #{debit_records.inject(0 , &self.class.records_sum)} while credit is #{credit_records.inject(0 , &self.class.records_sum)}.")
+      errors.add(:debit , "accounts do not balance , debit is #{debit_records.inject(0 , &self.class.records_sum)} while credit is #{credit_records.inject(0 , &self.class.records_sum)}.")
     end
   end
 
@@ -26,13 +26,13 @@ class AccountingTransaction < ActiveRecord::Base
   def build_income_records options
     build_paired_record({
       :debit_record => {
-        :amount => options[:amount],
+        :amount => options[:amount].abs,
         :account_name => "cash",
         :account_type => "asset",
         :user => self.user
       },
       :credit_record => {
-        :amount => options[:amount] * -1,
+        :amount => options[:amount].abs * -1,
         :account_name => options[:account_name],
         :account_type => "equity",
         :user => self.user
@@ -44,13 +44,13 @@ class AccountingTransaction < ActiveRecord::Base
   def build_expenditure_records options
     build_paired_record({
       :debit_record => {
-        :amount => options[:amount],
+        :amount => options[:amount].abs,
         :account_name => options[:account_name],
         :account_type => "equity",
         :user => self.user
       },
       :credit_record => {
-        :amount => options[:amount] * -1,
+        :amount => options[:amount].abs * -1,
         :account_name => "cash",
         :account_type => "asset",
         :user => self.user
