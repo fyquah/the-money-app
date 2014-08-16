@@ -26,10 +26,14 @@ class User < ActiveRecord::Base
     all_records.select { |x| x.account_name == query_account_name.to_s.lowercase }
   end
 
-  def accounts_amount
+  def accounts_amount # positive means debit balance, negative means credit balance
     all_records.inject({}) do |output , record|
       output[record.account_name.to_sym] ||= 0
-      output[record.account_name.to_sym] += record.amount
+      if record.record_type == "debit"
+        output[record.account_name.to_sym] += record.amount
+      else
+        output[record.account_name.to_sym] -= record.amount
+      end
       output
     end
   end
@@ -40,19 +44,7 @@ class User < ActiveRecord::Base
 
   # General accounting methods
   def accounts_are_balance?
-    (total_assets) == (total_liabilities + total_equities)
-  end
-
-  def total_assets
-    asset_records.inject(0){ |output , record| output += record.amount }
-  end
-
-  def total_liabilities
-    liability_records.inject(0){ |output , record| output += record.amount } * -1
-  end
-
-  def total_equities
-    equity_records.inject(0){ |output , record| output += record.amount } * -1
+    accounts_amount.inject(0) { |o , (_ , v)| o += v } == 0
   end
 
   # Class methods

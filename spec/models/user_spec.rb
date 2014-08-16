@@ -9,7 +9,7 @@ describe User do
       :credit_record => {
         :account_name => "lottery",
         :account_type => "equity",
-        :amount => -1000,
+        :amount => 1000,
         :user => @user
       },
       :debit_record => {
@@ -95,11 +95,11 @@ describe User do
       expect(accounts_amount_hash[paired_records_options[:debit_record][:account_name].to_sym]).to eq(paired_records_options[:debit_record][:amount] * 6)  
     end
 
-    it "should be able to total up assets from several operations" do
-      @user.accounting_transactions.build.build_income_records(sample_income_options)
-      @user.accounting_transactions.build.build_expenditure_records(sample_expenditure_options)
-      @user.save
-      expect(@user.accounts_amount[:cash]).to eq 1000
-    end
+      it "should be able to total up assets from several operations" do
+        @user.accounting_transactions.build.build_income_records(sample_income_options)
+        @user.accounting_transactions.build.build_expenditure_records(sample_expenditure_options)
+        @user.save
+        expect(@user.accounts_amount[:cash]).to eq 1000
+      end
   end
 end

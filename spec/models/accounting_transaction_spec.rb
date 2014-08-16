@@ -10,7 +10,7 @@ describe AccountingTransaction do
       :credit_record => {
         :account_name => "lottery",
         :account_type => "equity",
-        :amount => -1000,
+        :amount => 1000,
         :user => user
       },
       :debit_record => {
@@ -62,7 +62,7 @@ describe AccountingTransaction do
     describe "when debit and credit_records tally" do
       before do
         @accounting_transaction.debit_records.build :account_name => "debitted acount" , :account_type => "equity" , :amount => 100 , :user => user
-        @accounting_transaction.credit_records.build :account_name => "creditted acount" , :account_type => "asset" , :amount => -100 , :user => user
+        @accounting_transaction.credit_records.build :account_name => "creditted acount" , :account_type => "asset" , :amount => 100 , :user => user
       end
       it { should be_valid }
       its(:balance?){ should be true }
@@ -97,7 +97,7 @@ describe AccountingTransaction do
     end
     it "should credit the asset account" do
       expect(@accounting_transaction.credit_records.first.account_name).to eq "cash" 
-      expect(@accounting_transaction.credit_records.first.amount).to eq sample_expenditure_options[:amount] * -1
+      expect(@accounting_transaction.credit_records.first.amount).to eq sample_expenditure_options[:amount]
       expect(@accounting_transaction.credit_records.first.record_type).to eq "credit"
       expect(@accounting_transaction.credit_records.first.account_type).to eq "asset" 
     end
@@ -125,7 +125,7 @@ describe AccountingTransaction do
     end
     it "should credit the asset account" do
       expect(@accounting_transaction.credit_records.first.account_name).to eq sample_income_options[:account_name] 
-      expect(@accounting_transaction.credit_records.first.amount).to eq sample_income_options[:amount] * -1 
+      expect(@accounting_transaction.credit_records.first.amount).to eq sample_income_options[:amount] 
       expect(@accounting_transaction.credit_records.first.record_type).to eq "credit"
       expect(@accounting_transaction.credit_records.first.account_type).to eq "equity" 
     end
