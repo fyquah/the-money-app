@@ -4,8 +4,8 @@
     <h1>My monetary profile</h1>
       <p><strong>Email: </strong> <%= @user.email %></p>
       <p><strong>Name: </strong> <%= @user.name %></p>
-      <p><strong>Balance: </strong><%= '%.2f' % @user.balance %></p>
-      <% if @user.balance < 0 %>
+      <p><strong>Balance: </strong><%= '%.2f' % (@user.accounts_amount[:cash] || 0) %></p>
+      <% if (@user.accounts_amount[:cash] || 0) < 0 %>
         <p class='alert alert-danger'>You have an overdraft account!</p>
       <% end %>
       

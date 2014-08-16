@@ -2,9 +2,14 @@ class AccountingTransaction < ActiveRecord::Base
   belongs_to :user
   has_many :debit_records , ->{ where :record_type => "debit" } , :class_name => "AccountingRecord" , :foreign_key => "accounting_transaction_id" 
   has_many :credit_records , ->{ where :record_type => "credit" } , :class_name => "AccountingRecord" , :foreign_key => "accounting_transaction_id" 
-
+  accepts_nested_attributes_for :debit_records , :credit_records
   # validation => must be balance before saving the transaction
   validate :account_records_must_be_able_to_balance
+
+  before_save do
+    debit_records.each { |r| r.user = self.user }
+    credit_records.each { |r| r.user = self.user }
+  end
 
   def account_records_must_be_able_to_balance
     unless balance?

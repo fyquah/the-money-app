@@ -1,0 +1,39 @@
+<div class='row'>
+  <div class='col-xs-12 col-sm-offset-2 col-sm-8'>
+    <% if @accounting_transaction.id %>
+      <h1>Update existing accounting transaction</h1>
+    <% else %>
+      <h1>Make a new accounting transaction</h1>
+    <% end %>
+    <%= form_for(@accounting_transaction) do |f| %>
+      <%= render "shared/error_messages" , object: f.object %>
+      <div class='form-group'>
+        <%= f.label :description %>
+        <%= f.text_area :description, :class => "form-control" %>
+      </div>
+      <h2>Debit Records</h1>
+      <div class='form-group'>
+        <%= f.fields_for(:debit_records) do |ff| %>
+          <%= ff.hidden_field :id %>
+
+          <div class='form-group'>
+            <%= ff.label :account_name %>
+            <%= ff.text_field :account_name, :class => "form-control" %>
+            </div>
+          <div class='form-group'>
+            <%= ff.label :account_type %>
+            <%= ff.text_field :account_type, :class => "form-control" %>
+          </div>
+          <div class='form-group'>
+            <%= ff.label :amount %>
+            <%= ff.text_field :amount, :class => "form-control" %>
+          </div>
+        <% end %>
+      </div>
+      <h2>Credit records</h2> 
+      <div class='form-group'>
+
+      </div>
+    <% end %>
+  </div>
+</div>
