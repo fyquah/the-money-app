@@ -13,6 +13,11 @@ class AccountingTransactionsController < ApplicationController
     @accounting_transaction = current_user.accounting_transactions.build
   end
 
+  def show
+    @accounting_transaction = current_user.accounting_transactions.find params[:id]
+    render 'edit'
+  end
+
   def edit
     @accounting_transaction = current_user.accounting_transactions.find params[:id]
   end
@@ -38,12 +43,29 @@ class AccountingTransactionsController < ApplicationController
     end
   end
 
-  def detroy
-
+  def destroy
+    @accounting_transaction = current_user.accounting_transactions.find params[:id]
+    if @accounting_transaction.destroy
+      flash[:success] = "Deleted transaction!"
+      redirect_to accounting_transactions_path
+    else
+      flash[:error] = "Looks like an error has occured"
+    end
   end
 
   private 
     def accounting_transaction_params
-      params.require(:accounting_transaction).permit(:description , :created_at , :debit_records_attributes => [:id , :account_name , :amount , :account_type] , :credit_records_attributes => [:id , :account_name , :amount , :account_type])
+      parameters = params.require(:accounting_transaction).permit(:description , :created_at , :debit_records_attributes => [:id , :account_name , :amount , :account_type , :_destroy] , :credit_records_attributes => [:id , :account_name , :amount , :account_type , :_destroy])
+      p = lambda do |_ , r| 
+        if r[:_destroy].nil? || r[:_destroy].to_s.strip.empty?
+          r[:_destroy] = nil  
+        else
+          r[:_destroy] = true
+        end
+      end
+      parameters[:debit_records_attributes].each(&p) unless parameters[:debit_records_attributes].nil?
+      parameters[:credit_records_attributes].each(&p) unless parameters[:credit_records_attributes].nil?
+      puts parameters
+      parameters
     end
 end

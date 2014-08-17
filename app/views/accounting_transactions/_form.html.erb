@@ -1,23 +1,26 @@
 <% # think of some way of drying this up %>
 <script id='accounting_record_template' type='x-tmpl-mustache'>
-<h4>Record {{ index }}</h4>
-<input id="accounting_transaction_{{ record_type }}_attributes_{{ record_count }}_id" name="accounting_transaction[{{ record_type }}_attributes][{{ record_count }}][id]" type="hidden" value="{{ record_id }}">
-<div class='form-group'>
-  <label for="accounting_transaction_{{ record_type }}_attributes_{{ record_count }}_account_name">Account name</label>
-  <input class="form-control" id="accounting_transaction_{{ record_type }}_attributes_1_account_name" name="accounting_transaction[{{ record_type }}_attributes][{{record_count}}][account_name]" type="text" value="{{ account_name }}"/>
+<div id='{{ record_type }}_{{ record_count }}'>
+  <h4>Record {{ index }}</h4><button class="btn btn-warning" onclick="return remove_record('{{ record_count}}' , '{{ record_type}}' , 'Are sure you want to remove this accounting record of {{ type }} the {{ account_name }} account by {{ amount }} units of money')">Remove record</button>
+  <input id="accounting_transaction_{{ record_type }}_attributes_{{ record_count }}_id" name="accounting_transaction[{{ record_type }}_attributes][{{ record_count }}][id]" type="hidden" value="{{ record_id }}">
+  <input id="accounting_transaction_{{ record_type }}_attributes_{{ record_count }}__destroy" name="accounting_transaction[{{ record_type }}_attributes][{{ record_count }}][_destroy]" type="hidden" value="">
+  <div class='form-group'>
+    <label for="accounting_transaction_{{ record_type }}_attributes_{{ record_count }}_account_name">Account name</label>
+    <input class="form-control" id="accounting_transaction_{{ record_type }}_attributes_1_account_name" name="accounting_transaction[{{ record_type }}_attributes][{{record_count}}][account_name]" type="text" value="{{ account_name }}"/>
+    </div>
+    <div class="form-group">
+      <label for="accounting_transaction_{{ record_type }}_attributes_{{ record_count }}_account_type">Account type</label>
+      <select class="form-control" id="accounting_transaction_{{ record_type }}_attributes_{{ record_count }}_account_type" name="accounting_transaction[{{ record_type }}_attributes][{{ record_count }}][account_type]">
+        <option {{ selected_blank }} value=""></option>
+        <option {{ selected_asset }} value="asset">asset</option>
+        <option {{ selected_equity }} value="equity">equity</option>
+        <option {{ selected_liability }} value="liability">liability</option>
+      </select>
+    </div>
+  <div class='form-group'>
+    <label for="accounting_transaction_{{ record_type }}_attributes_{{ record_type }}_amount">Amount</label>
+    <input class="form-control" id="accounting_transaction_{{ record_type }}_attributes_1_amount" name="accounting_transaction[{{ record_type }}_attributes][{{ record_count }}][amount]" type="text" value="{{ amount }}"/>
   </div>
-  <div class="form-group">
-    <label for="accounting_transaction_{{ record_type }}_attributes_{{ record_count }}_account_type">Account type</label>
-    <select class="form-control" id="accounting_transaction_{{ record_type }}_attributes_{{ record_count }}_account_type" name="accounting_transaction[{{ record_type }}_attributes][{{ record_count }}][account_type]">
-      <option {{ selected_blank }} value=""></option>
-      <option {{ selected_asset }} value="asset">asset</option>
-      <option {{ selected_equity }} value="equity">equity</option>
-      <option {{ selected_liability }} value="liability">liability</option>
-    </select>
-  </div>
-<div class='form-group'>
-  <label for="accounting_transaction_{{ record_type }}_attributes_{{ record_type }}_amount">Amount</label>
-  <input class="form-control" id="accounting_transaction_{{ record_type }}_attributes_1_amount" name="accounting_transaction[{{ record_type }}_attributes][{{ record_count }}][amount]" type="text" value="{{ amount }}"/>
 </div>
 </script>
 <%= javascript_tag do %>
@@ -30,9 +33,12 @@
 <div class='row'>
   <div class='col-xs-12 col-sm-offset-2 col-sm-8'>
     <% if @accounting_transaction.id %>
-      <h1>Update existing accounting transaction</h1>
+      <div class='row'>
+        <div class='col-sm-10'><h2>Update existing accounting transaction</h2></div>
+        <div class='col-sm-2'><h2 style='text-align : left'><%= link_to "delete" , { :controller => "accounting_transactions" , :action => "destroy" } , :method => "delete" , :class => "btn btn-danger" , :data => { :confirm => "Are you sure you want to delete this transaction?" } %></h2></div>
+      </div>
     <% else %>
-      <h1>Create a new accounting transaction</h1>
+      <h2>Create a new accounting transaction</h2>
     <% end %>
     <%= form_for(@accounting_transaction , :html => { :method => (@accounting_transaction.id ? "patch" : "post") }) do |f| %>
       <%= render "shared/error_messages" , object: f.object %>
@@ -46,29 +52,31 @@
       </div>
       <div class='row'>
         <div id='debit_records' class='col-sm-6'>
-          <h2>Debit Records</h1><button type="button" id='create_new_debit_entry' class="btn btn-default">Add new debit record</button>
+          <h2>Debit Records</h2><button type="button" id='create_new_debit_entry' class="btn btn-default">Add new debit record</button>
           <script>
               <% @accounting_transaction.debit_records.each_with_index do |r , index| %>
-              create_content("debit" , { record_count: "<%= index %>" , record_id: "<%= r.id %>" , account_name: " <%= r.account_name %>" , account_type: "<%= r.account_type %>" , amount: "<%= r.amount %>" } )
+              create_content("debit" , { record_count: "<%= index %>" , record_id: "<%= r.id %>" , account_name: "<%= r.account_name %>" , account_type: "<%= r.account_type %>" , amount: "<%= r.amount %>" } )
             <% end %>
           </script>
         </div>
         <div id='credit_records' class='col-sm-6'>
-          <h2>Credit Records</h1><button type="button" id='create_new_credit_entry' class="btn btn-default">Add new credit record</button>
+          <h2>Credit Records</h2><button type="button" id='create_new_credit_entry' class="btn btn-default">Add new credit record</button>
           <script>
               <% @accounting_transaction.credit_records.each_with_index do |r , index| %>
-              create_content("credit" , { record_count: "<%= index %>" , record_id: "<%= r.id %>" , account_name: " <%= r.account_name %>" , account_type: "<%= r.account_type %>" , amount: "<%= r.amount %>" } )
+              create_content("credit" , { record_count: "<%= index %>" , record_id: "<%= r.id %>" , account_name: "<%= r.account_name %>" , account_type: "<%= r.account_type %>" , amount: "<%= r.amount %>" } )
             <% end %>
           </script>
         </div>
 
       </div>
       <br />
+      <div class='row'>
       <% if @accounting_transaction.id %>
-        <p style='text-align: center'><%= f.submit "update transaction" , :class => "btn btn-primary" %></p>
+        <div class='col-sm-6'><%= f.submit "update transaction" , :class => "btn btn-primary" %></div>
       <% else %>
-        <p style='text-align: center'><%= f.submit "create transaction" , :class => "btn btn-primary" %></p>
+        <div class='col-sm-6'><%= f.submit "create transaction" , :class => "btn btn-primary" %></div>
       <% end %>
+      </div>
     <% end %>
     <br />  
   </div>

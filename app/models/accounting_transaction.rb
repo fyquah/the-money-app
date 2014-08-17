@@ -2,7 +2,7 @@ class AccountingTransaction < ActiveRecord::Base
   belongs_to :user
   has_many :debit_records , ->{ where :record_type => "debit" } , :class_name => "AccountingRecord" , :foreign_key => "accounting_transaction_id" , :dependent => :destroy
   has_many :credit_records , ->{ where :record_type => "credit" } , :class_name => "AccountingRecord" , :foreign_key => "accounting_transaction_id" , :dependent => :destroy
-  accepts_nested_attributes_for :debit_records , :credit_records
+  accepts_nested_attributes_for :debit_records , :credit_records , :allow_destroy => true
   # validation => must be balance before saving the transaction
   validate :account_records_must_be_able_to_balance
   validate :at_least_one_debit_record
@@ -26,11 +26,11 @@ class AccountingTransaction < ActiveRecord::Base
   end
 
   def at_least_one_debit_record
-    errors.add(:debit_records , "should have at least one debitted account") unless debit_records.size > 0
+    errors.add(:debit_records , "should have at least one debitted account") unless debit_records.reject(&:marked_for_destruction?).size > 0
   end
 
   def at_least_one_credit_record
-    errors.add(:credit_records , "should have at least one creditted account") unless credit_records.size > 0
+    errors.add(:credit_records , "should have at least one creditted account") unless credit_records.reject(&:marked_for_destruction?).size > 0
   end
 
   def description_cannot_be_empty_string
@@ -38,7 +38,7 @@ class AccountingTransaction < ActiveRecord::Base
   end
 
   def balance?
-    debit_records.inject(0 , &self.class.records_sum) == credit_records.inject(0 , &self.class.records_sum)
+    debit_records.reject(&:marked_for_destruction?).inject(0 , &self.class.records_sum) == credit_records.reject(&:marked_for_destruction?).inject(0 , &self.class.records_sum)
   end
 
   def build_paired_records options

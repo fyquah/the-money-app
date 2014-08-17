@@ -8,11 +8,11 @@ Rails.application.routes.draw do
   match "signin" , :to => "sessions#new" , :via => "get"
   match "signout" , :to => "sessions#destroy" , :via => "delete"
   match "about" , :to => "static_pages#about" , :via => "get"
-  resources :users , only: [:new , :edit, :create , :update , :show]
+  resources :users , only: [:new , :edit , :create , :update , :show]
   resources :sessions , only: [:create , :destroy]
 
   # For transactions
-  resources :accounting_transactions , only: [:index , :view , :new , :edit , :create , :update , :destroy]
+  resources :accounting_transactions , only: [:index , :view , :show , :new , :edit , :create , :update , :destroy]
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
