@@ -9,10 +9,6 @@
         <p class='alert alert-danger'>You have an overdraft account!</p>
       <% end %>
       <% if current_user? @user %>
-        <p><strong>Balance: </strong><%= '%.2f' % @user.balance %></p>
-        <% if @user.balance < 0 %>
-          <p class='alert alert-danger'>You have an overdraft account!</p>
-        <% end %>
       
         <div class='row'>
           <div class='col-sm-6'><%= link_to "Create new accounting transaction" , { :controller => "accounting_transactions" , :action => "new" } , :class => "btn btn-default wide-btn" %></a></div>

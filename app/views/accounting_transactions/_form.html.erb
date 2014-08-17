@@ -1,17 +1,18 @@
 <% # think of some way of drying this up %>
 <script id='accounting_record_template' type='x-tmpl-mustache'>
 <h4>Record</h4>
+<input id="accounting_transaction_{{ record_type }}_attributes_{{ record_count }}_id" name="accounting_transaction[{{ record_type }}_attributes][{{ record_count }}][id]" type="hidden" value="{{ record_id }}">
 <div class='form-group'>
   <label for="accounting_transaction_{{ record_type }}_attributes_{{ record_count }}_account_name">Account name</label>
-  <input class="form-control" id="accounting_transaction_{{ record_type }}_attributes_1_account_name" name="accounting_transaction[{{ record_type }}_attributes][{{record_count}}][account_name]" type="text" />
+  <input class="form-control" id="accounting_transaction_{{ record_type }}_attributes_1_account_name" name="accounting_transaction[{{ record_type }}_attributes][{{record_count}}][account_name]" type="text" value="{{ account_name }}"/>
   </div>
 <div class='form-group'>
   <label for="accounting_transaction_{{ record_type }}_attributes_{{record_count}}_account_type">Account type</label>
-  <input class="form-control" id="accounting_transaction_{{ record_type }}_attributes_1_account_type" name="accounting_transaction[{{ record_type }}_attributes][{{record_count}}][account_type]" type="text" />
+  <input class="form-control" id="accounting_transaction_{{ record_type }}_attributes_1_account_type" name="accounting_transaction[{{ record_type }}_attributes][{{record_count}}][account_type]" type="text" value="{{ account_type }}" />
 </div>
 <div class='form-group'>
   <label for="accounting_transaction_{{ record_type }}_attributes_{{ record_type }}_amount">Amount</label>
-  <input class="form-control" id="accounting_transaction_{{ record_type }}_attributes_1_amount" name="accounting_transaction[{{ record_type }}_attributes][{{ record_count }}][amount]" type="text" />
+  <input class="form-control" id="accounting_transaction_{{ record_type }}_attributes_1_amount" name="accounting_transaction[{{ record_type }}_attributes][{{ record_count }}][amount]" type="text" value="{{ amount }}"/>
 </div>
 </script>
 <%= javascript_tag do %>
@@ -37,21 +38,31 @@
       <div class='row'>
         <div id='debit_records' class='col-sm-6'>
           <h2>Debit Records</h1><button type="button" id='create_new_debit_entry' class="btn btn-default">Add new debit record</button>
-            <script type="text/javascript"></script>
-            <%= #render :partial => "record_form" , :locals => { :f => f  , :record_type => :debit_records } %>
+          <script>
+            <% counter = 0 %>
+              <% @accounting_transaction.debit_records.each do |r| %>
+              create_content("debit" , { record_count: "<%= counter %>" , record_id: "<%= r.id %>" , account_name: " <%= r.account_name %>" , account_type: "<%= r.account_type %>" , amount: "<%= r.amount %>" } )
+              <% counter += 1 %>
+            <% end %>
+          </script>
         </div>
         <div id='credit_records' class='col-sm-6'>
           <h2>Credit Records</h1><button type="button" id='create_new_credit_entry' class="btn btn-default">Add new credit record</button>
-          <script type="text/javascript"></script>
-            <%= render :partial => "record_form" , :locals => { :f => f  , :record_type => :credit_records } %>
+          <script>
+            <% counter = 0 %>
+              <% @accounting_transaction.credit_records.each do |r| %>
+              create_content("credit" , { record_count: "<%= counter %>" , record_id: "<%= r.id %>" , account_name: " <%= r.account_name %>" , account_type: "<%= r.account_type %>" , amount: "<%= r.amount %>" } )
+              <% counter += 1 %>
+            <% end %>
+          </script>
         </div>
 
       </div>
-
-      <% unless @accounting_transaction.id %>
-        <%= f.submit "create transaction" , :class => "btn btn-primary" %>
+      <br />
+      <% if @accounting_transaction.id %>
+        <p style='text-align: center'><%= f.submit "update transaction" , :class => "btn btn-primary" %></p>
       <% else %>
-        <%= f.submit "update transaction" , :class => "btn btn-primary" %>
+        <p style='text-align: center'><%= f.submit "create transaction" , :class => "btn btn-primary" %></p>
       <% end %>
     <% end %>
     <br />  
