@@ -1,0 +1,43 @@
+<% render_records = Proc.new do |record| %>
+<div class='row'>
+  <div class="col-xs-6"><%= link_to(record.account_name , {:controller => "accounting_transactions" , :action => "index" , :account_name => record.account_name } , { :class => "account_name_link" }) %></div>
+  <div class='col-xs-6'><%= record.amount %></div>
+</div>
+<% end %>
+  <h3>Accounting Transactions <%= "for #{params[:account_name]}" if params[:account_name] %></h3>
+  <h4><%= link_to "New Accounting Transaction" , { :controller => "accounting_transactions" , :action => "new" } , :class => "btn btn-link" %></h4>
+  <% if @accounting_transactions.count == 0 %>
+    <div class='row'>
+      <div class='col-xs-12'>
+      <h3>Looks like you have not started accounting <%= "for #{params[:account_name]} " if params[:account_name] %>yet! <%= link_to "Start writing some accounts" , { :controller => "accounting_transactions" , :action => "new" } %> for yourself</h3>
+      </div>
+    </div>
+  <% else %>
+    <%= will_paginate @accounting_transactions , renderer: BootstrapPagination::Rails%>
+    <% @accounting_transactions.each_with_index do |transaction , index| %>
+      <div class='row transaction_list_item <%= "transaction_list_item_#{index % 2 == 0 ? "white" : "grey"}" %>'>
+        <div class='col-sm-6 transaction_list_item_sub_list'>
+          <div class='row'>
+            <div class='col-sm-8 col-xs-7 description'><%= transaction.description %></div>
+            <div class='col-sm-4 col-xs-5'><%= transaction.created_at.strftime("%Y %B %d") %></div>
+          </div>
+        </div>
+        <div class='col-sm-4 transaction_list_item_sub_list'>
+          <div class='row'>
+            <div class='col-xs-6'><% transaction.debit_records.each(&render_records) %></div>
+            <div class='col-xs-6'><% transaction.credit_records.each(&render_records) %></div>
+          </div>
+        </div>
+        <div class='col-sm-2 transaction_list_item_sub_list'>
+          <div class='row'>
+            <div class='col-xs-6'><%= link_to "Edit" , { :controller => "accounting_transactions" , :action => "edit" , :id => transaction.id } , { :class => "btn btn-#{index % 2 == 0 ? 'default' : 'info' }" } %></div>
+            <div class='col-xs-6'><%= link_to "Delete", { :controller => "accounting_transactions" , :action => "destroy" , :id => transaction.id }, { :class => "btn btn-danger" , :method => "delete" , :data => {:confirm => "Are you sure you want to delete transaction with description \n#{transaction.description}?"} } %></div>
+          </div>
+        </div>
+
+      </div>
+    <% end %>
+    <%= will_paginate @accounting_transactions ,renderer: BootstrapPagination::Rails %>
+  <% end %>
+</div>
+

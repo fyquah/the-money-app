@@ -13,6 +13,9 @@ gem "twitter-bootstrap-rails"
 gem 'will_paginate-bootstrap'
 gem 'unicorn'
 gem 'mustache-js-rails'
+# For the forms
+gem 'momentjs-rails', '>= 2.8.1'
+gem 'bootstrap3-datetimepicker-rails', '~> 3.0.2'
 
 group :development, :test do
   gem 'sqlite3', '1.3.8'

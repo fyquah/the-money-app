@@ -39,6 +39,8 @@ GEM
       sass (~> 3.2)
     bootstrap-will_paginate (0.0.9)
       will_paginate
+    bootstrap3-datetimepicker-rails (3.0.3)
+      momentjs-rails (>= 2.8.1)
     builder (3.2.2)
     capybara (2.1.0)
       mime-types (>= 1.16)
@@ -96,6 +98,8 @@ GEM
     mime-types (1.25.1)
     mini_portile (0.6.0)
     minitest (5.4.0)
+    momentjs-rails (2.8.1)
+      railties (>= 3.1)
     multi_json (1.10.1)
     multi_test (0.1.1)
     mustache-js-rails (0.0.9)
@@ -202,6 +206,7 @@ DEPENDENCIES
   bcrypt-ruby (= 3.1.2)
   bootstrap-sass
   bootstrap-will_paginate (= 0.0.9)
+  bootstrap3-datetimepicker-rails (~> 3.0.2)
   capybara (= 2.1.0)
   coffee-rails (= 4.0.1)
   cucumber-rails (= 1.4.0)
@@ -212,6 +217,7 @@ DEPENDENCIES
   jquery-rails (= 3.0.4)
   libnotify (= 0.8.0)
   minitest
+  momentjs-rails (>= 2.8.1)
   mustache-js-rails
   pg (= 0.15.1)
   rails (= 4.1.4)

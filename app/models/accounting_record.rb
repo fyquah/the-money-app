@@ -9,6 +9,7 @@ class AccountingRecord < ActiveRecord::Base
 
   before_save do
     account_name.downcase!
+    account_name.strip!
     account_type.downcase!
   end
 

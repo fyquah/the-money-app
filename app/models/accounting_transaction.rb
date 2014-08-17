@@ -5,6 +5,14 @@ class AccountingTransaction < ActiveRecord::Base
   accepts_nested_attributes_for :debit_records , :credit_records
   # validation => must be balance before saving the transaction
   validate :account_records_must_be_able_to_balance
+  validate :at_least_one_debit_record
+  validate :at_least_one_credit_record
+  validate :description , :presence => true
+
+  scope :contains_records_of , ->(account_name) do
+    where(:id => AccountingRecord.where(:account_name => account_name.downcase).select(:accounting_transaction_id))
+  end
+  default_scope ->{ order(:created_at => :desc )}
 
   before_save do
     debit_records.each { |r| r.user = self.user }
@@ -13,9 +21,20 @@ class AccountingTransaction < ActiveRecord::Base
 
   def account_records_must_be_able_to_balance
     unless balance?
-      errors.add(:debit , "does not balance with credit account")
-      errors.add(:credit , "does not balance with debit account")
+      errors.add(:debit_and_credit_records_amount , "do not balance")
     end
+  end
+
+  def at_least_one_debit_record
+    errors.add(:debit_records , "should have at least one debitted account") unless debit_records.size > 0
+  end
+
+  def at_least_one_credit_record
+    errors.add(:credit_records , "should have at least one creditted account") unless credit_records.size > 0
+  end
+
+  def description_cannot_be_empty_string
+    errors.add(:description , "cannot be empty") if description.nil? || description.empty?
   end
 
   def balance?

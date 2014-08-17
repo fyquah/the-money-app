@@ -38,7 +38,11 @@
       <%= render "shared/error_messages" , object: f.object %>
       <div class='form-group'>
         <%= f.label :description %>
-        <%= f.text_area :description, :class => "form-control" %>
+        <%= f.text_area :description, :class => "form-control" , :required => true %>
+      </div>
+      <div class="form-group">
+          <%= f.label :created_at , "Date / Time of transaction (defaults to date of transaction creation)" %>
+          <%= f.datetime_local_field :created_at , :class => "form-control" %>
       </div>
       <div class='row'>
         <div id='debit_records' class='col-sm-6'>
