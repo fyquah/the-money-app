@@ -12,6 +12,7 @@ gem 'bootstrap-will_paginate', '0.0.9'
 gem "twitter-bootstrap-rails"
 gem 'will_paginate-bootstrap'
 gem 'unicorn'
+gem 'mustache-js-rails'
 
 group :development, :test do
   gem 'sqlite3', '1.3.8'

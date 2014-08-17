@@ -1,0 +1,59 @@
+<% # think of some way of drying this up %>
+<script id='accounting_record_template' type='x-tmpl-mustache'>
+<h4>Record</h4>
+<div class='form-group'>
+  <label for="accounting_transaction_{{ record_type }}_attributes_{{ record_count }}_account_name">Account name</label>
+  <input class="form-control" id="accounting_transaction_{{ record_type }}_attributes_1_account_name" name="accounting_transaction[{{ record_type }}_attributes][{{record_count}}][account_name]" type="text" />
+  </div>
+<div class='form-group'>
+  <label for="accounting_transaction_{{ record_type }}_attributes_{{record_count}}_account_type">Account type</label>
+  <input class="form-control" id="accounting_transaction_{{ record_type }}_attributes_1_account_type" name="accounting_transaction[{{ record_type }}_attributes][{{record_count}}][account_type]" type="text" />
+</div>
+<div class='form-group'>
+  <label for="accounting_transaction_{{ record_type }}_attributes_{{ record_type }}_amount">Amount</label>
+  <input class="form-control" id="accounting_transaction_{{ record_type }}_attributes_1_amount" name="accounting_transaction[{{ record_type }}_attributes][{{ record_count }}][amount]" type="text" />
+</div>
+</script>
+<%= javascript_tag do %>
+  var debit_record_count = <%= @accounting_transaction.debit_records.count || 0 %>
+  var credit_record_count = <%= @accounting_transaction.credit_records.count || 0 %> 
+<% end %>
+<div id='target'>
+
+</div>
+<div class='row'>
+  <div class='col-xs-12 col-sm-offset-2 col-sm-8'>
+    <% if @accounting_transaction.id %>
+      <h1>Update existing accounting transaction</h1>
+    <% else %>
+      <h1>Create a new accounting transaction</h1>
+    <% end %>
+    <%= form_for(@accounting_transaction , :html => { :method => (@accounting_transaction.id ? "patch" : "post") }) do |f| %>
+      <%= render "shared/error_messages" , object: f.object %>
+      <div class='form-group'>
+        <%= f.label :description %>
+        <%= f.text_area :description, :class => "form-control" %>
+      </div>
+      <div class='row'>
+        <div id='debit_records' class='col-sm-6'>
+          <h2>Debit Records</h1><button type="button" id='create_new_debit_entry' class="btn btn-default">Add new debit record</button>
+            <script type="text/javascript"></script>
+            <%= #render :partial => "record_form" , :locals => { :f => f  , :record_type => :debit_records } %>
+        </div>
+        <div id='credit_records' class='col-sm-6'>
+          <h2>Credit Records</h1><button type="button" id='create_new_credit_entry' class="btn btn-default">Add new credit record</button>
+          <script type="text/javascript"></script>
+            <%= render :partial => "record_form" , :locals => { :f => f  , :record_type => :credit_records } %>
+        </div>
+
+      </div>
+
+      <% unless @accounting_transaction.id %>
+        <%= f.submit "create transaction" , :class => "btn btn-primary" %>
+      <% else %>
+        <%= f.submit "update transaction" , :class => "btn btn-primary" %>
+      <% end %>
+    <% end %>
+    <br />  
+  </div>
+</div>

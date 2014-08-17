@@ -12,9 +12,7 @@ Rails.application.routes.draw do
   resources :sessions , only: [:create , :destroy]
 
   # For transactions
-  resources :transactions , :only => [:new , :create , :destroy]
-  match "incomes" , :to => "transactions#incomes", :via => "get"
-  match "expenditures" , :to => "transactions#expenditures" , :via => "get"
+  resources :accounting_transactions , only: [:index , :new , :edit , :create , :update , :destroy]
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
