@@ -4,6 +4,7 @@ function create_content(type , properties){
   var template = $("#accounting_record_template").html()
   Mustache.parse(template);   // optional, speeds up future uses
   var rendered = Mustache.render(template , {
+    index: (properties.record_count + 1),
     record_type: (type + "_records"),
     record_count: (properties.record_count),
     record_id: (properties.record_id || ""),

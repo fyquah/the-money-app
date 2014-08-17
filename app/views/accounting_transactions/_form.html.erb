@@ -1,6 +1,6 @@
 <% # think of some way of drying this up %>
 <script id='accounting_record_template' type='x-tmpl-mustache'>
-<h4>Record</h4>
+<h4>Record {{ index }}</h4>
 <input id="accounting_transaction_{{ record_type }}_attributes_{{ record_count }}_id" name="accounting_transaction[{{ record_type }}_attributes][{{ record_count }}][id]" type="hidden" value="{{ record_id }}">
 <div class='form-group'>
   <label for="accounting_transaction_{{ record_type }}_attributes_{{ record_count }}_account_name">Account name</label>
@@ -39,20 +39,16 @@
         <div id='debit_records' class='col-sm-6'>
           <h2>Debit Records</h1><button type="button" id='create_new_debit_entry' class="btn btn-default">Add new debit record</button>
           <script>
-            <% counter = 0 %>
               <% @accounting_transaction.debit_records.each do |r| %>
-              create_content("debit" , { record_count: "<%= counter %>" , record_id: "<%= r.id %>" , account_name: " <%= r.account_name %>" , account_type: "<%= r.account_type %>" , amount: "<%= r.amount %>" } )
-              <% counter += 1 %>
+              create_content("debit" , { record_count: "<%= r.index %>" , record_id: "<%= r.id %>" , account_name: " <%= r.account_name %>" , account_type: "<%= r.account_type %>" , amount: "<%= r.amount %>" } )
             <% end %>
           </script>
         </div>
         <div id='credit_records' class='col-sm-6'>
           <h2>Credit Records</h1><button type="button" id='create_new_credit_entry' class="btn btn-default">Add new credit record</button>
           <script>
-            <% counter = 0 %>
               <% @accounting_transaction.credit_records.each do |r| %>
-              create_content("credit" , { record_count: "<%= counter %>" , record_id: "<%= r.id %>" , account_name: " <%= r.account_name %>" , account_type: "<%= r.account_type %>" , amount: "<%= r.amount %>" } )
-              <% counter += 1 %>
+              create_content("credit" , { record_count: "<%= r.index %>" , record_id: "<%= r.id %>" , account_name: " <%= r.account_name %>" , account_type: "<%= r.account_type %>" , amount: "<%= r.amount %>" } )
             <% end %>
           </script>
         </div>
