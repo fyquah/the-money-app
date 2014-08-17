@@ -3,7 +3,7 @@
 function create_content(type , properties){
   var template = $("#accounting_record_template").html()
   Mustache.parse(template);   // optional, speeds up future uses
-  var rendered = Mustache.render(template , {
+  var options_object = {
     index: (properties.record_count + 1),
     record_type: (type + "_records"),
     record_count: (properties.record_count),
@@ -11,7 +11,10 @@ function create_content(type , properties){
     account_name: (properties.account_name || ""),
     account_type: (properties.account_type || ""),
     amount: (properties.amount || "")
-  })
+  }
+  options_object["selected_" + (properties.account_type || "blank").toLowerCase()] = "selected"
+  var rendered = Mustache.render(template , options_object)
+
   if(type == "credit")
     $("#credit_records").append(rendered)
   else
