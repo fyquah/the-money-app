@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   match "about" , :to => "static_pages#about" , :via => "get"
   resources :users , only: [:new , :edit , :create , :update , :show]
   resources :sessions , only: [:create , :destroy]
-
+  match "clear_sessions_except_current" , :to => "sessions#clear_sessions_except_current" , :via => "delete"
   # For transactions
   resources :accounting_transactions , only: [:index , :view , :show , :new , :edit , :create , :update , :destroy]
 

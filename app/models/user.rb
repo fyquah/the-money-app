@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
 	has_secure_password
+  has_many :sessions , :foreign_key => "user_id" , :class_name => "Session" , :autosave => true
   has_many :asset_records , -> { where(:account_type => "asset") } , :foreign_key => "user_id" , :class_name => "AccountingRecord"
   has_many :liability_records , -> { where(:account_type => "liability") } , :foreign_key => "user_id" , :class_name => "AccountingRecord"
   has_many :equity_records , -> { where(:account_type => "equity") } , :foreign_key => "user_id" , :class_name => "AccountingRecord"
@@ -12,11 +13,6 @@ class User < ActiveRecord::Base
 	before_save do
 		self.email.downcase!
 	end
-
-  before_create do
-    create_remember_token
-  end
- 
   after_save do 
     
   end
@@ -47,25 +43,5 @@ class User < ActiveRecord::Base
     accounts_amount.inject(0) { |o , (_ , v)| o += v } == 0
   end
 
-  # Class methods
-  def self.new_remember_token
-    SecureRandom.urlsafe_base64
-  end
-
-  def self.digest token
-    Digest::SHA1.hexdigest token.to_s
-  end
-
   # Private methods
-  private
-    def create_record acc_record
-      # acc should have the follwing hash keys
-      # account_type , account_name , description , amount
-      self.send("#{acc_record[:account_type]}_accounts_records").build(acc_record)
-    end
-
-    def create_remember_token
-      self.remember_token = self.class.digest(self.class.new_remember_token)
-    end
-
 end

@@ -1,22 +1,30 @@
 module SessionsHelper
   # Create a new remember_token for the user every time he signs in 
   def sign_in user
-    remember_token = User.new_remember_token
+    remember_token = Session.new_remember_token
     cookies.permanent[:remember_token] = remember_token
-    user.update_attribute(:remember_token , User.digest(remember_token))
+    user.sessions.build(:remember_token => Session.digest(remember_token))
+    user.save
     current_user = user
   end
 
   def sign_out
-    remember_token = User.new_remember_token
-    current_user.update_attribute :remember_token , User.digest(remember_token)
-    current_user = nil
-    cookies.delete :remember_token
+    if signed_in?
+      current_user.sessions.find_by(:remember_token => Session.digest(cookies[:remember_token])).destroy
+      cookies.delete :remember_token
+      current_user = nil
+    end
+  end
+
+  def sign_out_from_other_devices user
+    user.sessions.each do |s|
+      s.destroy unless s.remember_token == Session.digest(cookies[:remember_token])
+    end
   end
 
   def current_user
-    remember_token = User.digest(cookies[:remember_token])
-    @current_user ||= User.find_by(:remember_token => remember_token)
+    remember_token = (cookies[:remember_token])
+    @current_user ||= Session.find_user(remember_token)
   end
 
   def current_user? user
