@@ -13,9 +13,7 @@ class AccountingRecord < ActiveRecord::Base
     account_type.downcase!
   end
 
-  def pretty_amount
-    "%.2f" % amount
-  end
+  
 
   def self.account_records_iterator
     Proc.new do |obj , record|
@@ -26,6 +24,10 @@ class AccountingRecord < ActiveRecord::Base
       end
       obj
     end
+  end
+
+  def self.pretty number
+    "%.2f" % number
   end
 
 end

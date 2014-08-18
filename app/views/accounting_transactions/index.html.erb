@@ -1,3 +1,4 @@
+<% provide :title , "transactions" %>
 <% render_records = Proc.new do |record| %>
 <div class='row'>
   <div class="col-xs-6"><%= link_to(record.account_name , {:controller => "accounting_transactions" , :action => "index" , :account_name => record.account_name } , { :class => "account_name_link" }) %></div>
