@@ -8,12 +8,25 @@ class AccountingRecord < ActiveRecord::Base
   validates :account_name , :presence => true
 
   before_save do
-    account_name.downcase!
-    account_name.strip!
-    account_type.downcase!
+    self.account_name.downcase!
+    self.account_name.strip!
+    self.account_type.downcase!
+  end
+
+  def account_type= arg
+    super(arg.to_s.downcase)
+  end
+
+  def account_name= arg
+    super(arg.to_s.downcase)
+  end
+
+  def record_type= arg
+    super(arg.to_s.downcase)
   end
 
   def self.account_records_iterator
+    # To be used with inject
     Proc.new do |obj , record|
       if obj[record.account_name.to_sym].nil?
         obj[record.account_name.to_sym] = record.amount

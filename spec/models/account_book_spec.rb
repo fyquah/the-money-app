@@ -60,31 +60,47 @@ describe AccountBook do
     
   end
 
-  # describe "account amount methods" do
-  #   before do
-  #     @user.accounting_transactions.build.build_paired_records(paired_records_options)
-  #     @user.save
-  #   end
+  describe "account amount methods" do
+    before do
+      @account_book.accounting_transactions.build.build_paired_records(paired_records_options)
+      @account_book.save
+    end
 
-  #   it "should have the accounts_amount correctly through user's accounts_amount method" do
-  #     accounts_amount_hash = @user.accounts_amount
-  #     expect(accounts_amount_hash[paired_records_options[:debit_record][:account_name].to_sym]).to eq(paired_records_options[:debit_record][:amount])  
-  #   end
+    it "should have the accounts_amount correctly through account_book's accounts_amount method" do
+      accounts_amount_hash = @account_book.accounts_amount
+      expect(accounts_amount_hash[paired_records_options[:debit_record][:account_name].to_sym]).to eq(paired_records_options[:debit_record][:amount])  
+    end
 
-  #   it "should be able to sum up several operations involving the same user's account" do
-  #     5.times do
-  #       @user.accounting_transactions.build.build_paired_records(paired_records_options)
-  #     end
-  #     @user.save
-  #     accounts_amount_hash = @user.accounts_amount
-  #     expect(accounts_amount_hash[paired_records_options[:debit_record][:account_name].to_sym]).to eq(paired_records_options[:debit_record][:amount] * 6)  
-  #   end
+    it "should be able to sum up several operations involving the same account_book's account" do
+      5.times do
+        @account_book.accounting_transactions.build.build_paired_records(paired_records_options)
+      end
+      @account_book.save
+      accounts_amount_hash = @account_book.accounts_amount
+      expect(accounts_amount_hash[paired_records_options[:debit_record][:account_name].to_sym]).to eq(paired_records_options[:debit_record][:amount] * 6)  
+    end
 
-  #     it "should be able to total up assets from several operations" do
-  #       @user.accounting_transactions.build.build_income_records(sample_income_options)
-  #       @user.accounting_transactions.build.build_expenditure_records(sample_expenditure_options)
-  #       @user.save
-  #       expect(@user.accounts_amount[:cash]).to eq 1000
-  #     end
-  # end
+      it "should be able to total up assets from several operations" do
+        @account_book.accounting_transactions.build.build_income_records(sample_income_options)
+        @account_book.accounting_transactions.build.build_expenditure_records(sample_expenditure_options)
+        @account_book.save
+        expect(@account_book.accounts_amount[:cash]).to eq 0
+      end
+  end
+
+  describe "additional accounting method" do
+    before do
+      @account_book.accounting_transactions.build.build_income_records(sample_income_options)
+      @account_book.accounting_transactions.build.build_expenditure_records(sample_expenditure_options)
+      @account_book.accounting_transactions.build.build_paired_records(paired_records_options)
+      @account_book.save
+    end
+
+    it "should contain should have values for all accounts" do
+      ["income_tax" , "lottery" , "cash" , "bank"].each do |x|
+        @account_book.accounts_amount.keys.include? x
+      end
+    end
+  end
+
 end

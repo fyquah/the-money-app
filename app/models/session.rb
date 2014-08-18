@@ -19,8 +19,9 @@ class Session < ActiveRecord::Base
     end
   end
 
-  private
-    def create_remember_token
-      self.remember_token = self.class.digest(self.class.new_remember_token)
-    end
+  def create_remember_token
+    token = self.class.new_remember_token
+    self.remember_token = self.class.digest(token)
+    token
+  end
 end
