@@ -1,5 +1,5 @@
 class User < ActiveRecord::Base
-	has_secure_password
+  has_secure_password
   has_many :sessions , :foreign_key => "user_id" , :class_name => "Session" , :autosave => true
   has_many :asset_records , -> { where(:account_type => "asset") } , :foreign_key => "user_id" , :class_name => "AccountingRecord"
   has_many :liability_records , -> { where(:account_type => "liability") } , :foreign_key => "user_id" , :class_name => "AccountingRecord"
@@ -10,11 +10,11 @@ class User < ActiveRecord::Base
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-])*.[a-z]+\z/i
   validates :email , uniqueness: true , presence: true , format: { with: VALID_EMAIL_REGEX }
 
-	before_save do
-		self.email.downcase!
-	end
-  after_save do 
-    
+  before_save do
+    self.email.downcase!
+  end
+  after_save do
+
   end
 
   # Manaing records
