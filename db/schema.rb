@@ -11,36 +11,43 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140817150153) do
+ActiveRecord::Schema.define(version: 20140818132857) do
+
+  create_table "account_books", force: true do |t|
+    t.string   "name"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "accounting_records", force: true do |t|
     t.integer  "accounting_transaction_id"
-    t.integer  "user_id"
     t.float    "amount"
     t.string   "account_name"
     t.string   "account_type"
     t.string   "record_type"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "account_book_id"
   end
 
+  add_index "accounting_records", ["account_book_id", "account_name"], name: "index_accounting_records_on_account_book_id_and_account_name"
+  add_index "accounting_records", ["account_book_id", "account_type"], name: "index_accounting_records_on_account_book_id_and_account_type"
+  add_index "accounting_records", ["account_book_id"], name: "index_accounting_records_on_account_book_id"
   add_index "accounting_records", ["accounting_transaction_id", "record_type"], name: "index_accounting_records_on_transactions_and_record_type"
   add_index "accounting_records", ["accounting_transaction_id"], name: "index_accounting_records_on_accounting_transaction_id"
-  add_index "accounting_records", ["user_id", "account_name"], name: "index_accounting_records_on_user_id_and_account_name"
-  add_index "accounting_records", ["user_id", "account_type"], name: "index_accounting_records_on_user_id_and_account_type"
-  add_index "accounting_records", ["user_id"], name: "index_accounting_records_on_user_id"
 
   create_table "accounting_transactions", force: true do |t|
-    t.integer  "user_id"
     t.string   "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "account_book_id"
   end
 
+  add_index "accounting_transactions", ["account_book_id", "created_at"], name: "index_transactions_on_account_book_and_created"
+  add_index "accounting_transactions", ["account_book_id"], name: "index_accounting_transactions_on_account_book_id"
   add_index "accounting_transactions", ["created_at"], name: "index_accounting_transactions_on_created_at"
   add_index "accounting_transactions", ["description"], name: "index_accounting_transactions_on_description"
-  add_index "accounting_transactions", ["user_id", "created_at"], name: "index_accounting_transactions_on_user_id_and_created_at"
-  add_index "accounting_transactions", ["user_id"], name: "index_accounting_transactions_on_user_id"
 
   create_table "sessions", force: true do |t|
     t.integer  "user_id"

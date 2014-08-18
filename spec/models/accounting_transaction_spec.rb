@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe AccountingTransaction do
   let(:user){ FactoryGirl.create :user }
+  let(:account_book){ user.account_books.create!(:name => "Some account book") }
   let(:sample_expenditure_options){ { :account_name => "income_tax" , :amount => 1000 , :description => "paid income tax of 1000 dollars"} }
   let(:sample_income_options){ { :account_name => "lottery" , :amount => 1000 , :description => "won lottery of 1000 dollars"} }
   let(:paired_records_options) do
@@ -10,37 +11,35 @@ describe AccountingTransaction do
       :credit_record => {
         :account_name => "lottery",
         :account_type => "equity",
-        :amount => 1000,
-        :user => user
+        :amount => 1000
       },
       :debit_record => {
         :account_name => "bank",
         :account_type => "asset",
-        :amount => 1000,
-        :user => user
+        :amount => 1000
       }
     }
   end
 
   before do
-    @accounting_transaction = user.accounting_transactions.build
+    @accounting_transaction = account_book.accounting_transactions.build
   end
   
   subject { @accounting_transaction }
 
   it { should respond_to :description }
-  it { should respond_to :user_id }
+  it { should respond_to :account_book_id }
   it { should respond_to :created_at }
   it { should respond_to :updated_at }
-  it { should respond_to :user }
+  it { should respond_to :account_book }
   it { should respond_to :debit_records }
   it { should respond_to :credit_records }
 
   describe "the balance? method" do
     describe "when debit and credit records do not tally" do
       before do
-        @accounting_transaction.debit_records.build :account_name => "a" , :account_type => "equity" , :amount => 100 , :user => user
-        @accounting_transaction.credit_records.build :account_name => "ab" , :account_type => "cash" , :amount => 1000 , :user => user
+        @accounting_transaction.debit_records.build :account_name => "a" , :account_type => "equity" , :amount => 100
+        @accounting_transaction.credit_records.build :account_name => "ab" , :account_type => "cash" , :amount => 1000
       end
       it { should_not be_valid }
       it "should not be balanced" do
@@ -51,18 +50,18 @@ describe AccountingTransaction do
           @accounting_transaction.save
         end.not_to change(AccountingTransaction , :count)
       end
-      it "should cause user not to be vaild" do
+      it "should cause account_book not to be vaild" do
         expect do
-          user.save
+          account_book.save
         end.not_to change(AccountingTransaction , :count)
-        expect(user.save).to be false
+        expect(account_book.save).to be false
       end
     end
 
     describe "when debit and credit_records tally" do
       before do
-        @accounting_transaction.debit_records.build :account_name => "debitted acount" , :account_type => "equity" , :amount => 100 , :user => user
-        @accounting_transaction.credit_records.build :account_name => "creditted acount" , :account_type => "asset" , :amount => 100 , :user => user
+        @accounting_transaction.debit_records.build :account_name => "debitted acount" , :account_type => "equity" , :amount => 100
+        @accounting_transaction.credit_records.build :account_name => "creditted acount" , :account_type => "asset" , :amount => 100
       end
       it { should be_valid }
       its(:balance?){ should be true }
@@ -80,14 +79,14 @@ describe AccountingTransaction do
       @accounting_transaction.build_expenditure_records(sample_expenditure_options)
       @accounting_transaction.save
     end
-    it "should create a new equity entry in user" do
-      expect(user.equity_records.empty?).to be false
+    it "should create a new equity entry in account_book" do
+      expect(account_book.equity_records.empty?).to be false
     end
-    it "should create a new asset entry in user" do
-      expect(user.asset_records.empty?).to be false
+    it "should create a new asset entry in account_book" do
+      expect(account_book.asset_records.empty?).to be false
     end
     it "should create a new accounting_transaction" do
-      expect{user.accounting_transactions.find(@accounting_transaction.id)}.not_to raise_exception
+      expect{account_book.accounting_transactions.find(@accounting_transaction.id)}.not_to raise_exception
     end
     it "should debit the equity account" do
       expect(@accounting_transaction.debit_records.first.account_name).to eq sample_expenditure_options[:account_name] 
@@ -108,14 +107,14 @@ describe AccountingTransaction do
       @accounting_transaction.build_income_records(sample_income_options)
       @accounting_transaction.save
     end
-    it "should create a new equity entry in user" do
-      expect(user.equity_records.empty?).to be false
+    it "should create a new equity entry in account_book" do
+      expect(account_book.equity_records.empty?).to be false
     end
-    it "should create a new asset entry in user" do
-      expect(user.asset_records.empty?).to be false
+    it "should create a new asset entry in account_book" do
+      expect(account_book.asset_records.empty?).to be false
     end
     it "should create a new accounting_transaction" do
-      expect{user.accounting_transactions.find(@accounting_transaction.id)}.not_to raise_exception
+      expect{account_book.accounting_transactions.find(@accounting_transaction.id)}.not_to raise_exception
     end
     it "should debit the cash account" do
       expect(@accounting_transaction.debit_records.first.account_name).to eq "cash" 
@@ -134,19 +133,19 @@ describe AccountingTransaction do
   describe "when creating a new paired record" do
     before do
       @accounting_transaction.build_paired_records(paired_records_options)
-      user.save
+      account_book.save
     end
 
-    it "should create account records in the user's area" do
-      expect(user.asset_records.first).to eq @accounting_transaction.debit_records.first
-      expect(user.equity_records.first).to eq @accounting_transaction.credit_records.first
+    it "should create account records in the account_book's area" do
+      expect(account_book.asset_records.first).to eq @accounting_transaction.debit_records.first
+      expect(account_book.equity_records.first).to eq @accounting_transaction.credit_records.first
     end
   end
 
   describe "when destroying a transaction " do
     before do
       @accounting_transaction.build_paired_records(paired_records_options)
-      user.save
+      account_book.save
       @accounting_transaction.destroy
     end
 
