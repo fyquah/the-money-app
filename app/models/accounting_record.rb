@@ -1,5 +1,5 @@
 class AccountingRecord < ActiveRecord::Base
-  belongs_to :user
+  belongs_to :account_book
   belongs_to :accounting_transaction , :class_name => "AccountingTransaction" , :foreign_key => "accounting_transaction_id"
 
   validates :account_type , :presence => true , :inclusion => ["liability" , "asset" , "equity"]
@@ -12,8 +12,6 @@ class AccountingRecord < ActiveRecord::Base
     account_name.strip!
     account_type.downcase!
   end
-
-  
 
   def self.account_records_iterator
     Proc.new do |obj , record|
@@ -31,4 +29,3 @@ class AccountingRecord < ActiveRecord::Base
   end
 
 end
- 
