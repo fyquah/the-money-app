@@ -1,5 +1,7 @@
 class AccountBook < ActiveRecord::Base
   belongs_to :user
+  has_and_belongs_to_many :viewable_users , :class_name => "User" , :join_table => "users_viewable_account_books" , :foreign_key => "account_book_id"
+  has_and_belongs_to_many :editable_users , :class_name => "User" , :join_table => "user_editable_account_books" , :foreign_key => "account_book_id"
   has_many :accounting_transactions , :class_name => "AccountingTransaction" , :foreign_key => "account_book_id"
   has_many :asset_records , -> { where(:account_type => "asset").order(:created_at => :desc) } , :foreign_key => "account_book_id" , :class_name => "AccountingRecord"
   has_many :liability_records , -> { where(:account_type => "liability").order(:created_at => :desc) } , :foreign_key => "account_book_id" , :class_name => "AccountingRecord"
@@ -7,6 +9,17 @@ class AccountBook < ActiveRecord::Base
 
   validates :name , :presence => true
   validates :name , :length => { :maximum => 140 }
+
+  scope :viewable_by , ->(user){ where(:id => (user.viewable_account_books + user.account_books + user.editable_account_books)) }
+  scope :editable_by , ->(user){ where(:id => (user.editable_account_books + user.account_books))}
+
+  def can_be_viewed_by? user
+    self.class.viewable_by(user).find_by(:id => self.id)
+  end
+
+  def can_be_edited_by? user
+    self.class.editable_by(user).find_by(:id => self.id)
+  end
 
   def find_account_records query_account_name
     all_records.select { |x| x.account_name == query_account_name.to_s.lowercase }

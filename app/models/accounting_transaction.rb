@@ -1,5 +1,6 @@
 class AccountingTransaction < ActiveRecord::Base
   belongs_to :account_book
+  belongs_to :author , :class_name => "User" , :foreign_key => "author_id"
   has_many :debit_records , ->{ where :record_type => "debit" } , :class_name => "AccountingRecord" , :foreign_key => "accounting_transaction_id" , :dependent => :destroy
   has_many :credit_records , ->{ where :record_type => "credit" } , :class_name => "AccountingRecord" , :foreign_key => "accounting_transaction_id" , :dependent => :destroy
   accepts_nested_attributes_for :debit_records , :credit_records , :allow_destroy => true

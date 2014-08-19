@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140818132857) do
+ActiveRecord::Schema.define(version: 20140819064035) do
 
   create_table "account_books", force: true do |t|
     t.string   "name"
@@ -42,10 +42,12 @@ ActiveRecord::Schema.define(version: 20140818132857) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "account_book_id"
+    t.integer  "author_id"
   end
 
   add_index "accounting_transactions", ["account_book_id", "created_at"], name: "index_transactions_on_account_book_and_created"
   add_index "accounting_transactions", ["account_book_id"], name: "index_accounting_transactions_on_account_book_id"
+  add_index "accounting_transactions", ["author_id"], name: "index_accounting_transactions_on_author_id"
   add_index "accounting_transactions", ["created_at"], name: "index_accounting_transactions_on_created_at"
   add_index "accounting_transactions", ["description"], name: "index_accounting_transactions_on_description"
 
@@ -59,6 +61,15 @@ ActiveRecord::Schema.define(version: 20140818132857) do
   add_index "sessions", ["remember_token"], name: "index_sessions_on_remember_token"
   add_index "sessions", ["user_id"], name: "index_sessions_on_user_id"
 
+  create_table "user_editable_account_books", id: false, force: true do |t|
+    t.integer "user_id"
+    t.integer "account_book_id"
+  end
+
+  add_index "user_editable_account_books", ["account_book_id"], name: "index_user_editable_account_books_on_account_book_id"
+  add_index "user_editable_account_books", ["user_id", "account_book_id"], name: "index_editable_account_book_on_user_account_book"
+  add_index "user_editable_account_books", ["user_id"], name: "index_user_editable_account_books_on_user_id"
+
   create_table "users", force: true do |t|
     t.string   "name"
     t.string   "email"
@@ -68,5 +79,14 @@ ActiveRecord::Schema.define(version: 20140818132857) do
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true
+
+  create_table "users_viewable_account_books", id: false, force: true do |t|
+    t.integer "user_id"
+    t.integer "account_book_id"
+  end
+
+  add_index "users_viewable_account_books", ["account_book_id"], name: "index_users_viewable_account_books_on_account_book_id"
+  add_index "users_viewable_account_books", ["user_id", "account_book_id"], name: "index_viewable_account_books_user_account_book"
+  add_index "users_viewable_account_books", ["user_id"], name: "index_users_viewable_account_books_on_user_id"
 
 end
