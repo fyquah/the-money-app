@@ -1,0 +1,9 @@
+<% provide :title , "Account Books" %>
+
+<h1>Account Books owned by you</h1>
+<% if @account_books.count == 0 %>
+  <h2><small>You do not own any account books, yet :)</small></h2>
+<% end %>
+<% @account_books.each do |account_book| %>
+  <li><%= link_to account_book.name , account_book %></li>
+<% end %>

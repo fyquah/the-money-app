@@ -1,5 +1,6 @@
 class AccountingTransaction < ActiveRecord::Base
-  belongs_to :user
+  belongs_to :account_book
+  belongs_to :author , :class_name => "User" , :foreign_key => "author_id"
   has_many :debit_records , ->{ where :record_type => "debit" } , :class_name => "AccountingRecord" , :foreign_key => "accounting_transaction_id" , :dependent => :destroy
   has_many :credit_records , ->{ where :record_type => "credit" } , :class_name => "AccountingRecord" , :foreign_key => "accounting_transaction_id" , :dependent => :destroy
   accepts_nested_attributes_for :debit_records , :credit_records , :allow_destroy => true
@@ -15,8 +16,8 @@ class AccountingTransaction < ActiveRecord::Base
   default_scope ->{ order(:created_at => :desc )}
 
   before_save do
-    debit_records.each { |r| r.user = self.user }
-    credit_records.each { |r| r.user = self.user }
+    debit_records.each { |r| r.account_book ||= self.account_book }
+    credit_records.each { |r| r.account_book ||= self.account_book }
   end
 
   def account_records_must_be_able_to_balance
@@ -54,13 +55,13 @@ class AccountingTransaction < ActiveRecord::Base
         :amount => options[:amount].abs,
         :account_name => "cash",
         :account_type => "asset",
-        :user => self.user
+        :account_book => self.account_book
       },
       :credit_record => {
         :amount => options[:amount].abs,
         :account_name => options[:account_name],
         :account_type => "equity",
-        :user => self.user
+        :account_book => self.account_book
       },
       :description => options[:description]
     })
@@ -72,13 +73,13 @@ class AccountingTransaction < ActiveRecord::Base
         :amount => options[:amount].abs,
         :account_name => options[:account_name],
         :account_type => "equity",
-        :user => self.user
+        :account_book => self.account_book
       },
       :credit_record => {
         :amount => options[:amount].abs,
         :account_name => "cash",
         :account_type => "asset",
-        :user => self.user
+        :account_book => self.account_book
       },
       :description => options[:description]
     })
@@ -86,7 +87,7 @@ class AccountingTransaction < ActiveRecord::Base
 
   # Class methods
   def self.records_sum
-    Proc.new do |x, record| 
+    Proc.new do |x, record|
       x += record.amount
     end
   end

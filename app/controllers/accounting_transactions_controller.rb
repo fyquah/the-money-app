@@ -1,53 +1,63 @@
 class AccountingTransactionsController < ApplicationController
   before_action :signed_in?
-  
+  before_action :find_viewable_account_book , :only => [:index , :show]
+  before_action :find_editable_account_book , :only => [:edit , :update , :create , :new , :destroy]
+
   def index
     if params[:account_name].nil? || params[:account_name].empty?
-      @accounting_transactions = current_user.accounting_transactions.paginate(page: params[:page])
+      @accounting_transactions = @account_book.accounting_transactions.paginate(page: params[:page])
     else
-      @accounting_transactions = current_user.accounting_transactions.contains_records_of(params[:account_name].downcase).paginate(page: params[:page])
+      @accounting_transactions = @account_book.accounting_transactions.contains_records_of(params[:account_name].downcase).paginate(page: params[:page])
     end
   end
 
   def new
-    @accounting_transaction = current_user.accounting_transactions.build
+    @accounting_transaction = @account_book.accounting_transactions.build
   end
 
   def show
-    @accounting_transaction = current_user.accounting_transactions.find params[:id]
-    render 'edit'
+    @accounting_transaction = @account_book.accounting_transactions.find params[:id]
   end
 
   def edit
-    @accounting_transaction = current_user.accounting_transactions.find params[:id]
+    @accounting_transaction = @account_book.accounting_transactions.find params[:id]
   end
 
   def create
-    @accounting_transaction = current_user.accounting_transactions.build(accounting_transaction_params)
+    @accounting_transaction = @account_book.accounting_transactions.build(accounting_transaction_params)
+    @accounting_transaction.author = current_user
     @accounting_transaction.created_at = nil if @accounting_transaction.created_at.nil? || @accounting_transaction.created_at.to_s.empty?  #Leave the task to SQL
     if @accounting_transaction.save
       flash[:success] = "recorded transaction"
-      redirect_to current_user
+      redirect_to({
+        :action => "show",
+        :account_book_id => @account_book.id,
+        :id => @accounting_transaction.id
+      })
     else
       render 'new'
     end
   end
 
   def update
-    @accounting_transaction = current_user.accounting_transactions.find params[:id]
+    @accounting_transaction = @account_book.accounting_transactions.find params[:id]
     if @accounting_transaction.update_attributes accounting_transaction_params
       flash[:success] = "updated transaction"
-      redirect_to current_user
+      redirect_to({
+        :action => "show",
+        :account_book_id => @account_book.id,
+        :id => @accounting_transaction.id
+      })
     else
       render 'edit'
     end
   end
 
   def destroy
-    @accounting_transaction = current_user.accounting_transactions.find params[:id]
+    @accounting_transaction = @account_book.accounting_transactions.find params[:id]
     if @accounting_transaction.destroy
       flash[:success] = "Deleted transaction!"
-      redirect_to accounting_transactions_path
+      redirect_to account_book_accounting_transactions_path(:account_book_id => @account_book.id , :id => @accounting_transaction.id)
     else
       flash[:error] = "Looks like an error has occured"
     end
@@ -68,4 +78,5 @@ class AccountingTransactionsController < ApplicationController
       puts parameters
       parameters
     end
+
 end

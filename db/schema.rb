@@ -11,20 +11,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140817150153) do
+ActiveRecord::Schema.define(version: 20140819065451) do
+
+  create_table "account_books", force: true do |t|
+    t.string   "name"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "accounting_records", force: true do |t|
     t.integer  "accounting_transaction_id"
-    t.integer  "user_id"
     t.float    "amount"
     t.string   "account_name"
     t.string   "account_type"
     t.string   "record_type"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "account_book_id"
   end
 
   add_index "accounting_records", ["accounting_transaction_id", "record_type"], name: "index_accounting_records_on_transactions_and_record_type", using: :btree
@@ -34,10 +41,11 @@ ActiveRecord::Schema.define(version: 20140817150153) do
   add_index "accounting_records", ["user_id"], name: "index_accounting_records_on_user_id", using: :btree
 
   create_table "accounting_transactions", force: true do |t|
-    t.integer  "user_id"
     t.string   "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "account_book_id"
+    t.integer  "author_id"
   end
 
   add_index "accounting_transactions", ["created_at"], name: "index_accounting_transactions_on_created_at", using: :btree
@@ -64,5 +72,23 @@ ActiveRecord::Schema.define(version: 20140817150153) do
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
+
+  create_table "users_editable_account_books", id: false, force: true do |t|
+    t.integer "user_id"
+    t.integer "account_book_id"
+  end
+
+  add_index "users_editable_account_books", ["account_book_id"], name: "index_users_editable_account_books_on_account_book_id"
+  add_index "users_editable_account_books", ["user_id", "account_book_id"], name: "index_editable_account_book_on_user_account_book"
+  add_index "users_editable_account_books", ["user_id"], name: "index_users_editable_account_books_on_user_id"
+
+  create_table "users_viewable_account_books", id: false, force: true do |t|
+    t.integer "user_id"
+    t.integer "account_book_id"
+  end
+
+  add_index "users_viewable_account_books", ["account_book_id"], name: "index_users_viewable_account_books_on_account_book_id"
+  add_index "users_viewable_account_books", ["user_id", "account_book_id"], name: "index_viewable_account_books_user_account_book"
+  add_index "users_viewable_account_books", ["user_id"], name: "index_users_viewable_account_books_on_user_id"
 
 end

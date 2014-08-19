@@ -11,8 +11,10 @@ Rails.application.routes.draw do
   resources :users , only: [:new , :edit , :create , :update , :show]
   resources :sessions , only: [:create , :destroy]
   match "clear_sessions_except_current" , :to => "sessions#clear_sessions_except_current" , :via => "delete"
-  # For transactions
-  resources :accounting_transactions , only: [:index , :view , :show , :new , :edit , :create , :update , :destroy]
+  # For account_books
+  resources :account_books do
+    resources :accounting_transactions
+  end
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

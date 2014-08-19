@@ -1,0 +1,23 @@
+<div class='row'>
+  <div class='col-xs-12 col-sm-offset-2 col-sm-8'>
+    <%= form_for(@account_book , html: {role: "form" , :method => (@account_book.id ? "patch" : "post")}) do |f| %>
+      <% unless @account_book.id %>
+        <h1>Create New Account Book</h1>
+      <% else %>
+        <h1>Update Account Book</h1>
+      <% end %>
+      <%= render "shared/error_messages" , object: f.object %>
+      <div class='form-group'>
+        <%= f.label :name %>
+        <%= f.text_field :name , :class => "form-control" %>
+      </div>
+      <div class='form-group'>
+        <% if @account_book.id %>
+          <%= f.submit "Update" , :class =>"btn btn-primary" %>
+        <% else %>
+          <%= f.submit "Create" , :class => "btn btn-primary" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

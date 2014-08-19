@@ -1,19 +1,15 @@
 <% provide :title , "My Profile" %>
 <div class='row'>
   <div class='col-xs-12 col-sm-offset-2 col-sm-8'>
-    <h1>My monetary profile</h1>
+    <h1>My Profile</h1>
       <p><strong>Email: </strong> <%= @user.email %></p>
       <p><strong>Name: </strong> <%= @user.name %></p>
-      <p><strong>Balance: </strong><%= '%.2f' % (@user.accounts_amount[:cash] || 0) %></p>
-      <% if (@user.accounts_amount[:cash] || 0) < 0 %>
-        <p class='alert alert-danger'>You have an overdraft account!</p>
-      <% end %>
       <% if current_user? @user %>
       
         <div class='row'>
-          <div class='col-sm-offset-3 col-sm-6' style='margin-bottom : 10px'><%= link_to "Create new accounting transaction" , { :controller => "accounting_transactions" , :action => "new" } , :class => "btn btn-default wide-btn" %></a></div>
-          <div class='col-sm-offset-3 col-sm-6' style='margin-bottom : 10px'><%= link_to "View all accounting transactions" , { :controller => "accounting_transactions" , :action => "index" }, :class => "btn btn-primary wide-btn" %></div>
-          <div class='col-sm-offset-3 col-sm-6' style='margin-bottom : 10px'><%= link_to "View your account book" , "#", :class => "btn btn-success wide-btn" %></div>
+          <div class='col-sm-4' style='margin-bottom : 10px'><%= link_to "View your account books" , account_books_path, :class => "btn btn-success wide-btn" %></div>
+          <div class='col-sm-4' style='margin-bottom : 10px'><%= link_to "Editable account books" , account_books_path, :class => "btn btn-primary wide-btn" %></div>
+          <div class='col-sm-4' style='margin-bottom : 10px'><%= link_to "Viewable account books" , account_books_path, :class => "btn btn-default wide-btn" %></div>
         </div>
       <% end %>
   </div>
