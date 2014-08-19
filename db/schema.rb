@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20140817150153) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "accounting_records", force: true do |t|
     t.integer  "accounting_transaction_id"
     t.integer  "user_id"
@@ -24,11 +27,11 @@ ActiveRecord::Schema.define(version: 20140817150153) do
     t.datetime "updated_at"
   end
 
-  add_index "accounting_records", ["accounting_transaction_id", "record_type"], name: "index_accounting_records_on_transactions_and_record_type"
-  add_index "accounting_records", ["accounting_transaction_id"], name: "index_accounting_records_on_accounting_transaction_id"
-  add_index "accounting_records", ["user_id", "account_name"], name: "index_accounting_records_on_user_id_and_account_name"
-  add_index "accounting_records", ["user_id", "account_type"], name: "index_accounting_records_on_user_id_and_account_type"
-  add_index "accounting_records", ["user_id"], name: "index_accounting_records_on_user_id"
+  add_index "accounting_records", ["accounting_transaction_id", "record_type"], name: "index_accounting_records_on_transactions_and_record_type", using: :btree
+  add_index "accounting_records", ["accounting_transaction_id"], name: "index_accounting_records_on_accounting_transaction_id", using: :btree
+  add_index "accounting_records", ["user_id", "account_name"], name: "index_accounting_records_on_user_id_and_account_name", using: :btree
+  add_index "accounting_records", ["user_id", "account_type"], name: "index_accounting_records_on_user_id_and_account_type", using: :btree
+  add_index "accounting_records", ["user_id"], name: "index_accounting_records_on_user_id", using: :btree
 
   create_table "accounting_transactions", force: true do |t|
     t.integer  "user_id"
@@ -37,10 +40,10 @@ ActiveRecord::Schema.define(version: 20140817150153) do
     t.datetime "updated_at"
   end
 
-  add_index "accounting_transactions", ["created_at"], name: "index_accounting_transactions_on_created_at"
-  add_index "accounting_transactions", ["description"], name: "index_accounting_transactions_on_description"
-  add_index "accounting_transactions", ["user_id", "created_at"], name: "index_accounting_transactions_on_user_id_and_created_at"
-  add_index "accounting_transactions", ["user_id"], name: "index_accounting_transactions_on_user_id"
+  add_index "accounting_transactions", ["created_at"], name: "index_accounting_transactions_on_created_at", using: :btree
+  add_index "accounting_transactions", ["description"], name: "index_accounting_transactions_on_description", using: :btree
+  add_index "accounting_transactions", ["user_id", "created_at"], name: "index_accounting_transactions_on_user_id_and_created_at", using: :btree
+  add_index "accounting_transactions", ["user_id"], name: "index_accounting_transactions_on_user_id", using: :btree
 
   create_table "sessions", force: true do |t|
     t.integer  "user_id"
@@ -49,8 +52,8 @@ ActiveRecord::Schema.define(version: 20140817150153) do
     t.datetime "updated_at"
   end
 
-  add_index "sessions", ["remember_token"], name: "index_sessions_on_remember_token"
-  add_index "sessions", ["user_id"], name: "index_sessions_on_user_id"
+  add_index "sessions", ["remember_token"], name: "index_sessions_on_remember_token", using: :btree
+  add_index "sessions", ["user_id"], name: "index_sessions_on_user_id", using: :btree
 
   create_table "users", force: true do |t|
     t.string   "name"
@@ -60,6 +63,6 @@ ActiveRecord::Schema.define(version: 20140817150153) do
     t.string   "password_digest"
   end
 
-  add_index "users", ["email"], name: "index_users_on_email", unique: true
+  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
 
 end
