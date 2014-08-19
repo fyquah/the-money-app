@@ -2,7 +2,7 @@ class AccountBook < ActiveRecord::Base
   belongs_to :user
   has_and_belongs_to_many :viewable_users , :class_name => "User" , :join_table => "users_viewable_account_books" , :foreign_key => "account_book_id"
   has_and_belongs_to_many :editable_users , :class_name => "User" , :join_table => "users_editable_account_books" , :foreign_key => "account_book_id"
-  has_many :accounting_transactions , :class_name => "AccountingTransaction" , :foreign_key => "account_book_id"
+  has_many :accounting_transactions , :class_name => "AccountingTransaction" , :foreign_key => "account_book_id" , :dependent => :destroy
   has_many :asset_records , -> { where(:account_type => "asset").order(:created_at => :desc) } , :foreign_key => "account_book_id" , :class_name => "AccountingRecord"
   has_many :liability_records , -> { where(:account_type => "liability").order(:created_at => :desc) } , :foreign_key => "account_book_id" , :class_name => "AccountingRecord"
   has_many :equity_records , -> { where(:account_type => "equity").order(:created_at => :desc) } , :foreign_key => "account_book_id" , :class_name => "AccountingRecord"

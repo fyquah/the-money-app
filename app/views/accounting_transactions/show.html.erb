@@ -1,0 +1,37 @@
+<div class='row'>
+  <div class='col-xs-12 col-sm-offset-2 col-sm-8'>
+    <h2>Accounting Transaction in <%=link_to_account_book %></h2>
+    <p><strong>Description</strong></p>
+    <p><%= @accounting_transaction.description %></p>
+    <p><strong>Date of transaction</strong></p>
+    <p><%= @accounting_transaction.created_at.strftime("%Y %B %d") %></p>
+    <p><strong>Time of transaction</strong></p>
+    <p><%= @accounting_transaction.created_at.strftime("%l:%M:%S %P %Z") %></p>
+    <div class='row'>
+      <div class='col-sm-6'>
+
+        <br />
+      </div>
+      <div class='col-sm-6'>
+
+        <br />
+      </div>
+    </div>
+    <% if @account_book.can_be_edited_by?(current_user) %>
+      <div class='row'>
+        <div class='col-xs-12' style='text-align : left'><span style='margin-right : 10px'><%= link_to "Edit" , {
+            :controller => "accounting_transactions", 
+            :action => "edit" , 
+            :account_book_id => @account_book.id,
+            :id => @accounting_transaction.id
+          } , :class => "btn btn-primary" %></span>
+        <span><%= link_to "Delete" , {
+            :controller => "accounting_transactions", 
+            :action => "destroy" , 
+            :account_book_id => @account_book.id,
+            :id => @accounting_transaction.id
+          } , :class => "btn btn-danger" , :data => { :confirm => "Are you sure you want to delete this transaction?" } , :method => "delete" %></span></div>
+      </div>
+  <% end %> 
+  </div>
+</div>
