@@ -103,4 +103,43 @@ describe AccountBook do
     end
   end
 
+  describe "habtm viewable relationsship with users" do
+    let(:other_user){ FactoryGirl.create :user }
+    before { @account_book.save }
+
+    it "should allow creator user to be able to view account book but not directly from user himself" do
+      expect(user.viewable_account_books).not_to include(@account_book)
+      expect(AccountBook.viewable_by(user)).to include(@account_book)
+    end
+
+    it "should not allow other users to view initially" do
+      expect(other_user.viewable_account_books).not_to include(@account_book)
+      expect(AccountBook.viewable_by(other_user)).not_to include (@account_book)
+      expect(@account_book.can_be_viewed_by? other_user).to be false
+    end
+
+    describe "after permiting them to view" do
+      before { @account_book.viewable_users << other_user }
+      it "should allow other users to view the accounts" do
+        expect(other_user.viewable_account_books).to include(@account_book)
+        expect(@account_book.can_be_viewed_by? other_user).to be true
+      end
+    end
+  end
+
+  describe "habtm editable relationship with users" do
+    let(:other_user){ FactoryGirl.create(:user) }
+    before{ @account_book.save }
+
+    it "should allow creator user to be able to list as editable account, but not directly" do
+      expect(user.editable_account_books).not_to include(@account_book)
+      expect(AccountBook.editable_by(user)).to include(@account_book)
+    end
+
+    it "should grant view access along with edit access" do
+      @account_book.editable_users << other_user
+      expect(AccountBook.viewable_by(other_user)).to include(@account_book)
+    end
+  end
+
 end
