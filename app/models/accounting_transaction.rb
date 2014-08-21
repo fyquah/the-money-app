@@ -8,7 +8,8 @@ class AccountingTransaction < ActiveRecord::Base
   validate :account_records_must_be_able_to_balance
   validate :at_least_one_debit_record
   validate :at_least_one_credit_record
-  validate :description , :presence => true
+  validates :description , :presence => true
+  validates :date , :presence => true
 
   scope :contains_records_of , ->(account_name) do
     where(:id => AccountingRecord.where(:account_name => account_name.downcase).select(:accounting_transaction_id))
@@ -18,6 +19,10 @@ class AccountingTransaction < ActiveRecord::Base
   before_save do
     debit_records.each { |r| r.account_book ||= self.account_book }
     credit_records.each { |r| r.account_book ||= self.account_book }
+  end
+
+  before_create do
+    self.date ||= Time.now.to_date
   end
 
   def account_records_must_be_able_to_balance

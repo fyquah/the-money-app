@@ -4,9 +4,7 @@
     <p><strong>Description</strong></p>
     <p><%= @accounting_transaction.description %></p>
     <p><strong>Date of transaction</strong></p>
-    <p><%= @accounting_transaction.created_at.strftime("%Y %B %d") %></p>
-    <p><strong>Time of transaction</strong></p>
-    <p><%= @accounting_transaction.created_at.strftime("%l:%M:%S %P %Z") %></p>
+    <p><%= @accounting_transaction.date.strftime("%Y %B %d") %></p>
     <div class='row'>
       <div class='col-sm-6'>
 

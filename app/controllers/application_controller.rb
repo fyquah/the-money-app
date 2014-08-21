@@ -5,6 +5,10 @@ class ApplicationController < ActionController::Base
   include SessionsHelper
 
   protected
+    def self.allow_cors(*methods)
+      protect_from_forgery :with => :null_session, :only => methods
+    end
+
     def find_viewable_account_book
       @account_book = AccountBook.viewable_by(current_user).find(params[:account_book_id])
     end

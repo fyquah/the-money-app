@@ -1,15 +1,25 @@
-<h4>Record</h4>
-<%= ff.hidden_field :id %>
-
-<div class='form-group'>
-  <%= ff.label :account_name %>
-  <%= ff.text_field :account_name, :class => "form-control" %>
+<div id="{{ record.record_type }}_records_attributes_{{ $index }}" ng-hide="record._destroy">
+  <div class='row'>
+    <div class='col-xs-6'><h2 ng-bind="'Record ' +  ($index + 1)"></h2></div>
+    <div class='col-xs-6'><h2 style='text-align: right'><button record_type="button" ng-click="removeRecord(record.record_type , $index)" class="btn btn-danger">Delete Record {{ $index + 1 }}</button></h2></div>
   </div>
-<div class='form-group'>
-  <%= ff.label :account_type %>
-  <%= ff.select :account_type, ["asset" , "equity" , "liability"],  { :include_blank => true }, { :class => "form-control" } %>
-</div>
-<div class='form-group'>
-  <%= ff.label :amount %>
-  <%= ff.text_field :amount, :class => "form-control" %>
+  
+  <input id="accounting_transaction_{{ record.record_type }}_records_attributes_{{ $index }}_id" name="accounting_transaction[{{ record.record_type }}_records_attributes][{{ $index }}][id]" type="hidden" ng-model="record.id" />
+  <input id="accounting_transaction_{{ record.record_type }}_records_attributes_{{ $index }}__destroy" name="accounting_transaction[{{ record.record_type }}_records_attributes][{{ $index }}][_destroy]" type="hidden" ng-model="record._destroy" />
+  <div class='form-group'>
+    <label for="accounting_transaction_{{ record.record_type }}_records_attributes_{{ $index }}_account_name">Account Name</label>
+    <input id="accounting_transaction_{{ record.record_type }}_records_attributes_{{ $index }}_account_name" name="accounting_transaction[{{ record.record_type }}_records_attributes][{{ $index }}][account_name]" type="text" ng-model="record.account_name" class='form-control' />
+  </div>
+  <div class='form-group'>
+    <label for="accounting_transaction_{{ record.record_type }}_records_attributes_{{ $index }}_account_name">Account record_type</label>
+    <select id="accounting_transaction_{{ record.record_type }}_records_attributes_{{ $index }}_account_type" name="accounting_transaction[{{ record.record_type }}_records_attributes][{{ $index }}][account_type]" type="text" ng-model="record.account_type" class='form-control'>
+      <option>asset</option>
+      <option>equity</option>
+      <option>liability</option>
+    </select>
+  </div>
+  <div class='form-group'>
+    <label for="accounting_transaction_{{ record.record_type }}_records_attributes_{{ $index }}_account_name">Amount</label>
+    <input id="accounting_transaction_{{ record.record_type }}_records_attributes_{{ $index }}_amount" name="accounting_transaction[{{ record.record_type }}_records_attributes][{{ $index }}][amount]" type="text" ng-model="record.amount" class='form-control' />
+  </div>
 </div>

@@ -8,67 +8,42 @@
     <% else %>
       <h2>Create a new accounting transaction for <%= link_to_account_book %></h2>
     <% end %>
-    <% 
-    if @accounting_transaction.id
-      form_url = { :action => "update" , :controller => "accounting_transactions" , :account_book_id => @accounting_transaction.account_book.id , :id => @accounting_transaction.id }
-    else
-      form_url = { :action => "create" , :controller => "accounting_transactions" , :account_book_id => @accounting_transaction.account_book.id }
-    end
-    %>
-    <%= form_for(@accounting_transaction , :url =>  form_url, :html => { 
-      :method => (@accounting_transaction.id ? "patch" : "post") 
+    <%= form_for(@accounting_transaction , 
+      :url =>  "", 
+      :html => { 
+        :"ng-controller" => "accountingTransactionCtrl",
+        :"ng-init" => "initializeTransaction(#{@accounting_transaction.to_json})",
+        :"ng-submit" => "submit()",
+        :"authenticity-token" => form_authenticity_token
       }) do |f| %>
       <%= render "shared/error_messages" , object: f.object %>
+      <div ng-show="error_messages" class='alert alert-danger'>
+        <ul>
+          <li style='list-style-type : none'>You have <strong ng-bind="error_messages.length | pluralize_error_word"></strong></li>
+          <li ng-repeat="error_message in error_messages" ng-bind="error_message" style='list-style-type : none'></li>
+        </ul>
+      </div>
       <div class='form-group'>
         <%= f.label :description %>
-        <%= f.text_area :description, :class => "form-control" , :required => true , :"ng-model" => "accounting_transaction.description" %>
+        <%= f.text_area :description , :"ng-model" =>"transaction.description", :class => "form-control"%>
       </div>
       <div class="form-group">
-          <%= f.label :created_at , "Date / Time of transaction (defaults to date of transaction creation)" %>
-          <%= f.datetime_local_field :created_at , :class => "form-control" , :"ng-model" => "accounting_transaction.created_at" %>
+        <%= f.label :date , "Date of transaction (defaults to date of transaction creation)" %>
+        <%= f.date_field :date , :"ng-model" => "transaction.date" , :class => "form-control" %>
       </div>
       <div class='row'>
-        <div id='debit_records' class='col-sm-6'>
-          <h2>Debit Records</h2><button type="button" id='create_new_debit_entry' class="btn btn-default">Add new debit record</button>
-            <%= f.fields_for(:debit_records) do |ff| %>
-              <h4>Record</h4>
-              <%= ff.hidden_field :id %>
-
-              <div class='form-group'>
-                <%= ff.label :account_name %>
-                <%= ff.text_field :account_name, :class => "form-control" %>
-                </div>
-              <div class='form-group'>
-                <%= ff.label :account_type %>
-                <%= ff.select :account_type, ["asset" , "equity" , "liability"],  { :include_blank => true }, { :class => "form-control" } %>
-              </div>
-              <div class='form-group'>
-                <%= ff.label :amount %>
-                <%= ff.text_field :amount, :class => "form-control" %>
-              </div>
-            <% end %>
+        <div id='debit_records' class='col-sm-6' ng-init="initializeRecords('debit' , <%= @accounting_transaction.debit_records.to_json %>)">
+          <h2>Debit Records</h2><button type="button" ng-click="addRecord('debit')" class="btn btn-default">Add new debit record</button>
+          <div ng-repeat="record in transaction.debit_records_attributes">
+            <%= render partial: "record_form" %>
+          </div>
         </div>
-        <div id='credit_records' class='col-sm-6'>
-          <h2>Credit Records</h2><button type="button" id='create_new_credit_entry' class="btn btn-default">Add new credit record</button>
-            <%= f.fields_for :credit_records do |ff| %>
-              <h4>Record</h4>
-              <%= ff.hidden_field :id %>
-
-              <div class='form-group'>
-                <%= ff.label :account_name %>
-                <%= ff.text_field :account_name, :class => "form-control" %>
-                </div>
-              <div class='form-group'>
-                <%= ff.label :account_type %>
-                <%= ff.select :account_type, ["asset" , "equity" , "liability"],  { :include_blank => true }, { :class => "form-control" } %>
-              </div>
-              <div class='form-group'>
-                <%= ff.label :amount %>
-                <%= ff.text_field :amount, :class => "form-control" %>
-              </div>
-              <% end %>
+        <div id='credit_records' class='col-sm-6' ng-init="initializeRecords('credit' , <%= @accounting_transaction.credit_records.to_json %>)">
+          <h2>Credit Records</h2><button type="button" ng-click="addRecord('credit')" class="btn btn-default">Add new credit record</button>
+          <div ng-repeat="record in transaction.credit_records_attributes">
+            <%= render partial: "record_form" %>
+          </div>
         </div>
-
       </div>
       <br />
       <div class='row'>
