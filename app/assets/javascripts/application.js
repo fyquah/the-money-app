@@ -18,7 +18,4 @@
 //= require mustache
 //= require jquery.mustache
 //= require moment
-//= require bootstrap-datetimepicker
-$(document).ready(function(){
-  $(".date-time-picker").datetimepicker()
-})
+//= require angular

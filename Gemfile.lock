@@ -33,6 +33,7 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.1)
       tzinfo (~> 1.1)
+    angularjs-rails (1.2.21)
     arel (5.0.1.20140414130214)
     bcrypt-ruby (3.1.2)
     bootstrap-sass (3.2.0.1)
@@ -202,12 +203,12 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  angularjs-rails
   bcrypt-ruby (= 3.1.2)
   bootstrap-sass
   bootstrap-will_paginate (= 0.0.9)
   bootstrap3-datetimepicker-rails (~> 3.0.2)
   capybara (= 2.1.0)
-  coffee-rails (= 4.0.1)
   cucumber-rails (= 1.4.0)
   database_cleaner!
   factory_girl_rails (= 4.2.0)
