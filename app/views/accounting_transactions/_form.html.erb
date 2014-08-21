@@ -1,10 +1,3 @@
-<%= javascript_tag do %>
-  var debit_record_count = <%= @accounting_transaction.debit_records.count || 0 %>
-  var credit_record_count = <%= @accounting_transaction.credit_records.count || 0 %> 
-<% end %>
-<div id='target'>
-
-</div>
 <div class='row'>
   <div class='col-xs-12 col-sm-offset-2 col-sm-8'>
     <% if @accounting_transaction.id %>
@@ -28,11 +21,11 @@
       <%= render "shared/error_messages" , object: f.object %>
       <div class='form-group'>
         <%= f.label :description %>
-        <%= f.text_area :description, :class => "form-control" , :required => true %>
+        <%= f.text_area :description, :class => "form-control" , :required => true , :"ng-model" => "accounting_transaction.description" %>
       </div>
       <div class="form-group">
           <%= f.label :created_at , "Date / Time of transaction (defaults to date of transaction creation)" %>
-          <%= f.datetime_local_field :created_at , :class => "form-control" %>
+          <%= f.datetime_local_field :created_at , :class => "form-control" , :"ng-model" => "accounting_transaction.created_at" %>
       </div>
       <div class='row'>
         <div id='debit_records' class='col-sm-6'>
