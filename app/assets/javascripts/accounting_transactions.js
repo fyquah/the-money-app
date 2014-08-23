@@ -1,45 +1,103 @@
-// Place all the behaviors and hooks related to the matching controller here.
-// All this logic will automatically be available in application.js.
-// function create_content(type , properties){
-//   var template = $("#accounting_record_template").html()
-//   Mustache.parse(template);   // optional, speeds up future uses
-//   var options_object = {
-//     type: (type),
-//     index: (properties.record_count + 1),
-//     record_type: (type + "_records"),
-//     record_count: (properties.record_count),
-//     record_id: (properties.record_id || ""),
-//     account_name: (properties.account_name || ""),
-//     account_type: (properties.account_type || ""),
-//     amount: (properties.amount || "")
-//   }
-//   options_object["selected_" + (properties.account_type || "blank").toLowerCase()] = "selected"
-//   var rendered = Mustache.render(template , options_object)
+var accountingTransactionCtrl = angular.module("accountingTransactionCtrl" , [])
+theMoneyApp.requires.push("accountingTransactionCtrl");
 
-//   if(type == "credit")
-//     $("#credit_records").append(rendered)
-//   else
-//     $("#debit_records").append(rendered)
-// }
+accountingTransactionCtrl.controller('accountingTransactionCtrl', 
+  ['$http' , '$scope' , "$accountingTransaction", function($http, $scope, $accountingTransaction){
 
-// function remove_record(record_count , record_type , prompt_message){
-//   if(confirm(prompt_message)){
-//     $("#" + record_type + "_" + record_count).css("display" , "none")
-//     console.log("accounting_transaction_" + record_type  + "_attributes_" + record_count + "__destroy")
-//     document.getElementById("accounting_transaction_" + record_type  + "_attributes_" + record_count + "__destroy").value = "destroy me"
-//   }
-//   return false
-// }
-  
-// $(document).ready(function(){
-//   $("#create_new_credit_entry").click(function(){ 
-//     create_content("credit" , { record_count: credit_record_count })
-//     credit_record_count++
-//     return false
-//   })
-//   $("#create_new_debit_entry").click(function(){ 
-//     create_content("debit" , {  record_count: debit_record_count })
-//     debit_record_count++ 
-//     return false
-//   })
-// })
+  $scope.initializeTransaction = function(transaction){
+    $scope.transaction = Object.create(null); // create an object with absolutely no prototype objects!
+    ["id" , "description" , "date" , "account_book_id"].forEach(function(key){
+      $scope.transaction[key] = transaction[key];
+    });
+    ["debit_records_attributes" , "credit_records_attributes" , "removed_debit_records" , "removed_credit_records"].forEach(function(key){
+      $scope.transaction[key] = [];
+    })
+  }
+
+  $scope.initializeRecords = function(type , obj){
+    console.log(obj);
+    obj.forEach(function(record){
+      $scope.addRecord(type , record);
+    });
+  }
+
+  $scope.addRecord = function(type , obj){
+    if(typeof obj == "undefined")
+      obj = { record_type: type };
+
+    if(type == "debit"){
+      $scope.transaction.debit_records_attributes.push($accountingTransaction.recordCreator(obj));
+    } else if(type == "credit"){ 
+      $scope.transaction.credit_records_attributes.push($accountingTransaction.recordCreator(obj));
+    } else {
+      alert("invalid type given to functon addRecord()");
+    }
+  }
+
+  $scope.removeRecord = function(type , index){
+    if($scope.transaction[type + "_records_attributes"].length != 0 && index < $scope.transaction[type + "_records_attributes"].length ){
+      var removed_item = $scope.transaction[type + "_records_attributes"].splice(index , 1)[0];
+      removed_item._destroy = "destroy me";
+      $scope.transaction["removed_" + type + "_records"].push(removed_item);
+    }
+  }
+
+  $scope.submit = function(){
+    var params = $scope.getSubmissionParams();
+    var savePromise = null;
+
+    if(params.accounting_transaction.id === null || params.accounting_transaction.id == undefined || params.accounting_transaction.id == ""){
+      var target_url = "/account_books/" + params.accounting_transaction.account_book_id + "/accounting_transactions.json";
+      savePromise = $http.post(target_url , params);
+    } else {
+      var target_url = "/account_books/" + params.accounting_transaction.account_book_id + "/accounting_transactions/" + params.accounting_transaction.id + ".json";
+      savePromise = $http.put(target_url , params);
+    }
+
+    savePromise.success(function(data){
+      console.log(data);
+      window.location = "/account_books/" + data.accounting_transaction.account_book_id + "/accounting_transactions/" + data.accounting_transaction.id;
+
+    });
+
+    savePromise.error(function(data){
+      $scope.error_messages = data.errors;
+    });
+  }
+
+  $scope.getSubmissionParams = function(){
+    return {
+      authenticity_token: $scope.authenticity_token,
+      accounting_transaction: (function(){
+        var return_value = Object.create(null);
+        Object.keys($scope.transaction).forEach(function(key){
+          return_value[key] = $scope.transaction[key];
+        });
+        return_value["debit_records_attributes"] = $scope.transaction.debit_records_attributes.concat($scope.transaction.removed_debit_records);
+        return_value["credit_records_attributes"] = $scope.transaction.credit_records_attributes.concat($scope.transaction.removed_credit_records);
+        return_value["removed_debit_records"] = null;
+        return_value["removed_credit_records"] = null;
+        return return_value;
+      })()
+    }
+  }
+}]);
+
+accountingTransactionCtrl.service("$accountingTransaction" , function(){
+  return {
+    recordCreator: function(obj){
+      var defaults = {
+        account_name: "",
+        amount: "",
+        account_type: "",
+        id: ""
+      };
+
+      for(var prop in defaults)
+        if(obj[prop] === null  || obj[prop] === undefined || obj[prop] === "" )
+          obj[prop] = defaults[prop]
+
+      return obj;
+    }
+  }
+})

@@ -17,5 +17,6 @@
 //= require angular
 //= require turbolinks
 //= require twitter/bootstrap
-//= require_tree 
-//= require mustache
+//= require ./global.js
+//= require ./main.js
+//= require_tree . 

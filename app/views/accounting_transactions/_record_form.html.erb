@@ -11,7 +11,7 @@
     <input id="accounting_transaction_{{ record.record_type }}_records_attributes_{{ $index }}_account_name" name="accounting_transaction[{{ record.record_type }}_records_attributes][{{ $index }}][account_name]" type="text" ng-model="record.account_name" class='form-control' />
   </div>
   <div class='form-group'>
-    <label for="accounting_transaction_{{ record.record_type }}_records_attributes_{{ $index }}_account_name">Account record_type</label>
+    <label for="accounting_transaction_{{ record.record_type }}_records_attributes_{{ $index }}_account_name">Account type</label>
     <select id="accounting_transaction_{{ record.record_type }}_records_attributes_{{ $index }}_account_type" name="accounting_transaction[{{ record.record_type }}_records_attributes][{{ $index }}][account_type]" type="text" ng-model="record.account_type" class='form-control'>
       <option>asset</option>
       <option>equity</option>
