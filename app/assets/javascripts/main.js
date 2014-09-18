@@ -1,16 +1,13 @@
-var theMoneyApp = angular.module("theMoneyApp" , []);
-
-theMoneyApp.directive("authenticityToken" , function(){
-  return {
-    restrict: "A",
-    link: function(scope , element , attr){
-      scope["authenticity_token"] = attr["authenticityToken"]
-    }
-  }
+$(document).on("page:load" , function(){
+    $("[ng-app]").each(function(){
+        module = $(this).attr('ng-app');
+        angular.bootstrap(this, [module]);
+    })
 });
 
-theMoneyApp.filter("pluralize_error_word" , function(){
-  return function(number_of_errors){
-    return (number_of_errors == 1 ? number_of_errors + " error" : number_of_errors + " errors")  
-  }
-});
+var APPNAME = "the-money-app"
+var app = angular.module(APPNAME, ['ngResource' , "ngRoute"]);
+
+app.run(["$rootScope" , function($rootScope){
+    // run initializations here
+}]);

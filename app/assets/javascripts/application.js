@@ -12,9 +12,9 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require jquery.mustache
 //= require moment
 //= require angular
+//= require angular-route
 //= require turbolinks
 //= require twitter/bootstrap
 //= require ./global.js
