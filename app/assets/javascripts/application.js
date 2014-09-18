@@ -17,6 +17,5 @@
 //= require angular-route
 //= require turbolinks
 //= require twitter/bootstrap
-//= require ./global.js
 //= require ./main.js
 //= require_tree . 

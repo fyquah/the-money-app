@@ -1,14 +1,9 @@
 Rails.application.routes.draw do
-  get 'transactions/new'
 
-  get 'transactions/create'
+  root "templates#index"
+  get "templates/:path" => "templates#template" , :constraints => { :path => /.+/ }
 
-  root "static_pages#index"
-
-  match "signin" , :to => "sessions#new" , :via => "get"
-  match "signout" , :to => "sessions#destroy" , :via => "delete"
-  match "about" , :to => "static_pages#about" , :via => "get"
-  resources :users , only: [:new , :edit , :create , :update , :show]
+  resources :users , only: [:create , :update , :show] # get stuff dealed by angularjs
   resources :sessions , only: [:create , :destroy]
   match "clear_sessions_except_current" , :to => "sessions#clear_sessions_except_current" , :via => "delete"
   # For account_books
