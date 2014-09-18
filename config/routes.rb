@@ -1,14 +1,14 @@
 Rails.application.routes.draw do
 
   root "templates#index"
-  get "templates/:path" => "templates#template" , :constraints => { :path => /.+/ }
+  get "templates/:path.html" => "templates#template" , :constraints => { :path => /.+/ }
 
-  resources :users , only: [:create , :update , :show] # get stuff dealed by angularjs
-  resources :sessions , only: [:create , :destroy]
+  resources :users , :format => { :default => :json } , only: [:create , :update , :show] # get stuff dealed by angularjs
+  resources :sessions , :format => { :default => :json } , only: [:create , :destroy]
   match "clear_sessions_except_current" , :to => "sessions#clear_sessions_except_current" , :via => "delete"
   # For account_books
-  resources :account_books do
-    resources :accounting_transactions
+  resources :account_books , :format => { :default => :json } do
+    resources :accounting_transactions , :format => { :default => :json }
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

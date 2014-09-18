@@ -9,7 +9,8 @@
 <body>
   <%= render "shared/header_bar" %>
   <div class='container'>
-    <%= yield %>
+    <ng-view></ng-view>
+    <% # Forger about erb rendering :) %>
   </div>
 </body>
 </html>

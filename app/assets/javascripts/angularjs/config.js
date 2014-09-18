@@ -1,4 +1,4 @@
-tasksApp.config(["$httpProvider" , function($httpProvider){
+app.config(["$httpProvider" , function($httpProvider){
     // adding csrf token
     $httpProvider.defaults.headers.common['X-CSRF-Token'] = $('meta[name=csrf-token]').attr('content')    
     // configuring for patch methods
@@ -7,7 +7,7 @@ tasksApp.config(["$httpProvider" , function($httpProvider){
     defaults.patch["Content-Type"] = "application/json"
 }]);
 
-tasksApp.config([ "$routeProvider", "$locationProvider" , function($routeProvider , $locationProvider){
+app.config([ "$routeProvider", "$locationProvider" , function($routeProvider , $locationProvider){
     $locationProvider.html5Mode(false);
 
     // var i , action , ctrl, controllers = {
@@ -28,5 +28,11 @@ tasksApp.config([ "$routeProvider", "$locationProvider" , function($routeProvide
     //     });
     // }
 
-    
+    $routeProvider.when("/" , {
+        redirectTo: "/signin"
+    }).
+    when("/signin" , {
+        templateUrl: "/templates/sessions/new.html",
+        controller: "sessionsNewCtrl"
+    })
 }]);

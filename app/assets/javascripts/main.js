@@ -5,7 +5,7 @@ $(document).on("page:load" , function(){
     })
 });
 
-var APPNAME = "the-money-app"
+var APPNAME = "theMoneyApp"
 var app = angular.module(APPNAME, ['ngResource' , "ngRoute"]);
 
 app.run(["$rootScope" , function($rootScope){

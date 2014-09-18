@@ -1,28 +1,22 @@
 class SessionsController < ApplicationController
-  def new #The sign in page
+  def get
     if current_user
-      flash[:notice] = "You are already logged in!"
-      redirect_to root_url 
+      render :json => current_user
     else
-      @user = User.new
+      render :status => 204
     end
   end
 
   def create
     if current_user
-      flash[:notice] = "You are already logged in!"
-      redirect_to root_url
-    end
-    
-    user = User.find_by(:email => params[:email])
-    puts user
-    if user && user.authenticate(params[:password])
-      sign_in user
-      flash[:success] = "Log in successful!"
-      redirect_to_or user
+      render :json => current_user , :status => 201
     else
-      flash.now[:error] = "Incorrect password and username combination!"
-      render "new"
+      user = User.find_by(:email => params[:email])
+      if user && user.authenticate(params[:password])
+        render :json => user , :status => 201
+      else
+        render :json => { :error => "user and password combination incorrect!" }
+      end  
     end
   end
 

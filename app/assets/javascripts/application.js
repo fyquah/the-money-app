@@ -15,6 +15,7 @@
 //= require moment
 //= require angular
 //= require angular-route
+//= require angular-resource
 //= require turbolinks
 //= require twitter/bootstrap
 //= require ./main.js
