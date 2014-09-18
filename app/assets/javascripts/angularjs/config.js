@@ -34,5 +34,9 @@ app.config([ "$routeProvider", "$locationProvider" , function($routeProvider , $
     when("/signin" , {
         templateUrl: "/templates/sessions/new.html",
         controller: "sessionsNewCtrl"
+    }).
+    when("/register" , {
+        templateUrl: "/templates/users/new.html",
+        controller: "usersNewCtrl"
     })
 }]);
