@@ -70,6 +70,41 @@ app.controller("usersNewCtrl" , ["page" , "User" , "$scope" , "session" , "$http
     }
 }]);
 
+app.controller("usersEditCtrl" , function($scope , $http , $routeParams, session , User, page , alerts){
+    if($routeParams.id.toString() !== session.currentUser().id.toString()){
+        page.redirect("/home");
+        alerts.push("danger" , "You are not authorized to view this page");
+        return;
+    }
+    $scope.user = angular.copy(session.currentUser());
+
+    $scope.submit = function(){
+        var data = {
+            user: $scope.user
+        };
+        // update then change current user into that
+        $http({
+            method: "PATCH",
+            url: "/users/" + $routeParams.id + ".json",
+            data: data
+        }).
+        success(function(data){
+            session.currentUser(new User(data));
+            alerts.push("success" , "Updated your user credentials!");
+        }).
+        error(function(data , status){
+            if (status === 400) {
+                console.log(data);
+                angular.forEach(data.error , function(err){
+                    alerts.push("danger" , err);
+                });
+            } else {
+                alert("An unkown error has happened!");
+            }
+        });
+    }
+});
+
 app.controller("alertsCtrl" , [ "alerts" , "$scope" , function(alerts , $scope){
     $scope.all = alerts.all;
 

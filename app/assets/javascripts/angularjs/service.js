@@ -86,21 +86,27 @@ app.service("page" , ["$location" , "$window" , "session" , "alerts" , function(
         $location.path(name);
     };
 
-    this.redirectUnlessSignedIn = function(redirected_page){
+    this.redirectUnlessSignedIn = function(redirected_page , display_alert){
+        display_alert = typeof display_alert === "undefined" ? true : display_alert;
         if (!session.currentUser()) {
             $location.path(redirected_page || "/signin");
             alerts.removeAll();
-            alerts.push({ type: "info" , msg: "You need to be signed in to view this page!"});
+            if (display_alert){
+                alerts.push({ type: "info" , msg: "You need to be signed in to view this page!"});
+            }
             return true;   
         }
         return false;
     };
 
-    this.redirectIfSignedIn = function(redirected_page){
+    this.redirectIfSignedIn = function(redirected_page , display_alert){
+        display_alert = typeof display_alert === "undefined" ? true : display_alert;
         if (session.currentUser()) {
             $location.path(redirected_page || "/home");
             alerts.removeAll();
-            alerts.push({ type: "info" , msg: "You are alredy logged in!"});
+            if (display_alert){
+                alerts.push({ type: "info" , msg: "You are alredy logged in!"});
+            }
             return true;
         }
         return false;
@@ -118,15 +124,22 @@ app.service("alerts" , function(){
             self.all.push({ type: obj , msg: msg});
         }
         
-    }
+    };
 
     this.remove = function(index){
         self.all.splice(index , 1);
-    }
+    };
 
     this.removeAll = function(){
         while (self.all.length) {
             self.all.pop();
         }
-    }
+    };
+
+    this.create = function(type , msg){
+        return {
+            type: type,
+            msg: msg
+        };
+    };
 });

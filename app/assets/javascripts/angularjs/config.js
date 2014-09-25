@@ -29,7 +29,10 @@ app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $l
     // }
 
     $routeProvider.when("/" , {
-        redirectTo: "/signin"
+        templateUrl: "/templates/static_pages/home.html",
+        controller: ["page" , function(page){
+            page.redirectUnlessSignedIn(undefined , false);
+        }]
     }).
     when("/signin" , {
         templateUrl: "/templates/sessions/new.html",
@@ -38,6 +41,10 @@ app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $l
     when("/register" , {
         templateUrl: "/templates/users/new.html",
         controller: "usersNewCtrl"
+    }).
+    when("/users/:id/edit" , {
+        templateUrl: "/templates/users/edit.html",
+        controller: "usersEditCtrl"
     }).
     when("/home" , {
         templateUrl: "/templates/static_pages/home.html",

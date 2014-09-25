@@ -32,10 +32,12 @@ class UsersController < ApplicationController
 	def update
     @user = User.find params[:id]
     if @user.update_attributes user_params
-  		flash[:success] = "Updated your credentials!" 
-      redirect_to edit_user_path(@user)
+  		# flash[:success] = "Updated your credentials!" 
+      # redirect_to edit_user_path(@user)
+      render :json => { :user => @user } , :status => 203
     else
-      render 'edit'
+      render :json => { :error => @user.errors.full_messages } , :status => 400
+      # render 'edit'
 	   end
   end
 
