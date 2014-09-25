@@ -15,11 +15,13 @@ class UsersController < ApplicationController
 	def create
 		@user = User.new user_params
 		if @user.save
-			flash[:success] = "Registration successful!" 
+		# 	flash[:success] = "Registration successful!" 
       sign_in @user
-			redirect_to "/"
+			render :json => { :user => @user } , :status => 201
+      # redirect_to "/"
 		else
-			render 'new'
+      render :json => { :error => @user.errors.full_messages } , :status => 400
+			# render 'new'
 		end
 	end
 

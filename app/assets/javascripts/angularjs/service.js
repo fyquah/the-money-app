@@ -1,6 +1,19 @@
-app.service("session" , [ "User" , "$http" ,function(User , $http){
+app.service("session" , [ "$location" , "User" , "$http" , "alerts" ,function($location , User , $http, alerts){
     var current_user = false,
         self = this;
+
+    this.create = function(obj){
+        return $http({
+            method: "POST",
+            url: "/sessions/new",
+            data: {
+                user: {
+                    email: obj.email,
+                    password: obj.password
+                }
+            }
+        });
+    };
 
     this.currentUser = function(args){
         var user_response_obj;
@@ -34,7 +47,7 @@ app.service("session" , [ "User" , "$http" ,function(User , $http){
     this.signOut = function(){
         $http({
             method: "delete",
-            url: "/sessions/destroy"
+            url: "/sessions/destroy.json"
         }).
         success(function(data , status , config){
             alert("you have been logged out!");
@@ -49,10 +62,10 @@ app.service("session" , [ "User" , "$http" ,function(User , $http){
     this.clearAllButCurrent = function(){
         $http({
             method: "delete",
-            url: "/sessions/clear_all_but_current"
+            url: "/sessions/clear_all_but_current.json"
         }).
         success(function(data , status , config){
-            alert("cleared all sessions but current's!");
+            alerts.push("success" , "cleared all sessions!");
         }).
         error(function(data , status , config){
             alert("an error occurred!");

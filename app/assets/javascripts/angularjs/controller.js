@@ -32,7 +32,8 @@ function($scope , $http , session , page , User){
 
 }]);
 
-app.controller("usersNewCtrl" , ["$scope" , function($scope){
+app.controller("usersNewCtrl" , ["page" , "User" , "$scope" , "session" , "$http" , "alerts" , function(page , User , $scope , session , $http , alerts){
+    page.redirectIfSignedIn();
     (function(){
         $scope.user = {};
     })();
@@ -48,15 +49,24 @@ app.controller("usersNewCtrl" , ["$scope" , function($scope){
         };
         $http({
             method: "POST" ,
-            url: "/users/new" ,
+            url: "/users.json" ,
             data: data
         }).
         success(function(data){
-
+            session.currentUser(new User(data.user));
+            $location.path("/home");
         }).
-        error(function(data){
-            
-        })
+        error(function(data , status){;
+            if (status === 400) {
+                alerts.removeAll();
+                angular.forEach(data.error , function(err , index , obj){
+                    alerts.push({type: "danger" , msg: err});
+                });
+            } else {
+                console.log(data);
+                alert("an unkown error has occurred!");
+            }
+        });
     }
 }]);
 
