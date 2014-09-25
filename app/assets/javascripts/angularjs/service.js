@@ -1,5 +1,6 @@
-app.service("session" , [ "User" ,function(User){
-    var current_user = false;
+app.service("session" , [ "User" , "$http" ,function(User , $http){
+    var current_user = false,
+        self = this;
 
     this.currentUser = function(args){
         var user_response_obj;
@@ -37,7 +38,8 @@ app.service("session" , [ "User" ,function(User){
         }).
         success(function(data , status , config){
             alert("you have been logged out!");
-            $location.hash("signin");
+            current_user = null;
+            page.redirect("/signin");
         }).
         error(function(data , status , config){
             alert("error signing out!");
@@ -55,5 +57,35 @@ app.service("session" , [ "User" ,function(User){
         error(function(data , status , config){
             alert("an error occurred!");
         });
+    };
+
+    this.isSignedIn = function(){
+        if (current_user === false) {
+            return self.currentUser();
+        } else {
+            return !(current_user === null);
+        }   
+    }
+}]);
+
+app.service("page" , ["$location" , "$window" , "session" , function($location , $window , session){
+    this.redirect = function(name){
+        $location.path(name);
+    };
+
+    this.redirectUnlessSignedIn = function(redirected_page){
+        if (!session.currentUser()) {
+            $location.path(redirected_page || "/signin");     
+            return true;   
+        }
+        return false;
+    };
+
+    this.redirectIfSignedIn = function(redirected_page){
+        if (session.currentUser()) {
+            $location.path(redirected_page || "/home");
+            return true;
+        }
+        return false;
     }
 }]);

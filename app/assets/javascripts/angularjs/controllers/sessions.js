@@ -1,8 +1,8 @@
-app.controller("sessionsNewCtrl" , [ "$scope" , "$http" , "currentUser" , function($scope , $http , currentUser){
-    (function(){
-        $scope.user = {};
-        console.log(currentUser());
-    })();
+app.controller("sessionsNewCtrl" , [ "$scope" , "$http" , "session" , "page" , "User" , 
+function($scope , $http , session , page , User){
+    page.redirectIfSignedIn();
+    $scope.user = {};
+    console.log(session.currentUser());
 
     $scope.submit = function(){
         var data = {
@@ -16,8 +16,10 @@ app.controller("sessionsNewCtrl" , [ "$scope" , "$http" , "currentUser" , functi
             url: "/sessions.json",
             data: data
         }).success(function(data){
-            currentUser(data);
-            console.log(currentUser);
+            console.log(data);
+            session.currentUser(new User(data.user));
+            console.log(session.currentUser());
+            page.redirect("/home");
         }).error(function(data){
             try {
                 console.log(data);

@@ -38,7 +38,13 @@ app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $l
     when("/register" , {
         templateUrl: "/templates/users/new.html",
         controller: "usersNewCtrl"
-    });
+    }).
+    when("/home" , {
+        templateUrl: "/templates/static_pages/home.html",
+        controller: ["page" , function(page){
+            page.redirectUnlessSignedIn();
+        }]
+    })
 }]);
 
 app.run(["$rootScope" , "session" , function($rootScope , session){

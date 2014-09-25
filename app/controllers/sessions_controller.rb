@@ -5,7 +5,7 @@ class SessionsController < ApplicationController
 
   def create
     if current_user
-      render :json => current_user , :status => 201
+      render :json => { :user => current_user } , :status => 201
     else
       user = User.find_by(:email => session_params[:email])
       if user && user.authenticate(session_params[:password])
@@ -19,7 +19,8 @@ class SessionsController < ApplicationController
 
   def destroy
     sign_out
-    redirect_to root_url
+    render :json => {} , :status => 204 # no entity to return :)
+    # redirect_to root_url
   end
 
   def clear_all_but_current
