@@ -31,3 +31,42 @@ function($scope , $http , session , page , User){
     };
 
 }]);
+
+app.controller("usersNewCtrl" , ["$scope" , function($scope){
+    (function(){
+        $scope.user = {};
+    })();
+
+    $scope.submit = function(){
+        var data = {
+            user: {
+                name: $scope.user.name,
+                email: $scope.user.email,
+                password: $scope.user.password,
+                password_confirmation: $scope.user.password_confirmation
+            }
+        };
+        $http({
+            method: "POST" ,
+            url: "/users/new" ,
+            data: data
+        }).
+        success(function(data){
+
+        }).
+        error(function(data){
+            
+        })
+    }
+}]);
+
+app.controller("alertsCtrl" , [ "alerts" , "$scope" , function(alerts , $scope){
+    $scope.all = alerts.all;
+
+    $scope.remove = alerts.remove;
+    $scope.removeAll = alerts.removeAll;
+}]);
+
+app.controller("menuBarCtrl" , [ "session" , "$scope" , function(session , $scope){
+    $scope.session = session;
+}]);

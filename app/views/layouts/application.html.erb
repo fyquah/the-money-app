@@ -8,9 +8,16 @@
 </head>
 <body>
   <%= render "shared/header_bar" %>
+  <div class="container" ng-controller="alertsCtrl">
+    <div ng-repeat="alert in all">
+        <div class="alert alert-{{ alert.type }}" ng-click="remove($index)">
+          {{ alert.msg }}
+        </div>
+    </div>
+  </div>
   <div class='container'>
     <ng-view></ng-view>
-    <% # Forger about erb rendering :) %>
+    <% # Forget about erb rendering :) %>
   </div>
 </body>
 </html>

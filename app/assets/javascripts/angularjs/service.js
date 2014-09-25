@@ -39,7 +39,7 @@ app.service("session" , [ "User" , "$http" ,function(User , $http){
         success(function(data , status , config){
             alert("you have been logged out!");
             current_user = null;
-            page.redirect("/signin");
+            $location.path("/signin");
         }).
         error(function(data , status , config){
             alert("error signing out!");
@@ -68,14 +68,16 @@ app.service("session" , [ "User" , "$http" ,function(User , $http){
     }
 }]);
 
-app.service("page" , ["$location" , "$window" , "session" , function($location , $window , session){
+app.service("page" , ["$location" , "$window" , "session" , "alerts" , function($location , $window , session , alerts){
     this.redirect = function(name){
         $location.path(name);
     };
 
     this.redirectUnlessSignedIn = function(redirected_page){
         if (!session.currentUser()) {
-            $location.path(redirected_page || "/signin");     
+            $location.path(redirected_page || "/signin");
+            alerts.removeAll();
+            alerts.push({ type: "info" , msg: "You need to be signed in to view this page!"});
             return true;   
         }
         return false;
@@ -84,8 +86,34 @@ app.service("page" , ["$location" , "$window" , "session" , function($location ,
     this.redirectIfSignedIn = function(redirected_page){
         if (session.currentUser()) {
             $location.path(redirected_page || "/home");
+            alerts.removeAll();
+            alerts.push({ type: "info" , msg: "You are alredy logged in!"});
             return true;
         }
         return false;
     }
 }]);
+
+app.service("alerts" , function(){
+    var self = this;
+    this.all = [];
+
+    this.push = function(obj , msg){
+        if(typeof obj === "object") {
+            self.all.push(obj);    
+        } else {
+            self.all.push({ type: obj , msg: msg});
+        }
+        
+    }
+
+    this.remove = function(index){
+        self.all.splice(index , 1);
+    }
+
+    this.removeAll = function(){
+        while (self.all.length) {
+            self.all.pop();
+        }
+    }
+});
