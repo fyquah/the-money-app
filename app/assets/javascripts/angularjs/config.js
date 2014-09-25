@@ -8,7 +8,7 @@ app.config(["$httpProvider" , function($httpProvider){
 }]);
 
 app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $locationProvider ){
-    $locationProvider.html5Mode(false);
+    $locationProvider.html5Mode(true);
 
     // var i , action , ctrl, controllers = {
     //     tasks: ["view" , "new" , "index"]

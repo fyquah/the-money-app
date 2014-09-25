@@ -32,7 +32,7 @@ function($scope , $http , session , page , User){
 
 }]);
 
-app.controller("usersNewCtrl" , ["page" , "User" , "$scope" , "session" , "$http" , "alerts" , function(page , User , $scope , session , $http , alerts){
+app.controller("usersNewCtrl" , ["page" , "User" , "$scope" , "session" , "$http" , "alerts" , "$location" , function(page , User , $scope , session , $http , alerts , $location){
     page.redirectIfSignedIn();
     (function(){
         $scope.user = {};
@@ -85,11 +85,12 @@ app.controller("usersEditCtrl" , function($scope , $http , $routeParams, session
         // update then change current user into that
         $http({
             method: "PATCH",
-            url: "/users/" + $routeParams.id + ".json",
+            url: "/users/" + session.currentUser().id + ".json",
             data: data
         }).
         success(function(data){
-            session.currentUser(new User(data));
+            session.currentUser(new User(data.user));
+            console.log(session.currentUser());
             alerts.push("success" , "Updated your user credentials!");
         }).
         error(function(data , status){

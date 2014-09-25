@@ -14,6 +14,8 @@ Rails.application.routes.draw do
     resources :accounting_transactions , :format => { :default => :json }
   end
 
+  get ":path" , :to => "templates#index" , :constraints => { :path => /.+/ }
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
