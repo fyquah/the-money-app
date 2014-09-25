@@ -7,7 +7,7 @@ app.config(["$httpProvider" , function($httpProvider){
     defaults.patch["Content-Type"] = "application/json"
 }]);
 
-app.config([ "$routeProvider", "$locationProvider" , function($routeProvider , $locationProvider){
+app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $locationProvider ){
     $locationProvider.html5Mode(false);
 
     // var i , action , ctrl, controllers = {
@@ -38,5 +38,9 @@ app.config([ "$routeProvider", "$locationProvider" , function($routeProvider , $
     when("/register" , {
         templateUrl: "/templates/users/new.html",
         controller: "usersNewCtrl"
-    })
+    });
+}]);
+
+app.run(["$rootScope" , "session" , function($rootScope , session){
+    $rootScope.session = session;
 }]);

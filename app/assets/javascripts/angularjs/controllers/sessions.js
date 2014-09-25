@@ -1,6 +1,7 @@
-app.controller("sessionsNewCtrl" , [ "$scope" , "$http" , function($scope , $http){
+app.controller("sessionsNewCtrl" , [ "$scope" , "$http" , "currentUser" , function($scope , $http , currentUser){
     (function(){
         $scope.user = {};
+        console.log(currentUser());
     })();
 
     $scope.submit = function(){
@@ -15,7 +16,8 @@ app.controller("sessionsNewCtrl" , [ "$scope" , "$http" , function($scope , $htt
             url: "/sessions.json",
             data: data
         }).success(function(data){
-            console.log(data);
+            currentUser(data);
+            console.log(currentUser);
         }).error(function(data){
             try {
                 console.log(data);

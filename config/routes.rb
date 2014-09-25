@@ -4,8 +4,11 @@ Rails.application.routes.draw do
   get "templates/:path.html" => "templates#template" , :constraints => { :path => /.+/ }
 
   resources :users , :format => { :default => :json } , only: [:create , :update , :show] # get stuff dealed by angularjs
-  resources :sessions , :format => { :default => :json } , only: [:create , :destroy]
-  match "clear_sessions_except_current" , :to => "sessions#clear_sessions_except_current" , :via => "delete"
+  resources :sessions , :format => { :default => :json } , only: [:create]
+
+  match "sessions/destroy" , :to => "sessions#destroy" , :via => "delete"
+  match "sessions/current" , :to => "sessions#current" , :via => "get"
+  match "sessions/clear_all_but_current" , :to => "sessions#clear_all_but_current" , :via => "delete"
   # For account_books
   resources :account_books , :format => { :default => :json } do
     resources :accounting_transactions , :format => { :default => :json }
