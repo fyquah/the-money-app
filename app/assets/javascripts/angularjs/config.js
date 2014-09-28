@@ -29,9 +29,24 @@ app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $l
     // }
 
     $routeProvider.when("/" , {
-        templateUrl: "/templates/static_pages/home.html",
-        controller: ["page" , function(page){
-            page.redirectUnlessSignedIn(undefined , false);
+        template: "<div ng-bind='loading_msg'></div>",
+        controller: ["page" , "$interval" , "session" , function(page , $interval , session){
+            $interval(function(){
+                var counter = 0;
+                return function(){
+                    var i;
+                    counter = (counter + 1) % 5;
+                    $scope.loading_msg = "Cooking up some awesomeness ";
+                    for(i = 0 ; i < counter + 1 ; i++) {
+                        $scope.loading_msg += ".";
+                    }
+                };
+            }() , 500);
+            if (session.currentUser()) {
+                page.redirect("home");
+            } else {
+                page.redirect("signin");
+            }
         }]
     }).
     when("/signin" , {
@@ -51,6 +66,9 @@ app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $l
         controller: ["page" , function(page){
             page.redirectUnlessSignedIn();
         }]
+    }).
+    otherwise({
+        templateUrl: "/templates/404.html"
     })
 }]);
 
