@@ -8,6 +8,7 @@
 </head>
 <body>
   <%= render "shared/header_bar" %>
+  <app-spinner></app-spinner>
   <div class="container" ng-controller="alertsCtrl">
     <div ng-repeat="alert in all">
         <div class="alert alert-{{ alert.type }}" ng-click="remove($index)">

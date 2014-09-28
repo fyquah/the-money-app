@@ -118,8 +118,12 @@ app.service("alerts" , function(){
     this.all = [];
 
     this.push = function(obj , msg){
-        if(typeof obj === "object") {
+        if(typeof obj === "object" && !angular.isArray(msg)) {
             self.all.push(obj);    
+        } else if (angular.isArray(msg)) {
+            msg.forEach(function(x){
+                self.all.push({ type: obj , msg: x});
+            });
         } else {
             self.all.push({ type: obj , msg: msg});
         }
@@ -143,3 +147,5 @@ app.service("alerts" , function(){
         };
     };
 });
+
+app.service("spinner" , function(){});

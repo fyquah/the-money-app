@@ -12,7 +12,7 @@ class SessionsController < ApplicationController
         sign_in(user)
         render :json => { :user => user } , :status => 201
       else
-        render :json => { :error => "user and password combination incorrect!" }
+        render :json => { :error => "user and password combination incorrect!" } , :status => 400
       end  
     end
   end

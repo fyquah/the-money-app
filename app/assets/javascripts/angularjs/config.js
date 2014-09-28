@@ -30,7 +30,7 @@ app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $l
 
     $routeProvider.when("/" , {
         template: "<div ng-bind='loading_msg'></div>",
-        controller: ["page" , "$interval" , "session" , function(page , $interval , session){
+        controller: ["page" , "$interval" , "session" , "$scope" , function(page , $interval , session , $scope){
             $interval(function(){
                 var counter = 0;
                 return function(){

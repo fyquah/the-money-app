@@ -1,10 +1,15 @@
-app.controller("sessionsNewCtrl" , [ "$scope" , "$http" , "session" , "page" , "User" , 
-function($scope , $http , session , page , User){
+app.controller("sessionsNewCtrl" , [ "$scope" , "$http" , "session" , "page" , "User" , "spinner" , "alerts" ,
+function($scope , $http , session , page , User , spinner , alerts){
     page.redirectIfSignedIn();
     $scope.user = {};
-    console.log(session.currentUser());
 
     $scope.submit = function(){
+        spinner.start();
+        if( !$scope.user.email && !$scope.user.password) {
+            alerts.push("danger" , "user and password combination incorrect!");
+            spinner.stop();
+            return;
+        }
         var data = {
             user: {
                 email: $scope.user.email,
@@ -20,12 +25,17 @@ function($scope , $http , session , page , User){
             session.currentUser(new User(data.user));
             console.log(session.currentUser());
             page.redirect("/home");
-        }).error(function(data){
+        }).error(function(data , status){
             try {
                 console.log(data);
                 // kemungkinan invalid credential
+                if (status === 400 && data.error) {
+                    alerts.removeAll();
+                    alerts.push("danger" , data.error);
+                }
             } catch (e) {
                 // error 5** [ISE] !!!
+                alert("an unkown error occured");
             }
         });
     };
@@ -108,7 +118,6 @@ app.controller("usersEditCtrl" , function($scope , $http , $routeParams, session
 
 app.controller("alertsCtrl" , [ "alerts" , "$scope" , function(alerts , $scope){
     $scope.all = alerts.all;
-
     $scope.remove = alerts.remove;
     $scope.removeAll = alerts.removeAll;
 }]);
