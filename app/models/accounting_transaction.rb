@@ -25,6 +25,12 @@ class AccountingTransaction < ActiveRecord::Base
     self.date ||= Time.now.to_date
   end
 
+  def amount
+    if balance?
+      debit_records.reject(&:marked_for_destruction?).inject(0 , &self.class.records_sum)
+    end
+  end
+
   def account_records_must_be_able_to_balance
     unless balance?
       errors.add(:debit_and_credit_records_amount , "do not balance")

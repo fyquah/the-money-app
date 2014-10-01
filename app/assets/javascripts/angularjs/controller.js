@@ -23,7 +23,10 @@ function($scope , $http , session , page , User , spinner , alerts , $timeout){
             console.log(data);
             session.currentUser(new User(data.user));
             console.log(session.currentUser());
+            alerts.removeAll();
             page.redirect("/home");
+            alerts.push("success" , "Log in successful! Welcome to the money app");
+            spinner.stop();
         }).error(function(data , status){
             try {
                 console.log(data);
@@ -36,6 +39,7 @@ function($scope , $http , session , page , User , spinner , alerts , $timeout){
                 // error 5** [ISE] !!!
                 alert("an unkown error occured");
             }
+            spinner.stop();
         });
     };
 
@@ -79,7 +83,7 @@ app.controller("usersNewCtrl" , ["page" , "User" , "$scope" , "session" , "$http
     }
 }]);
 
-app.controller("usersEditCtrl" , function($scope , $http , $routeParams, session , User, page , alerts){
+app.controller("usersEditCtrl" , function($scope , $http , $routeParams, session , User, page , alerts , spinner){
     if($routeParams.id.toString() !== session.currentUser().id.toString()){
         page.redirect("/home");
         alerts.push("danger" , "You are not authorized to view this page");
@@ -91,6 +95,7 @@ app.controller("usersEditCtrl" , function($scope , $http , $routeParams, session
         var data = {
             user: $scope.user
         };
+        spinner.start();
         // update then change current user into that
         $http({
             method: "PATCH",
@@ -101,6 +106,7 @@ app.controller("usersEditCtrl" , function($scope , $http , $routeParams, session
             session.currentUser(new User(data.user));
             console.log(session.currentUser());
             alerts.push("success" , "Updated your user credentials!");
+            spinner.stop();
         }).
         error(function(data , status){
             if (status === 400) {
@@ -111,6 +117,7 @@ app.controller("usersEditCtrl" , function($scope , $http , $routeParams, session
             } else {
                 alert("An unkown error has happened!");
             }
+            spinner.stop();
         });
     }
 });
@@ -123,4 +130,59 @@ app.controller("alertsCtrl" , [ "alerts" , "$scope" , function(alerts , $scope){
 
 app.controller("menuBarCtrl" , [ "session" , "$scope" , function(session , $scope){
     $scope.session = session;
+}]);
+
+app.controller("accountBooksIndexCtrl" , ["alerts" , "page" , "$http", "$scope" , "spinner" , function(alerts , page, $http, $scope, spinner){
+    if(page.redirectUnlessSignedIn()){
+        return;
+    }
+    spinner.start();
+    // query ajax data to get all the 
+    $http({
+        method: "GET",
+        url: "/account_books.json"
+    }).
+    success(function(data){
+        $scope.account_books = angular.fromJson(data.account_books);
+        spinner.stop();
+    }).
+    error(function(data , status){
+        
+        spinner.stop();
+    });
+}]);
+
+app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" , "spinner" , "$routeParams" , function(alerts , page, $http, $scope, spinner , $routeParams){
+    if(page.redirectUnlessSignedIn()){
+        return;
+    }
+    spinner.start();
+    // query ajax data to get all the 
+    $http({
+        method: "GET",
+        url: "/account_books/" + $routeParams.id + ".json"
+    }).
+    success(function(data){
+        var i , all_transactions;
+        $scope.account_book = angular.fromJson(data.account_book);
+        console.log(data);
+        spinner.stop();
+    }).
+    error(function(data , status){
+        
+        spinner.stop();
+    });
+
+    $scope.removeTransaction = function(index){
+        var transaction = $scope.account_book.accounting_transactions[index];
+        $scope.account_book.accounting_transactions.splice(index , 1);
+        $http({
+            method: "DELETE",
+            url: "/accounting_transactions/" + transaction.id + ".json",
+        }).success(function(){
+            console.log("removed");
+        }).error(function(data){
+            $scope.account_book.accounting_transactions.splice(index , 0 , transaction);
+        })
+    }
 }]);

@@ -3,6 +3,11 @@ class AccountBooksController < ApplicationController
 
   def index
     @account_books = current_user.account_books.paginate(page: params[:page])
+    render(:json => {
+      :account_books => current_user.account_books.to_json,
+      :viewable_account_books => current_user.account_books.to_json,
+      :editable_account_books => current_user.editable_account_books.to_json
+    })
   end
 
   def new
@@ -14,7 +19,16 @@ class AccountBooksController < ApplicationController
   end
 
   def show # Fancy functions should come here
-    @account_book = AccountBook.viewable_by(current_user).find(params[:id])
+    @account_book = AccountBook.editable_by(current_user).find(params[:id])    
+    render(:json => {
+      :account_book => @account_book.to_json(
+        :include => {
+          :accounting_transactions => {
+            :methods => [:amount]
+          }
+        }
+      )
+    })
   end
 
   def create

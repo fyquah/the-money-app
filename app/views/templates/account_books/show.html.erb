@@ -1,6 +1,9 @@
-<h1>This is the show page for account books!</h1>
-<p><%= @account_book.name %></p>
-<p><%= link_to "View Account Book transactions" , { :controller => "accounting_transactions" , :action => "index" , :account_book_id => @account_book.id } %></p>
-<% if @account_book.can_be_edited_by? current_user %>
-  <p><%= link_to "edit account book" , edit_account_book_path(@account_book) %></p>
-<% end %>
+<h1 ng-bind="account_book.name"></h1>
+<p>{{ account_book.description }}</p>
+<h2>Transactions</h2>
+<div class="row" ng-repeat="transaction in account_book.accounting_transactions">
+    <div class="col-xs-6">{{ transaction.description }}</div>
+    <div class="col-xs-2">{{ transaction.amount }}</div>
+    <div class="col-xs-2"><a ng-href="" class="default" >View</a></div>
+    <div class="col-xs-2"><a style="cursor: pointer" ng-click="removeTransaction($index)" class="danger">Delete</a></div>
+</div>

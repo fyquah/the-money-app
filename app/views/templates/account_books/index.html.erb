@@ -1,9 +1,5 @@
-<% provide :title , "Account Books" %>
-
-<h1>Account Books owned by you</h1>
-<% if @account_books.count == 0 %>
-  <h2><small>You do not own any account books, yet :)</small></h2>
-<% end %>
-<% @account_books.each do |account_book| %>
-  <li><%= link_to account_book.name , account_book %></li>
-<% end %>
+<h1>Account Books</h1>
+<div ng-repeat="account_book in account_books" class="row">
+    <div class="col-xs-6"><a ng-href="/account-books/{{ account_book.id }}">{{ account_book.name }}</a></div>
+    <div class="col-xs-6" ng-bind="account_book.description"></div>
+</div>

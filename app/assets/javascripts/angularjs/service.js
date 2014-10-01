@@ -50,12 +50,12 @@ app.service("session" , [ "$location" , "User" , "$http" , "alerts" ,function($l
             url: "/sessions/destroy.json"
         }).
         success(function(data , status , config){
-            alert("you have been logged out!");
+            alerts.push("info" , "You have been logged out!");
             current_user = null;
             $location.path("/signin");
         }).
         error(function(data , status , config){
-            alert("error signing out!");
+            alerts.push("danger" , "An unexpected error occured in logging you out!");
         });
     };
 

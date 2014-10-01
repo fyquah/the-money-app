@@ -67,6 +67,14 @@ app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $l
             page.redirectUnlessSignedIn();
         }]
     }).
+    when("/account-books" , {
+        templateUrl: "/templates/account_books/index.html",
+        controller: "accountBooksIndexCtrl"
+    }).
+    when("/account-books/:id" , {
+        templateUrl: "/templates/account_books/show.html",
+        controller: "accountBooksShowCtrl"
+    }).
     otherwise({
         templateUrl: "/templates/404.html"
     })
