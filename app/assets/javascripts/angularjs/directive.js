@@ -20,6 +20,7 @@ app.directive("appSpinner" , function(){
     return {
         restrict: "E",
         template: "<div ng-show='spinner_is_moving' style=\"z-index: 9999 ;background-color : rgba(255 , 255 , 255 , 0.6); width : 100% ; position : fixed ; height : 100%\"><img src=\"/assets/spinner.gif\" ng-style='spinner_style'/></div>",
+        scope: true,
         controller: function(spinner){
             var ori_style = {
                 height: "100px",
@@ -35,14 +36,12 @@ app.directive("appSpinner" , function(){
             };
             return ["spinner" , "$scope" , function(spinner , $scope){
                 $scope.spinner_style = ori_style;
-                $scope.start = function(){
+                $scope.$on("spinner:start" , function(){
                     $scope.spinner_is_moving = true;
-                };
-                $scope.stop = function(){
+                });
+                $scope.$on("spinner:stop" , function(){
                     $scope.spinner_is_moving = false;
-                }
-                spinner.start = $scope.start;
-                spinner.stop = $scope.stop;
+                })
             }];
         }()
     };

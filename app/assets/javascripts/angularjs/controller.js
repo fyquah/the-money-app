@@ -1,8 +1,7 @@
-app.controller("sessionsNewCtrl" , [ "$scope" , "$http" , "session" , "page" , "User" , "spinner" , "alerts" ,
-function($scope , $http , session , page , User , spinner , alerts){
+app.controller("sessionsNewCtrl" , [ "$scope" , "$http" , "session" , "page" , "User" , "spinner" , "alerts" , "$timeout" , 
+function($scope , $http , session , page , User , spinner , alerts , $timeout){
     page.redirectIfSignedIn();
     $scope.user = {};
-
     $scope.submit = function(){
         spinner.start();
         if( !$scope.user.email && !$scope.user.password) {

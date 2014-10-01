@@ -148,4 +148,12 @@ app.service("alerts" , function(){
     };
 });
 
-app.service("spinner" , function(){});
+app.service("spinner" , ["$rootScope", function($rootScope){
+    this.start = function(){
+        $rootScope.$broadcast("spinner:start");
+    }
+
+    this.stop = function(){
+        $rootScope.$broadcast("spinner:stop");
+    }
+}]);
