@@ -10,9 +10,8 @@ Rails.application.routes.draw do
   match "sessions/current" , :to => "sessions#current" , :via => "get"
   match "sessions/clear_all_but_current" , :to => "sessions#clear_all_but_current" , :via => "delete"
   # For account_books
-  resources :account_books , :format => { :default => :json } do
-    resources :accounting_transactions , :format => { :default => :json }
-  end
+  resources :account_books , :format => { :default => :json }
+  resources :accounting_transactions , :format => { :default => :json } , :only => [:update , :show , :destroy]
 
   get ":path" , :to => "templates#index" , :constraints => { :path => /.+/ }
 

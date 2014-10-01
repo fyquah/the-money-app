@@ -8,12 +8,4 @@ class ApplicationController < ActionController::Base
     def self.allow_cors(*methods)
       protect_from_forgery :with => :null_session, :only => methods
     end
-
-    def find_viewable_account_book
-      @account_book = AccountBook.viewable_by(current_user).find(params[:account_book_id])
-    end
-
-    def find_editable_account_book
-      @account_book = AccountBook.editable_by(current_user).find(params[:account_book_id])
-    end
 end
