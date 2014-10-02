@@ -43,9 +43,9 @@ class AccountBooksController < ApplicationController
   end
 
   def create_accounting_transaction
-    @accounting_transaction = AccountBook.accounting_transactions.build(accounting_transaction_params)
+    @accounting_transaction = @account_book.accounting_transactions.build(accounting_transaction_params)
     if @accounting_transaction.save
-      render :stauts => 201 , :json => { :accounting_transactions => accounting_transaction.as_json }
+      render :status => 201 , :json => { :accounting_transaction => @accounting_transaction.as_json }
     else
       render :status => 400 , :json => { :error => @accounting_transaction.errors.full_messages }
     end

@@ -5,7 +5,7 @@ app.service("session" , [ "$location" , "User" , "$http" , "alerts" ,function($l
     this.create = function(obj){
         return $http({
             method: "POST",
-            url: "/sessions/new",
+            url: "/sessions/new.json",
             data: {
                 user: {
                     email: obj.email,
@@ -27,7 +27,7 @@ app.service("session" , [ "$location" , "User" , "$http" , "alerts" ,function($l
                 try {
                     user_response_obj = angular.fromJson($.ajax({
                         type: "GET",
-                        url: "/sessions/current",
+                        url: "/sessions/current.json",
                         async: false
                     }).responseText);
                     console.log(user_response_obj);

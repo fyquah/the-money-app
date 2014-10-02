@@ -12,7 +12,7 @@ class AccountingTransactionsController < ApplicationController
   # to_json
 
   def destroy
-    if accounting_transaction.destroy
+    if @accounting_transaction.destroy
       render :status => 204 , :json => nil
     else
       render :status => 505 , :json => { :erorr => "An unkown error occured!" }

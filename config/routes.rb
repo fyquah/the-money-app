@@ -1,18 +1,20 @@
 Rails.application.routes.draw do
 
+  scope :format => true, :constraints => { :format => 'json' } do
+    resources :users , only: [:create , :update , :show] # get stuff dealed by angularjs
+    resources :sessions , only: [:create]
+    match "sessions/destroy" , :to => "sessions#destroy" , :via => "delete"
+    match "sessions/current" , :to => "sessions#current" , :via => "get"
+    match "sessions/clear_all_but_current" , :to => "sessions#clear_all_but_current" , :via => "delete"
+    # For account_books
+    resources :account_books
+    match "account_books/:id/create_accounting_transaction", :to => "account_books#create_accounting_transaction", :via => "post"
+    resources :accounting_transactions , :only => [:update , :show , :destroy]    
+  end
+
+  # The client parts come here
   root "templates#index"
   get "templates/:path.html" => "templates#template" , :constraints => { :path => /.+/ }
-
-  resources :users , :format => { :default => :json } , only: [:create , :update , :show] # get stuff dealed by angularjs
-  resources :sessions , :format => { :default => :json } , only: [:create]
-
-  match "sessions/destroy" , :to => "sessions#destroy" , :via => "delete"
-  match "sessions/current" , :to => "sessions#current" , :via => "get"
-  match "sessions/clear_all_but_current" , :to => "sessions#clear_all_but_current" , :via => "delete"
-  # For account_books
-  resources :account_books , :format => { :default => :json }
-  resources :accounting_transactions , :format => { :default => :json } , :only => [:update , :show , :destroy]
-
   get ":path" , :to => "templates#index" , :constraints => { :path => /.+/ }
 
   # The priority is based upon order of creation: first created -> highest priority.

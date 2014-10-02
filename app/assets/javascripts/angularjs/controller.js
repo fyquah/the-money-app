@@ -157,6 +157,7 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
         return;
     }
     spinner.start();
+    $scope.edit = {};
     // query ajax data to get all the 
     $http({
         method: "GET",
@@ -184,6 +185,28 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
         }).error(function(data){
             $scope.account_book.accounting_transactions.splice(index , 0 , transaction);
         })
+    };
+
+    $scope.addNewTransaction = function(){
+        var data = {
+            accounting_transaction: {
+                description: $scope.new_accounting_transaction.description,
+                date: $scope.new_accounting_transaction.date
+            }
+        };
+        $http({
+            method: "POST",
+            url: "/account_books/" + $routeParams.id + "/create_accounting_transaction.json",
+            data: data,
+        }).
+        success(function(data, status){
+            $scope.edit.add_new_transaction = false;
+            page.redirect("/accounting-transactions/" + data.accounting_transaction.id);           
+        }).
+        error(function(data, status){
+            $scope.edit.add_new_transaction = false;
+            alerts.push("danger", "error adding new transaction!");
+        })
     }
 }]);
 
@@ -206,7 +229,7 @@ app.controller("accountingTransactionsShowCtrl" , ["$scope", "$http", "alerts", 
             }
             var d = $scope.accounting_transaction.debit_records.reduce(reduce_fnc, 0),
                 c = $scope.accounting_transaction.credit_records.reduce(reduce_fnc, 0);
-            return (d === c ? d : "NOT BALANCED!")
+            return (d === c ? d : ("NOT BALANCED!"));
         };
         spinner.stop();
     }).

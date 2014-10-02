@@ -6,8 +6,6 @@ class AccountingTransaction < ActiveRecord::Base
   accepts_nested_attributes_for :debit_records , :credit_records , :allow_destroy => true
   # validation => must be balance before saving the transaction
   validate :account_records_must_be_able_to_balance
-  validate :at_least_one_debit_record
-  validate :at_least_one_credit_record
   validates :description , :presence => true
   validates :date , :presence => true
 
@@ -35,14 +33,6 @@ class AccountingTransaction < ActiveRecord::Base
     unless balance?
       errors.add(:debit_and_credit_records_amount , "do not balance")
     end
-  end
-
-  def at_least_one_debit_record
-    errors.add(:debit_records , "should have at least one debitted account") unless debit_records.reject(&:marked_for_destruction?).size > 0
-  end
-
-  def at_least_one_credit_record
-    errors.add(:credit_records , "should have at least one creditted account") unless credit_records.reject(&:marked_for_destruction?).size > 0
   end
 
   def description_cannot_be_empty_string
