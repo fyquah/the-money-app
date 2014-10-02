@@ -26,7 +26,7 @@
         <div class='row'>
             <div class='col-sm-6'>
                 <h3>Debited Records</h3>
-                <a ng-click="prompt_record('debit_records')">Add new debit records</a>
+                <a ng-click="prompt_record('debit')">Add new debit records</a>
                 <div class="row" ng-repeat="record in accounting_transaction.debit_records">
                     <div class='col-xs-6'>{{ record.account_name }}</div>
                     <div class='col-xs-3'>{{ record.account_type }}</div>
@@ -36,7 +36,7 @@
             </div>
             <div class='col-sm-6'>
                 <h3>Credited Records</h3>
-                <a ng-click="prompt_record('credit_records')">Add new credit records</a>
+                <a ng-click="prompt_record('credit')">Add new credit records</a>
                 <div class="row" ng-repeat="record in accounting_transaction.credit_records">
                     <div class='col-xs-6'>{{ record.account_name }}</div>
                     <div class='col-xs-3'>{{ record.account_type }}</div>
@@ -45,7 +45,31 @@
                 <br />
             <br />
           </div>
-          <a ng-click="update('records')">Update Records!</a>
         </div>
+        <a ng-click="update('records')">Update Records!</a>
+        <br />
+        <app-pop-up-window ng-show="edit.add_new_record">
+            <p style="text-align : right"><a style="cursor: pointer" ng-click="edit.add_new_record = false">X</a></p>
+            <h2>Add new {{ new_account_record.record_type }} record</h2>
+            <form role="form" ng-submit="addNewRecord()">
+              <div class="form-group">
+                <label for="exampleInputEmail1">Account Name</label>
+                <input class="form-control" ng-model="new_account_record.account_name" placeholder="Enter accout name" />
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1">Type of Account</label>
+                <select class="form-control" ng-model="new_account_record.account_type" placeholder="Enter type of account">
+                    <option value="asset">Asset</option>
+                    <option value="equity">Equity</option>
+                    <option value="liability">Liability</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="exampleInputFile">Amount</label>
+                <input class="form-control" ng-model="new_account_record.amount" placeholder="Enter amount" />
+              </div>
+              <button type="submit" class="btn btn-default">Add</button>
+            </form>
+        </app-pop-up-window>
     </div>
 </div>

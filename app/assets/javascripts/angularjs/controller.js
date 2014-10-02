@@ -253,14 +253,20 @@ app.controller("accountingTransactionsShowCtrl" , ["$scope", "$http", "alerts", 
     };
 
     $scope.prompt_record = function(r_type) {
-        var acc_name = prompt("What is the name of account?");
-        var acc_type = prompt("What is the type of account?");
-        var acc_amount = prompt("What is the amount?");
-        var data;
-        $scope.accounting_transaction[r_type].push({
-            account_name: acc_name,
-            account_type: acc_type,
-            amount: acc_amount
-        });
+        $scope.new_account_record = {
+            record_type: r_type
+        }
+        $scope.edit.add_new_record = true;
+    };
+
+    $scope.addNewRecord = function(){
+        var r_type = $scope.new_account_record.record_type;
+        delete $scope.new_account_record.record_type;
+        if (r_type === "debit") {
+            $scope.accounting_transaction.debit_records.push($scope.new_account_record);
+        } else if (r_type === "credit") {
+            $scope.accounting_transaction.credit_records.push($scope.new_account_record);
+        }
+        $scope.edit.add_new_record = false;
     }
 }])

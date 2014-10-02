@@ -52,4 +52,23 @@ app.directive("appTransactionRecords" , function(){
         restrict: "E",
         template: "<div class='col-xs-6'>{{ record.account_name }}</div><div class='col-xs-3'>{{ record.account_type }}</div><div class='col-xs-3'>{{ record.amount }}</div>"
     };
+});
+
+app.directive("appPopUpWindow" , function(){
+    return {
+        restrict: "E",
+        transclude: true,
+        template: "<div style='width: 500px ; height: 500px ; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) ; webkit-transform: translate(-50%, -50%); moz-transform: translate(-50%, -50%) ; ms-transform: (-50%, -50%); -o-transform: translate(-50%, -50%); background-color: rgba(255, 255, 255, 1);'><div style='padding: 10px' ng-transclude></div></div>",
+        link: function(scope, element, attr){
+            element.css({
+                height: "100%",
+                width: "100%",
+                position: "fixed",
+                top: "0px",
+                left: "0px",
+                "z-index": 9999,
+                "background-color": "rgba(0,0,0,0.7)"
+            })
+        }
+    }
 })
