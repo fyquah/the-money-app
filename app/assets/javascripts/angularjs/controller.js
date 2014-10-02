@@ -176,6 +176,9 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
 
     $scope.removeTransaction = function(index){
         var transaction = $scope.account_book.accounting_transactions[index];
+        if (!confirm("Are you sure you want to delete transaction with " + transaction.description)) {
+            return;
+        }
         $scope.account_book.accounting_transactions.splice(index , 1);
         $http({
             method: "DELETE",
