@@ -1,5 +1,9 @@
-<h1 ng-bind="account_book.name"></h1>
-<p>{{ account_book.description }}</p>
+<div class="page-header">
+    <div class="row">
+        <div class="col-sm-8"><h2>{{ account_book.name }}</h2></div>
+        <div class="col-sm-4"><p style="margin-top: 20px; text-align :right"><a ng-click="edit.rename_account_book = true">Change your account book name</a></p></div>
+    </div>
+</div>
 <a ng-click="new_accounting_transaction = {}; edit.add_new_transaction = true;" class="btn btn-link">Create new transaction</a>
 <h2>Transactions</h2>
 <div ng-show="account_book.accounting_transactions.length === 0">
@@ -15,6 +19,20 @@
     </div>
     <br />
 </div>
+
+<app-pop-up-window ng-show="edit.rename_account_book">
+    <p style="text-align : right"><a style="cursor: pointer" ng-click="edit.rename_account_book = false">X</a></p>
+    <h2>Rename Account Book</h2>
+    <form role="form" ng-submit="renameAccountBook()">
+        <div class="form-group">
+            <label>New Account Name</label>
+            <input class="form-control" ng-model="account_book.name" placeholder="Enter new account name" />
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Rename Account Book" class="btn btn-info form-control" />
+        </div>
+    </form>
+</app-pop-up-window>
 
 <app-pop-up-window ng-show="edit.add_new_transaction">
     <p style="text-align : right"><a style="cursor: pointer" ng-click="edit.add_new_transaction = false">X</a></p>

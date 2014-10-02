@@ -237,6 +237,23 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
             $scope.edit.add_new_transaction = false;
             alerts.push("danger", "error adding new transaction!");
         })
+    };
+
+    $scope.renameAccountBook = function(){
+        $http({
+            method: "PATCH",
+            url: "/account_books/" + $routeParams.id + ".json",
+            data: {
+                account_book: {
+                    name: $scope.account_book.name
+                }
+            }
+        }).success(function(){
+            alerts.push("info", "successfully changed your account book's name");
+        }).error(function(){
+            alerts.push("danger", "an error occured!");
+        });
+        $scope.edit.rename_account_book = false;
     }
 }]);
 
