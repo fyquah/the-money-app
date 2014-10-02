@@ -7,10 +7,11 @@
 </div>
 <div ng-repeat="transaction in account_book.accounting_transactions">
     <div class="row">
-        <div class="col-xs-4">{{ transaction.description }}</div>
-        <div class="col-xs-2"><strong>{{ transaction.amount }}</strong></div>
-        <div class="col-xs-3"><a ng-href="/accounting-transactions/{{ transaction.id }}" class="btn btn-info" >View</a></div>
-        <div class="col-xs-3"><a style="cursor: pointer" ng-click="removeTransaction($index)" class="btn btn-danger">Delete</a></div>
+        <div class="col-xs-3 col-sm-2">{{ transaction.date }}</div>
+        <div class="col-xs-9 col-sm-4">{{ transaction.description }}</div>
+        <div class="col-xs-6 col-sm-2"><strong>{{ transaction.amount }}</strong></div>
+        <div class="col-xs-3 col-sm-2"><a ng-href="/accounting-transactions/{{ transaction.id }}" class="btn btn-info" >View</a></div>
+        <div class="col-xs-3 col-sm-2"><a style="cursor: pointer" ng-click="removeTransaction($index)" class="btn btn-danger">Delete</a></div>
     </div>
     <br />
 </div>

@@ -17,7 +17,7 @@
             <div class="col-xs-2"><a class="btn btn-success" ng-click="edit.accounting_transaction.date = true">Edit</a></div>
         </div>
         <div class="row" ng-show="edit.accounting_transaction.date || edit.accounting_transaction.all">
-            <div class="col-xs-8"><input class="form-control" ng-model="accounting_transaction.date" /></div>
+            <div class="col-xs-8"><input type="date" class="form-control" ng-model="accounting_transaction.date" /></div>
             <div class="col-xs-2"><a class="btn btn-info" ng-click="update('date')">Update</a></div>    
             <div class="col-xs-2"><a class="btn btn-warning" ng-click="edit.accounting_transaction.date = false">Back</a></div>
         </div>
@@ -28,9 +28,12 @@
                 <h3>Debited Records</h3>
                 <a ng-click="prompt_record('debit')">Add new debit records</a>
                 <div class="row" ng-repeat="record in accounting_transaction.debit_records">
-                    <div class='col-xs-6'>{{ record.account_name }}</div>
-                    <div class='col-xs-3'>{{ record.account_type }}</div>
-                    <div class='col-xs-3'>{{ record.amount }}</div>
+                    <div ng-hide="record._destroy">
+                        <div class="col-xs-2"><a style="color : red" ng-click="record._destroy = true">X</a></div>
+                        <div class='col-xs-4'>{{ record.account_name }}</div>
+                        <div class='col-xs-3'>{{ record.account_type }}</div>
+                        <div class='col-xs-3'>{{ record.amount }}</div>
+                    </div>
                 </div>
                 <br />
             </div>
@@ -38,15 +41,21 @@
                 <h3>Credited Records</h3>
                 <a ng-click="prompt_record('credit')">Add new credit records</a>
                 <div class="row" ng-repeat="record in accounting_transaction.credit_records">
-                    <div class='col-xs-6'>{{ record.account_name }}</div>
-                    <div class='col-xs-3'>{{ record.account_type }}</div>
-                    <div class='col-xs-3'>{{ record.amount }}</div>
+                    <div ng-hide="record._destroy">
+                        <div class="col-xs-2"><a style="color : red" ng-click="record._destroy = true">X</a></div>
+                        <div class='col-xs-4'>{{ record.account_name }}</div>
+                        <div class='col-xs-3'>{{ record.account_type }}</div>
+                        <div class='col-xs-3'>{{ record.amount }}</div>
+                    </div>
                 </div>
                 <br />
             <br />
           </div>
         </div>
-        <a ng-click="update('records')">Update Records!</a>
+        <p>Note : You have to mannualy press update records if you make any ammendments to the account records!</p>
+        <p style="text-align : right">
+            <a class="btn btn-info" ng-click="update('records')">Update Records!</a>
+        </p>
         <br />
         <app-pop-up-window ng-show="edit.add_new_record">
             <p style="text-align : right"><a style="cursor: pointer" ng-click="edit.add_new_record = false">X</a></p>

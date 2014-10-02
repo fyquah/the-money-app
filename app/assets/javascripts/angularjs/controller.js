@@ -203,7 +203,7 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
 
     $scope.removeTransaction = function(index){
         var transaction = $scope.account_book.accounting_transactions[index];
-        if (!confirm("Are you sure you want to delete transaction with " + transaction.description)) {
+        if (!confirm("Are you sure you want to delete transaction described by " + transaction.description + " which occured on the " + transaction.date )) {
             return;
         }
         $scope.account_book.accounting_transactions.splice(index , 1);
@@ -254,7 +254,7 @@ app.controller("accountingTransactionsShowCtrl" , ["$scope", "$http", "alerts", 
         $scope.accounting_transaction = data.accounting_transaction;
         $scope.accounting_transaction.amount = function(){
             var reduce_fnc = function(memo, record, index){
-                var x = (record.amount || 0);
+                var x = record._destroy ? 0 : (record.amount || 0);
                 return memo + Number(x);
             }
             var d = $scope.accounting_transaction.debit_records.reduce(reduce_fnc, 0),
@@ -321,5 +321,9 @@ app.controller("accountingTransactionsShowCtrl" , ["$scope", "$http", "alerts", 
             $scope.accounting_transaction.credit_records.push($scope.new_account_record);
         }
         $scope.edit.add_new_record = false;
+    };
+
+    $scope.removeRecord = function(r_type, index){
+
     }
 }])
