@@ -1,2 +1,12 @@
-<% provide :title , "Create New Account Book" %>
-<%= render :partial => "form" %>
+<div class="page-header">
+    <h2>Create a new account book!</h2>
+</div>
+<form role="form" ng-submit="submit()">
+  <div class="form-group">
+    <label for="accountBookName">Account Book Name</label>
+    <input class="form-control" ng-model="new_account_book.name" placeholder="Enter account book's name" />
+  </div>
+  <div class="form-group">
+    <button type="submit" class="btn btn-default">Create Account Book!</button>
+  </div>
+</form>

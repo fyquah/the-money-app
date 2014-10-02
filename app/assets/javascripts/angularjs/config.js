@@ -71,6 +71,10 @@ app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $l
         templateUrl: "/templates/account_books/index.html",
         controller: "accountBooksIndexCtrl"
     }).
+    when("/account-books/new" , {
+        templateUrl: "/templates/account_books/new.html",
+        controller: "accountBooksNewCtrl"
+    }).
     when("/account-books/:id" , {
         templateUrl: "/templates/account_books/show.html",
         controller: "accountBooksShowCtrl"

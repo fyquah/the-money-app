@@ -2,6 +2,9 @@
 <p>{{ account_book.description }}</p>
 <a ng-click="new_accounting_transaction = {}; edit.add_new_transaction = true;" class="btn btn-link">Create new transaction</a>
 <h2>Transactions</h2>
+<div ng-show="account_book.accounting_transactions.length === 0">
+    Looks like you are still have to create any accounting transactions <strong>:(</strong>, go on and create one!
+</div>
 <div ng-repeat="transaction in account_book.accounting_transactions">
     <div class="row">
         <div class="col-xs-4">{{ transaction.description }}</div>

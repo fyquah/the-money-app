@@ -1,5 +1,5 @@
 class AccountBooksController < ApplicationController
-  before_action :find_account_book, :except => [:index]
+  before_action :find_account_book, :except => [:index, :create]
   before_action :signed_in_users_only
   before_action :account_book_must_be_editable , :only => [:update , :create_accounting_transaction]
   before_action :account_book_must_be_viewable , :only => [:show]

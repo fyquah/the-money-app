@@ -132,11 +132,38 @@ app.controller("menuBarCtrl" , [ "session" , "$scope" , function(session , $scop
     $scope.session = session;
 }]);
 
+app.controller("accountBooksNewCtrl" , ["alerts" , "page" , "$http", "$scope" , "spinner" , function(alerts , page, $http, $scope, spinner){
+    if(page.redirectUnlessSignedIn()){
+        return;
+    }
+
+    $scope.new_account_book = {};
+
+    $scope.submit = function(){
+        var data = {
+            account_book: {
+                name: $scope.new_account_book.name
+            }
+        };
+        $http({
+            method: "POST",
+            url: "/account_books.json",
+            data: data
+        }).
+        success(function(data){
+            // console.log(da)
+            page.redirect("/account-books/" + data.account_book.id)
+        }).
+        error(function(data, status){
+            console.log(data);
+        })
+    }
+}]);
+
 app.controller("accountBooksIndexCtrl" , ["alerts" , "page" , "$http", "$scope" , "spinner" , function(alerts , page, $http, $scope, spinner){
     if(page.redirectUnlessSignedIn()){
         return;
     }
-    spinner.start();
     // query ajax data to get all the 
     $http({
         method: "GET",
