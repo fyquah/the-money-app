@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="theMoneyApp">
 <head>
   <title><%= full_title yield(:title) %></title>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
@@ -8,17 +8,17 @@
 </head>
 <body>
   <%= render "shared/header_bar" %>
+  <app-spinner></app-spinner>
+  <div class="container" ng-controller="alertsCtrl">
+    <div ng-repeat="alert in all">
+        <div class="alert alert-{{ alert.type }}" ng-click="remove($index)">
+          {{ alert.msg }}
+        </div>
+    </div>
+  </div>
   <div class='container'>
-    <% flash.each do |hash , value| %>
-      <% if hash.downcase.to_sym == :success %>
-        <div class='alert alert-success'><%= value %></div>
-      <% elsif hash.downcase.to_sym == :notice %>
-        <div class='alert alert-info'><%= value %></div>
-      <% elsif hash.downcase.to_sym == :error %>
-        <div class='alert alert-danger'><%= value %></div>
-      <% end %>
-    <% end %>
-    <%= yield %>
+    <ng-view></ng-view>
+    <% # Forget about erb rendering :) %>
   </div>
 </body>
 </html>

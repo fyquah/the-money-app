@@ -15,11 +15,13 @@ class UsersController < ApplicationController
 	def create
 		@user = User.new user_params
 		if @user.save
-			flash[:success] = "Registration successful!" 
+		# 	flash[:success] = "Registration successful!" 
       sign_in @user
-			redirect_to "/"
+			render :json => { :user => @user } , :status => 201
+      # redirect_to "/"
 		else
-			render 'new'
+      render :json => { :error => @user.errors.full_messages } , :status => 400
+			# render 'new'
 		end
 	end
 
@@ -30,10 +32,12 @@ class UsersController < ApplicationController
 	def update
     @user = User.find params[:id]
     if @user.update_attributes user_params
-  		flash[:success] = "Updated your credentials!" 
-      redirect_to edit_user_path(@user)
+  		# flash[:success] = "Updated your credentials!" 
+      # redirect_to edit_user_path(@user)
+      render :json => { :user => @user } , :status => 203
     else
-      render 'edit'
+      render :json => { :error => @user.errors.full_messages } , :status => 400
+      # render 'edit'
 	   end
   end
 

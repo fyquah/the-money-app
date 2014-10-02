@@ -1,0 +1,5 @@
+<h1>Account Books</h1>
+<div ng-repeat="account_book in account_books" class="row">
+    <div class="col-xs-6"><a ng-href="/account-books/{{ account_book.id }}">{{ account_book.name }}</a></div>
+    <div class="col-xs-6" ng-bind="account_book.description"></div>
+</div>

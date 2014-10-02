@@ -1,6 +1,0 @@
-<h1>This is the show page for account books!</h1>
-<p><%= @account_book.name %></p>
-<p><%= link_to "View Account Book transactions" , { :controller => "accounting_transactions" , :action => "index" , :account_book_id => @account_book.id } %></p>
-<% if @account_book.can_be_edited_by? current_user %>
-  <p><%= link_to "edit account book" , edit_account_book_path(@account_book) %></p>
-<% end %>

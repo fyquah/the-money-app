@@ -1,0 +1,27 @@
+<div class='row'>
+	<div class='col-xs-12 col-sm-offset-2 col-sm-8'>
+		<h1>Update Your Credentials</h1>
+		<form ng-submit="submit()">
+			<div class='form-group'>
+				<%= label_tag :name , "Name" %>
+				<%= text_field_tag :name , nil , :class => "form-control" , "ng-model" => "user.name" %>
+			</div>
+			<div class='form-group'>
+				<%= label_tag :email , "Email" %>
+				<%= text_field_tag :email , nil , :class => "form-control" , "ng-model" => "user.email"%>
+			</div>
+			<div class='form-group'>
+				<%= label_tag :password , "Password" %>
+				<%= password_field_tag :password , nil , :type => "email" , :class => "form-control" , "ng-model" => "user.password" %>
+			</div>
+			<div class='form-group'>
+				<%= label_tag :password_confirmation ,'Password Confirmation' %>
+				<%= password_field_tag :password_confirmation , nil , :class => "form-control" , "ng-model" => "user.password_confirmation" %>
+			</div>
+			<div class='form-group'>
+				<input type="submit" value="Update!" class="btn btn-default" />
+		        <!-- <button class="btn btn-default" ng-click="submit()">Sign In</button> -->
+			</div>
+		</form>
+	</div>
+</div>

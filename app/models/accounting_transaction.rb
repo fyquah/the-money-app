@@ -6,9 +6,8 @@ class AccountingTransaction < ActiveRecord::Base
   accepts_nested_attributes_for :debit_records , :credit_records , :allow_destroy => true
   # validation => must be balance before saving the transaction
   validate :account_records_must_be_able_to_balance
-  validate :at_least_one_debit_record
-  validate :at_least_one_credit_record
-  validate :description , :presence => true
+  validates :description , :presence => true
+  validates :date , :presence => true
 
   scope :contains_records_of , ->(account_name) do
     where(:id => AccountingRecord.where(:account_name => account_name.downcase).select(:accounting_transaction_id))
@@ -20,18 +19,20 @@ class AccountingTransaction < ActiveRecord::Base
     credit_records.each { |r| r.account_book ||= self.account_book }
   end
 
+  before_create do
+    self.date ||= Time.now.to_date
+  end
+
+  def amount
+    if balance?
+      debit_records.reject(&:marked_for_destruction?).inject(0 , &self.class.records_sum)
+    end
+  end
+
   def account_records_must_be_able_to_balance
     unless balance?
       errors.add(:debit_and_credit_records_amount , "do not balance")
     end
-  end
-
-  def at_least_one_debit_record
-    errors.add(:debit_records , "should have at least one debitted account") unless debit_records.reject(&:marked_for_destruction?).size > 0
-  end
-
-  def at_least_one_credit_record
-    errors.add(:credit_records , "should have at least one creditted account") unless credit_records.reject(&:marked_for_destruction?).size > 0
   end
 
   def description_cannot_be_empty_string

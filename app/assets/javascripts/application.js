@@ -12,13 +12,11 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require moment
+//= require angular
+//= require angular-route
+//= require angular-resource
 //= require turbolinks
 //= require twitter/bootstrap
-//= require_tree 
-//= require mustache
-//= require jquery.mustache
-//= require moment
-//= require bootstrap-datetimepicker
-$(document).ready(function(){
-  $(".date-time-picker").datetimepicker()
-})
+//= require ./main.js
+//= require_tree . 

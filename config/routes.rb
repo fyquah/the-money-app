@@ -1,20 +1,21 @@
 Rails.application.routes.draw do
-  get 'transactions/new'
 
-  get 'transactions/create'
-
-  root "static_pages#index"
-
-  match "signin" , :to => "sessions#new" , :via => "get"
-  match "signout" , :to => "sessions#destroy" , :via => "delete"
-  match "about" , :to => "static_pages#about" , :via => "get"
-  resources :users , only: [:new , :edit , :create , :update , :show]
-  resources :sessions , only: [:create , :destroy]
-  match "clear_sessions_except_current" , :to => "sessions#clear_sessions_except_current" , :via => "delete"
-  # For account_books
-  resources :account_books do
-    resources :accounting_transactions
+  scope :format => true, :constraints => { :format => 'json' } do
+    resources :users , only: [:create , :update , :show] # get stuff dealed by angularjs
+    resources :sessions , only: [:create]
+    match "sessions/destroy" , :to => "sessions#destroy" , :via => "delete"
+    match "sessions/current" , :to => "sessions#current" , :via => "get"
+    match "sessions/clear_all_but_current" , :to => "sessions#clear_all_but_current" , :via => "delete"
+    # For account_books
+    resources :account_books
+    match "account_books/:id/create_accounting_transaction", :to => "account_books#create_accounting_transaction", :via => "post"
+    resources :accounting_transactions , :only => [:update , :show , :destroy]    
   end
+
+  # The client parts come here
+  root "templates#index"
+  get "templates/:path.html" => "templates#template" , :constraints => { :path => /.+/ }
+  get ":path" , :to => "templates#index" , :constraints => { :path => /.+/ }
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

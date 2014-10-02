@@ -11,7 +11,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140819065451) do
+ActiveRecord::Schema.define(version: 20140821080749) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -46,12 +49,14 @@ ActiveRecord::Schema.define(version: 20140819065451) do
     t.datetime "updated_at"
     t.integer  "account_book_id"
     t.integer  "author_id"
+    t.date     "date"
   end
 
   add_index "accounting_transactions", ["account_book_id", "created_at"], name: "index_transactions_on_account_book_and_created", using: :btree
   add_index "accounting_transactions", ["account_book_id"], name: "index_accounting_transactions_on_account_book_id", using: :btree
   add_index "accounting_transactions", ["author_id"], name: "index_accounting_transactions_on_author_id", using: :btree
   add_index "accounting_transactions", ["created_at"], name: "index_accounting_transactions_on_created_at", using: :btree
+  add_index "accounting_transactions", ["date"], name: "index_accounting_transactions_on_date", using: :btree
   add_index "accounting_transactions", ["description"], name: "index_accounting_transactions_on_description", using: :btree
 
   create_table "sessions", force: true do |t|
