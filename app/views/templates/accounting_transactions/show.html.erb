@@ -1,35 +1,51 @@
 <div class='row'>
-  <div class='col-xs-12 col-sm-offset-2 col-sm-8'>
-    <h2>Accounting Transaction in <%=link_to_account_book %></h2>
-    <p><strong>Description</strong></p>
-    <p><%= @accounting_transaction.description %></p>
-    <p><strong>Date of transaction</strong></p>
-    <p><%= @accounting_transaction.date.strftime("%Y %B %d") %></p>
-    <div class='row'>
-      <div class='col-sm-6'>
-
-        <br />
-      </div>
-      <div class='col-sm-6'>
-
-        <br />
-      </div>
+    <div class='col-xs-12 col-sm-offset-2 col-sm-8'>
+        <p style="text-align : right"><a ng-href="/account-books/{{ accounting_transaction.account_book_id }}">Back to Account Book</a></p>
+        <h3>Description</h3>
+        <div class="row" ng-hide="edit.accounting_transaction.description || edit.accounting_transaction.all">
+            <div class="col-xs-10">{{ accounting_transaction.description }}</div>
+            <div class="col-xs-2"><a class="btn btn-success" ng-click="edit.accounting_transaction.description = true">Edit</a></div>
+        </div>
+        <div class="row" ng-show="edit.accounting_transaction.description || edit.accounting_transaction.all">
+            <div class="col-xs-8"><input class="form-control" ng-model="accounting_transaction.description" /></div>
+            <div class="col-xs-2"><a class="btn btn-info" ng-click="update('description')">Update</a></div>    
+            <div class="col-xs-2"><a class="btn btn-warning" ng-click="edit.accounting_transaction.description = false">Back</a></div>
+        </div>
+        <h3>Date of Transaction</h3>
+        <div class="row" ng-hide="edit.accounting_transaction.date || edit.accounting_transaction.all">
+            <div class="col-xs-10">{{ accounting_transaction.date }}</div>
+            <div class="col-xs-2"><a class="btn btn-success" ng-click="edit.accounting_transaction.date = true">Edit</a></div>
+        </div>
+        <div class="row" ng-show="edit.accounting_transaction.date || edit.accounting_transaction.all">
+            <div class="col-xs-8"><input class="form-control" ng-model="accounting_transaction.date" /></div>
+            <div class="col-xs-2"><a class="btn btn-info" ng-click="update('date')">Update</a></div>    
+            <div class="col-xs-2"><a class="btn btn-warning" ng-click="edit.accounting_transaction.date = false">Back</a></div>
+        </div>
+        <h3>Amount</h3>
+        <p>{{ accounting_transaction.amount ? accounting_transaction.amount() : 0 }}</p>
+        <div class='row'>
+            <div class='col-sm-6'>
+                <h3>Debited Records</h3>
+                <a ng-click="prompt_record('debit_records')">Add new debit records</a>
+                <div class="row" ng-repeat="record in accounting_transaction.debit_records">
+                    <div class='col-xs-6'>{{ record.account_name }}</div>
+                    <div class='col-xs-3'>{{ record.account_type }}</div>
+                    <div class='col-xs-3'>{{ record.amount }}</div>
+                </div>
+                <br />
+            </div>
+            <div class='col-sm-6'>
+                <h3>Credited Records</h3>
+                <a ng-click="prompt_record('credit_records')">Add new credit records</a>
+                <div class="row" ng-repeat="record in accounting_transaction.credit_records">
+                    <div class='col-xs-6'>{{ record.account_name }}</div>
+                    <div class='col-xs-3'>{{ record.account_type }}</div>
+                    <div class='col-xs-3'>{{ record.amount }}</div>
+                </div>
+                <br />
+            <br />
+          </div>
+          <a ng-click="update('records')">Update Records!</a>
+        </div>
     </div>
-    <% if @account_book.can_be_edited_by?(current_user) %>
-      <div class='row'>
-        <div class='col-xs-12' style='text-align : left'><span style='margin-right : 10px'><%= link_to "Edit" , {
-            :controller => "accounting_transactions", 
-            :action => "edit" , 
-            :account_book_id => @account_book.id,
-            :id => @accounting_transaction.id
-          } , :class => "btn btn-primary" %></span>
-        <span><%= link_to "Delete" , {
-            :controller => "accounting_transactions", 
-            :action => "destroy" , 
-            :account_book_id => @account_book.id,
-            :id => @accounting_transaction.id
-          } , :class => "btn btn-danger" , :data => { :confirm => "Are you sure you want to delete this transaction?" } , :method => "delete" %></span></div>
-      </div>
-  <% end %> 
-  </div>
 </div>

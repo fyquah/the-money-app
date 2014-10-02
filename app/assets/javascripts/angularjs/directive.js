@@ -46,3 +46,10 @@ app.directive("appSpinner" , function(){
         }()
     };
 });
+
+app.directive("appTransactionRecords" , function(){
+    return {
+        restrict: "E",
+        template: "<div class='col-xs-6'>{{ record.account_name }}</div><div class='col-xs-3'>{{ record.account_type }}</div><div class='col-xs-3'>{{ record.amount }}</div>"
+    };
+})

@@ -1,7 +1,5 @@
 class AccountBooksController < ApplicationController
-  before_action do
-    @account_book = AccountBook.find(params[:id])
-  end
+  before_action :find_account_book, :except => [:index]
   before_action :signed_in_users_only
   before_action :account_book_must_be_editable , :only => [:update , :create_accounting_transaction]
   before_action :account_book_must_be_viewable , :only => [:show]
@@ -10,15 +8,15 @@ class AccountBooksController < ApplicationController
   def index
     @account_books = AccountBook.viewable_by(current_user)
     render(:json => {
-      :account_books => current_user.account_books.to_json,
-      :viewable_account_books => current_user.account_books.to_json,
-      :editable_account_books => current_user.editable_account_books.to_json
+      :account_books => current_user.account_books.as_json,
+      :viewable_account_books => current_user.account_books.as_json,
+      :editable_account_books => current_user.editable_account_books.as_json
     })
   end
   
   def show # Fancy functions should come her
     render(:json => {
-      :account_book => @account_book.to_json(:include => {
+      :account_book => @account_book.as_json(:include => {
           :accounting_transactions => { :methods => [:amount] }
       })
     })
@@ -27,7 +25,7 @@ class AccountBooksController < ApplicationController
   def create
     @account_book = current_user.account_books.build(account_book_params)
     if @account_book.save
-      render :status => 201 , :json => { :account_book => @account_book.to_json }
+      render :status => 201 , :json => { :account_book => @account_book.as_json }
     else
       render :status => 400 , :json => { :error => @account_book.errors.full_messages }
     end
@@ -35,7 +33,7 @@ class AccountBooksController < ApplicationController
 
   def update 
     if @account_book.update_attributes(account_book_params)
-      render :status => 200 , :json => { :account_book => @account_book.to_json }
+      render :status => 200 , :json => { :account_book => @account_book.as_json }
     else
       render :status => 400 , :json => { :error => @account_book.errors.full_messages }
     end
@@ -47,13 +45,17 @@ class AccountBooksController < ApplicationController
   def create_accounting_transaction
     @accounting_transaction = AccountBook.accounting_transactions.build(accounting_transaction_params)
     if @accounting_transaction.save
-      render :stauts => 201 , :json => { :accounting_transactions => accounting_transaction.to_json }
+      render :stauts => 201 , :json => { :accounting_transactions => accounting_transaction.as_json }
     else
       render :status => 400 , :json => { :error => @accounting_transaction.errors.full_messages }
     end
   end
 
   private
+    def find_account_book
+      @account_book = AccountBook.find(params[:id])
+    end
+
     def account_book_must_be_editable
       unless @account_book.can_be_viewed_by? current_user
         render :json => { :error => "You are not authorized to peform this action" } , :status => 401

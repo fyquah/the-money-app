@@ -3,7 +3,7 @@
 <h2>Transactions</h2>
 <div class="row" ng-repeat="transaction in account_book.accounting_transactions">
     <div class="col-xs-6">{{ transaction.description }}</div>
-    <div class="col-xs-2">{{ transaction.amount }}</div>
-    <div class="col-xs-2"><a ng-href="" class="default" >View</a></div>
-    <div class="col-xs-2"><a style="cursor: pointer" ng-click="removeTransaction($index)" class="danger">Delete</a></div>
+    <div class="col-xs-2"><strong>{{ transaction.amount }}</strong></div>
+    <div class="col-xs-2"><a ng-href="/accounting-transactions/{{ transaction.id }}" class="btn btn-info" >View</a></div>
+    <div class="col-xs-2"><a style="cursor: pointer" ng-click="removeTransaction($index)" class="btn btn-danger">Delete</a></div>
 </div>

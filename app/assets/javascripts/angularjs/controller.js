@@ -143,7 +143,7 @@ app.controller("accountBooksIndexCtrl" , ["alerts" , "page" , "$http", "$scope" 
         url: "/account_books.json"
     }).
     success(function(data){
-        $scope.account_books = angular.fromJson(data.account_books);
+        $scope.account_books = data.account_books;
         spinner.stop();
     }).
     error(function(data , status){
@@ -164,7 +164,7 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
     }).
     success(function(data){
         var i , all_transactions;
-        $scope.account_book = angular.fromJson(data.account_book);
+        $scope.account_book = data.account_book;
         console.log(data);
         spinner.stop();
     }).
@@ -186,3 +186,81 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
         })
     }
 }]);
+
+app.controller("accountingTransactionsShowCtrl" , ["$scope", "$http", "alerts", "session","$routeParams", "page", "spinner", function($scope, $http, alerts, session, $routeParams, page, spinner){
+    page.redirectUnlessSignedIn();
+    spinner.start();
+
+    $http({
+        method: "GET",
+        url: "/accounting_transactions/" + $routeParams.id + ".json"
+    }).
+    success(function(data){
+        // data = data.accounting_transaction;
+        console.log(data);
+        $scope.accounting_transaction = data.accounting_transaction;
+        $scope.accounting_transaction.amount = function(){
+            var reduce_fnc = function(memo, record, index){
+                var x = (record.amount || 0);
+                return memo + Number(x);
+            }
+            var d = $scope.accounting_transaction.debit_records.reduce(reduce_fnc, 0),
+                c = $scope.accounting_transaction.credit_records.reduce(reduce_fnc, 0);
+            return (d === c ? d : "NOT BALANCED!")
+        };
+        spinner.stop();
+    }).
+    error(function(data, status){
+        alerts.push("danger", "An unkown error occured!");
+        spinner.stop();
+    });
+
+    $scope.edit = {
+        accounting_transaction: {}
+    };
+
+    $scope.update = function(component){
+        spinner.start();
+        var save_promise, data = {};
+        if (component === "records") {
+            ["debit_records" , "credit_records"].forEach(function(prop){
+                data[prop + "_attributes"] = $scope.accounting_transaction[prop];
+            });
+        }
+        else if (component) { // update one component
+            data[component] = $scope.accounting_transaction[component];
+        } else { // update everything
+            for (var prop in $scope.accounting_transaction) {
+                data[prop] = $scope.accounting_transaction[prop];
+            }
+            console.log(data);
+        }
+        save_promise = $http({
+            method: "PATCH",
+            url: "/accounting_transactions/" + $routeParams.id + ".json",
+            data: {
+                accounting_transaction: data
+            }
+        }).
+        success(function(data){
+            alerts.push("success", "updated your " + component);
+            spinner.stop();
+        }).
+        error(function(data){
+            alerts.push("danger", "Error updating " + component);
+            spinner.stop();
+        });
+    };
+
+    $scope.prompt_record = function(r_type) {
+        var acc_name = prompt("What is the name of account?");
+        var acc_type = prompt("What is the type of account?");
+        var acc_amount = prompt("What is the amount?");
+        var data;
+        $scope.accounting_transaction[r_type].push({
+            account_name: acc_name,
+            account_type: acc_type,
+            amount: acc_amount
+        });
+    }
+}])

@@ -7,8 +7,9 @@ class AccountingTransactionsController < ApplicationController
   before_action :account_book_must_be_viewable , :only => [:show]
 
   def show
-    render :json => { :accounting_transactions => @accounting_transaction.to_json(:methods => [:amount]) }
+    render :json => { :accounting_transaction => @accounting_transaction.as_json(:methods => [:amount , :debit_records, :credit_records]) }
   end
+  # to_json
 
   def destroy
     if accounting_transaction.destroy
@@ -20,7 +21,7 @@ class AccountingTransactionsController < ApplicationController
 
   def update
     if @accounting_transaction.update_attributes(accounting_transaction_params)
-      render :json => { :accounting_transaction => @accounting_transaction } , :status => 201
+      render :json => { :accounting_transaction => @accounting_transaction.as_json(:methods => [:amount, :debit_records , :credit_records]) } , :status => 201
     else
       render :json => { :error => @accounting_transaction.errors.full_messages } , :status => 404
     end
