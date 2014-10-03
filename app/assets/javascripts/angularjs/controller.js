@@ -254,6 +254,70 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
             alerts.push("danger", "an error occured!");
         });
         $scope.edit.rename_account_book = false;
+    };
+
+    $scope.addNewExpenditure = function() {
+        var data = {
+            accounting_transaction: {
+                description: $scope.new_expenditure.description,
+                date: $scope.new_expenditure.date,
+                credit_records_attributes: [{
+                    account_name: "cash",
+                    account_type: "asset",
+                    amount: $scope.new_expenditure.amount
+                }],
+                debit_records_attributes: [{
+                    account_name: $scope.new_expenditure.account_name,
+                    account_type: "equity",
+                    amount: $scope.new_expenditure.amount
+                }]
+            }
+        };
+        $http({
+            method: "POST",
+            url: "/account_books/" + $routeParams.id + "/create_accounting_transaction.json",
+            data: data,
+        }).
+        success(function(data, status){
+            $scope.edit.add_new_transaction = false;
+            page.redirect("/accounting-transactions/" + data.accounting_transaction.id);           
+        }).
+        error(function(data, status){
+            $scope.edit.add_new_transaction = false;
+            alerts.push("danger", "error adding new transaction!");
+        })
+    };
+
+    $scope.addNewIncome = function() {
+        var data = {
+            accounting_transaction: {
+                description: $scope.new_income.description,
+                date: $scope.new_income.date,
+                debit_records_attributes: [{
+                    account_name: "cash",
+                    account_type: "asset",
+                    amount: $scope.new_income.amount
+                }],
+                credit_records_attributes: [{
+                    account_name: $scope.new_income.account_name,
+                    account_type: "equity",
+                    amount: $scope.new_income.amount
+                }]
+            }
+        };
+        $http({
+            method: "POST",
+            url: "/account_books/" + $routeParams.id + "/create_accounting_transaction.json",
+            data: data,
+        }).
+        success(function(data, status){
+            $scope.edit.add_new_transaction = false;
+            page.redirect("/accounting-transactions/" + data.accounting_transaction.id);           
+        }).
+        error(function(data, status){
+            $scope.edit.add_new_transaction = false;
+            alerts.push("danger", "error adding new transaction!");
+        })  
     }
 }]);
 

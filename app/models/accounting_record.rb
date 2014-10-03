@@ -4,7 +4,7 @@ class AccountingRecord < ActiveRecord::Base
 
   validates :account_type , :presence => true , :inclusion => ["liability" , "asset" , "equity"]
   validates :record_type , :presence => true , :inclusion => ["debit" , "credit"]
-  validates :amount, :presence => true , numericality: true
+  validates :amount, :presence => true , :numericality => true
   validates :account_name , :presence => true
 
   before_save do
