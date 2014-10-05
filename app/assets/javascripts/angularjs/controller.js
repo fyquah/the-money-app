@@ -335,6 +335,19 @@ app.controller('accountBooksRecordsCtrl', ['$scope', "$http", "alerts", "session
     }).success(function(data){
         spinner.stop();
         $scope.accounts = data.account_book_records;
+        if ($routeParams.account) {
+            $scope.accounts = {};
+            $scope.accounts[unescape($routeParams.account)] = data.account_book_records[unescape($routeParams.account)];
+            $scope.display_back_link = true;
+        }
+
+        for(var acc_name in $scope.accounts){
+            var sum_fnc = function(memo, record, index){
+                return memo + (record.amount || 0);
+            }
+            $scope.accounts[acc_name].debit_total = $scope.accounts[acc_name].debit_records.reduce(sum_fnc, 0);
+            $scope.accounts[acc_name].credit_total = $scope.accounts[acc_name].credit_records.reduce(sum_fnc, 0);
+        }
         console.log(data);
     }).error(function(data){
         spinner.stop();

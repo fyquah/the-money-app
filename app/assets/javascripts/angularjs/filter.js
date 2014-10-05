@@ -15,6 +15,6 @@ app.filter("accountsRecordSum", function(){
 app.filter("limitWordsLength", function(){
     return function(str, len){
         var s = str.substr(Number(len) +1, -1);
-        return str.substr(0, len) + s.substr(0, s.indexOf(" ")) + "...";
+        return str.substr(0, len) + s.substr(0, s.indexOf(" ")) + (str.length > len ? "..." : "");
     };
 });

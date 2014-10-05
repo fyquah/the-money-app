@@ -7,7 +7,7 @@
             <div class="col-xs-2"><a class="btn btn-success" ng-click="edit.accounting_transaction.description = true">Edit</a></div>
         </div>
         <div class="row" ng-show="edit.accounting_transaction.description || edit.accounting_transaction.all">
-            <div class="col-xs-8"><input class="form-control" ng-model="accounting_transaction.description" /></div>
+            <div class="col-xs-8"><textarea class="form-control" ng-model="accounting_transaction.description" rows="2"></textarea></div>
             <div class="col-xs-2"><a class="btn btn-info" ng-click="update('description')">Update</a></div>    
             <div class="col-xs-2"><a class="btn btn-warning" ng-click="edit.accounting_transaction.description = false">Back</a></div>
         </div>

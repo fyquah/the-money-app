@@ -46,6 +46,7 @@ class AccountBook < ActiveRecord::Base
   def accounts_based_records
     all_records.inject({}) do |memo, record|
       memo[record.account_name.to_sym] ||= Hash[:debit_records, [], :credit_records, []]
+      memo[record.account_name.to_sym][:account_type] ||= record.account_type
       if record.record_type == "debit"
         memo[record.account_name.to_sym][:debit_records] << record
       elsif record.record_type == "credit"
