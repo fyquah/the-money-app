@@ -6,11 +6,20 @@ class AccountingRecord < ActiveRecord::Base
   validates :record_type , :presence => true , :inclusion => ["debit" , "credit"]
   validates :amount, :presence => true , :numericality => true
   validates :account_name , :presence => true
+  validate :account_type_has_to_be_consistent
 
   before_save do
     self.account_name.downcase!
     self.account_name.strip!
     self.account_type.downcase!
+  end
+
+  def account_type_has_to_be_consistent
+    a = AccountingRecord.where(:account_name => account_name, :account_book => account_book)
+    return unless a.length != 0
+    if a[0].account_type != account_type
+      errors.add(:record_type, "cannot be different from previously declared! (Previously declared #{account_name} as a/an #{a[0].account_type} account)")
+    end
   end
 
   def account_type= arg
