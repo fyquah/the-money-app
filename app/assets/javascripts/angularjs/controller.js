@@ -321,6 +321,27 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
     }
 }]);
 
+app.controller('accountBooksRecordsCtrl', ['$scope', "$http", "alerts", "session", "$routeParams", "page", "spinner", function($scope, $http, alerts, session, $routeParams, page, spinner){
+    if(page.redirectUnlessSignedIn()){
+        return;
+    }
+
+    spinner.start();
+    $scope.accounts = {};
+    $scope.account_book_id = $routeParams.id;
+    $http({
+        method: "GET",
+        url: "/account_books/" + $routeParams.id + "/records.json"
+    }).success(function(data){
+        spinner.stop();
+        $scope.accounts = data.account_book_records;
+        console.log(data);
+    }).error(function(data){
+        spinner.stop();
+        console.log(data);
+    })
+}])
+
 app.controller("accountingTransactionsShowCtrl" , ["$scope", "$http", "alerts", "session","$routeParams", "page", "spinner", function($scope, $http, alerts, session, $routeParams, page, spinner){
     page.redirectUnlessSignedIn();
     spinner.start();

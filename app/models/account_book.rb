@@ -40,9 +40,20 @@ class AccountBook < ActiveRecord::Base
   end
 
   def all_records
-    asset_records + liability_records + equity_records
+    (asset_records + liability_records + equity_records)
   end
 
+  def accounts_based_records
+    all_records.inject({}) do |memo, record|
+      memo[record.account_name.to_sym] ||= Hash[:debit_records, [], :credit_records, []]
+      if record.record_type == "debit"
+        memo[record.account_name.to_sym][:debit_records] << record
+      elsif record.record_type == "credit"
+        memo[record.account_name.to_sym][:credit_records] << record
+      end
+      memo
+    end
+  end
   # General accounting methods
   def accounts_are_balance?
     accounts_amount.inject(0) { |o , (_ , v)| o += v } == 0

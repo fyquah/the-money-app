@@ -5,7 +5,7 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-xs-4 col-sm-offset-3 col-sm-2">
+    <div class="col-xs-4 col-sm-offset-2 col-sm-2">
         <a ng-click="new_accounting_transaction = {}; edit.add_new_transaction = true;">Create new transaction</a>
     </div>
     <div class="col-xs-4 col-sm-2">
@@ -13,6 +13,9 @@
     </div>
     <div class="col-xs-4 col-sm-2">
         <a ng-click="new_income = {}; edit.add_new_income = true;">Create new income</a>        
+    </div>
+    <div class="col-xs-4 col-sm-2">
+        <a ng-href="/account-books/{{ account_book.id }}/records">View Account Records Summary</a>        
     </div>
 </div>
 

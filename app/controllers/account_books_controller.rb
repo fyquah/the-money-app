@@ -2,7 +2,7 @@ class AccountBooksController < ApplicationController
   before_action :find_account_book, :except => [:index, :create]
   before_action :signed_in_users_only
   before_action :account_book_must_be_editable , :only => [:update , :create_accounting_transaction]
-  before_action :account_book_must_be_viewable , :only => [:show]
+  before_action :account_book_must_be_viewable , :only => [:show, :records]
   before_action :account_book_must_be_owned , :only => [:destroy]
 
   def index
@@ -49,6 +49,10 @@ class AccountBooksController < ApplicationController
     else
       render :status => 400 , :json => { :error => @accounting_transaction.errors.full_messages }
     end
+  end
+
+  def records
+    render :status => 200, :json => { :account_book_records => @account_book.accounts_based_records.as_json(:methods => [:accounting_transaction]) }
   end
 
   private

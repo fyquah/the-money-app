@@ -79,6 +79,10 @@ app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $l
         templateUrl: "/templates/account_books/show.html",
         controller: "accountBooksShowCtrl"
     }).
+    when("/account-books/:id/records", {
+        templateUrl: "/templates/account_books/records.html",
+        controller: "accountBooksRecordsCtrl"
+    }).
     when("/accounting-transactions/:id", {
         templateUrl: "/templates/accounting_transactions/show.html",
         controller: "accountingTransactionsShowCtrl"
