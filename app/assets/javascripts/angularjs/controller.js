@@ -132,51 +132,37 @@ app.controller("menuBarCtrl" , [ "session" , "$scope" , function(session , $scop
     $scope.session = session;
 }]);
 
-app.controller("accountBooksNewCtrl" , ["alerts" , "page" , "$http", "$scope" , "spinner" , function(alerts , page, $http, $scope, spinner){
+app.controller("accountBooksNewCtrl" , ["alerts" , "page" , "$http", "$scope" , "spinner", "AccountBook", function(alerts , page, $http, $scope, spinner, AccountBook){
     if(page.redirectUnlessSignedIn()){
         return;
     }
 
-    $scope.new_account_book = {};
+    $scope.new_account_book = new AccountBook();
 
     $scope.submit = function(){
-        var data = {
-            account_book: {
-                name: $scope.new_account_book.name
-            }
-        };
-        $http({
-            method: "POST",
-            url: "/account_books.json",
-            data: data
-        }).
-        success(function(data){
-            // console.log(da)
-            page.redirect("/account-books/" + data.account_book.id)
-        }).
-        error(function(data, status){
-            console.log(data);
+        $scope.new_account_book.create().then(function(account_book){
+            page.redirect("/account-books/" + account_book.id);
+        }).catch(function(){
+
+        }).finally(function(){
+
         })
-    }
+    };
 }]);
 
-app.controller("accountBooksIndexCtrl" , ["alerts" , "page" , "$http", "$scope" , "spinner" , function(alerts , page, $http, $scope, spinner){
+app.controller("accountBooksIndexCtrl" , ["alerts" , "page" , "$http", "$scope" , "spinner", "AccountBook" , function(alerts , page, $http, $scope, spinner, AccountBook){
     if(page.redirectUnlessSignedIn()){
         return;
     }
+    spinner.start();
     // query ajax data to get all the 
-    $http({
-        method: "GET",
-        url: "/account_books.json"
-    }).
-    success(function(data){
-        $scope.account_books = data.account_books;
+    AccountBook.all().then(function(account_books){
+        $scope.account_books = account_books;
+    }).catch(function(){
+
+    }).finally(function(){
         spinner.stop();
-    }).
-    error(function(data , status){
-        
-        spinner.stop();
-    });
+    })
 }]);
 
 app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" , "spinner" , "$routeParams", "AccountBook" , function(alerts , page, $http, $scope, spinner , $routeParams, AccountBook){
@@ -204,7 +190,7 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
         };
 
         $scope.renameAccountBook = function(){
-            account_book.updateAttribute("name", $scope.new_account_book_name).
+            account_book.updateAttribute("name", $scope.account_book.name).
             catch(function(msg){
                 if (msg.err) {
                     alerts.push("danger", msg.err);

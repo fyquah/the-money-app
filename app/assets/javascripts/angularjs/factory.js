@@ -13,6 +13,7 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
 
     var AccountBook = function(args){
         var i, self = this;
+        args = args || {};
         AccountBook.attributes().forEach(function(attr){
             self[attr] = args[attr];
         });
@@ -24,6 +25,25 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
         //     this.accounting_transactions[i] = new AccountingTransaction(args.accounting_transactions[i]);
         // }
     };
+
+    AccountBook.all = function(){
+        var deferred = $q.defer();
+        $http({
+            method: "GET",
+            url: "/account_books.json"
+        }).
+        success(function(data){
+            var account_books = data.account_books.reduce(function(memo, book){
+                memo.push(new AccountBook(book));
+                return memo;
+            }, []);
+            deferred.resolve(account_books);
+        }).
+        error(function(data , status){
+            deferred.reject();
+        });
+        return deferred.promise;
+    }
 
     AccountBook.attributes = function(){
         return ["id", "name", "user_id", "accounting_transactions"];
@@ -44,6 +64,36 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
         });
         return deferred.promise;
     };
+
+    AccountBook.prototype.create = function(){
+        var deferred = $q.defer();
+        var self = this;
+        var data = (function(){
+            return AccountBook.attributes().reduce(function(memo, attr){
+                memo[attr] = self[attr];
+                return memo;
+            }, {})
+        })();
+        data = {
+            account_book: data
+        };
+        console.log(data);
+        $http({
+            method: "POST",
+            url: "/account_books.json",
+            data: data
+        }).
+        success(function(data){
+            self.id = data.account_book.id;
+            self.user_id = data.account_book.user_id
+            deferred.resolve(self);
+        }).
+        error(function(data, status){
+            console.log(data);
+            deferred.reject();
+        });
+        return deferred.promise;
+    }
 
     AccountBook.prototype.removeTransaction = function(index){
         var removed_transaction = this.accounting_transactions[index];
@@ -96,6 +146,7 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
         };
         this[attr] = new_val;
         data.account_book[attr] = new_val;
+
         $http({
             method: "PATCH",
             url: "/account_books/" + this.id + ".json",

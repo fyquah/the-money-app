@@ -1,7 +1,7 @@
 <div class="page-header">
     <div class="row">
         <div class="col-sm-8"><h2>{{ account_book.name }}</h2></div>
-        <div class="col-sm-4"><p style="margin-top: 20px; text-align :right"><a ng-click="new_account_book_name = account_book.name; edit.rename_account_book = true">Change your account book name</a></p></div>
+        <div class="col-sm-4"><p style="margin-top: 20px; text-align :right"><a ng-click="edit.rename_account_book = true;">Change your account book name</a></p></div>
     </div>
 </div>
 <div class="row">
@@ -35,6 +35,7 @@
 </div>
 
 <app-pop-up-window ng-show="edit.rename_account_book">
+            <input required class="form-control" ng-model="new_account_book_name" placeholder="Enter new account name" />
     <p style="text-align : right"><a style="cursor: pointer" ng-click="edit.rename_account_book = false">X</a></p>
     <h2>Rename Account Book</h2>
     <form role="form" ng-submit="renameAccountBook()">
