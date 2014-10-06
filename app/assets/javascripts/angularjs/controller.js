@@ -179,146 +179,54 @@ app.controller("accountBooksIndexCtrl" , ["alerts" , "page" , "$http", "$scope" 
     });
 }]);
 
-app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" , "spinner" , "$routeParams" , function(alerts , page, $http, $scope, spinner , $routeParams){
+app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" , "spinner" , "$routeParams", "AccountBook" , function(alerts , page, $http, $scope, spinner , $routeParams, AccountBook){
     if(page.redirectUnlessSignedIn()){
         return;
     }
     spinner.start();
     $scope.edit = {};
     // query ajax data to get all the 
-    $http({
-        method: "GET",
-        url: "/account_books/" + $routeParams.id + ".json"
-    }).
-    success(function(data){
-        var i , all_transactions;
-        $scope.account_book = data.account_book;
-        console.log(data);
+    AccountBook.find($routeParams.id).then(function(account_book){
+        $scope.account_book = account_book;
         spinner.stop();
-    }).
-    error(function(data , status){
-        
-        spinner.stop();
-    });
 
-    $scope.removeTransaction = function(index){
-        var transaction = $scope.account_book.accounting_transactions[index];
-        if (!confirm("Are you sure you want to delete transaction described by " + transaction.description + " which occured on the " + transaction.date )) {
-            return;
-        }
-        $scope.account_book.accounting_transactions.splice(index , 1);
-        $http({
-            method: "DELETE",
-            url: "/accounting_transactions/" + transaction.id + ".json",
-        }).success(function(){
-            console.log("removed");
-        }).error(function(data){
-            $scope.account_book.accounting_transactions.splice(index , 0 , transaction);
-        })
-    };
+        $scope.removeTransaction = function(index){
+            account_book.removeTransaction(index).catch(function(){
+                alerts.push("danger", "An unkown error has just occured while removing transaction");
+            });
+        };
 
-    $scope.addNewTransaction = function(){
-        var data = {
-            accounting_transaction: {
+        $scope.addNewTransaction = function(){
+            account_book.addNewTransaction({
                 description: $scope.new_accounting_transaction.description,
                 date: $scope.new_accounting_transaction.date
-            }
+            });
         };
-        $http({
-            method: "POST",
-            url: "/account_books/" + $routeParams.id + "/create_accounting_transaction.json",
-            data: data,
-        }).
-        success(function(data, status){
-            $scope.edit.add_new_transaction = false;
-            page.redirect("/accounting-transactions/" + data.accounting_transaction.id);           
-        }).
-        error(function(data, status){
-            $scope.edit.add_new_transaction = false;
-            alerts.push("danger", "error adding new transaction!");
-        })
-    };
 
-    $scope.renameAccountBook = function(){
-        $http({
-            method: "PATCH",
-            url: "/account_books/" + $routeParams.id + ".json",
-            data: {
-                account_book: {
-                    name: $scope.account_book.name
+        $scope.renameAccountBook = function(){
+            account_book.updateAttribute("name", $scope.new_account_book_name).
+            catch(function(msg){
+                if (msg.err) {
+                    alerts.push("danger", msg.err);
                 }
-            }
-        }).success(function(){
-            alerts.push("info", "successfully changed your account book's name");
-        }).error(function(){
-            alerts.push("danger", "an error occured!");
-        });
-        $scope.edit.rename_account_book = false;
-    };
-
-    $scope.addNewExpenditure = function() {
-        var data = {
-            accounting_transaction: {
-                description: $scope.new_expenditure.description,
-                date: $scope.new_expenditure.date,
-                credit_records_attributes: [{
-                    account_name: "cash",
-                    account_type: "asset",
-                    amount: $scope.new_expenditure.amount
-                }],
-                debit_records_attributes: [{
-                    account_name: $scope.new_expenditure.account_name,
-                    account_type: "equity",
-                    amount: $scope.new_expenditure.amount
-                }]
-            }
+            }).
+            finally(function(){
+                $scope.edit.rename_account_book = false;
+            });
         };
-        $http({
-            method: "POST",
-            url: "/account_books/" + $routeParams.id + "/create_accounting_transaction.json",
-            data: data,
-        }).
-        success(function(data, status){
-            $scope.edit.add_new_transaction = false;
-            page.redirect("/accounting-transactions/" + data.accounting_transaction.id);           
-        }).
-        error(function(data, status){
-            $scope.edit.add_new_transaction = false;
-            alerts.push("danger", "error adding new transaction!");
-        })
-    };
 
-    $scope.addNewIncome = function() {
-        var data = {
-            accounting_transaction: {
-                description: $scope.new_income.description,
-                date: $scope.new_income.date,
-                debit_records_attributes: [{
-                    account_name: "cash",
-                    account_type: "asset",
-                    amount: $scope.new_income.amount
-                }],
-                credit_records_attributes: [{
-                    account_name: $scope.new_income.account_name,
-                    account_type: "equity",
-                    amount: $scope.new_income.amount
-                }]
-            }
+        $scope.addNewExpenditure = function(){
+            account_book.addNewExpenditure($scope.new_expenditure).finally(function(){
+                edit.add_new_expenditure = false;
+            });
         };
-        $http({
-            method: "POST",
-            url: "/account_books/" + $routeParams.id + "/create_accounting_transaction.json",
-            data: data,
-        }).
-        success(function(data, status){
-            $scope.edit.add_new_transaction = false;
-            page.redirect("/accounting-transactions/" + data.accounting_transaction.id);           
-        }).
-        error(function(data, status){
-            $scope.edit.add_new_transaction = false;
-            alerts.push("danger", "error adding new transaction!");
-        })  
-    }
+
+        $scope.addNewIncome = function(){
+            account_book.addNewIncome($scope.new_income).finally(function(){
+                edit.add_new_income = false;
+            });
+        }
+    }, null, null);
 }]);
 
 app.controller('accountBooksRecordsCtrl', ['$scope', "$http", "alerts", "session", "$routeParams", "page", "spinner", function($scope, $http, alerts, session, $routeParams, page, spinner){

@@ -9,7 +9,7 @@ app.factory("User" , function(){
     return User;
 });
 
-app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", function($http, $q, AccountingTransaction){
+app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", function($http, $q, AccountingTransaction, alerts){
 
     var AccountBook = function(args){
         var i, self = this;
@@ -17,7 +17,9 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", function($ht
             self[attr] = args[attr];
         });
         self.accounting_transactions = self.accounting_transactions || [];
-
+        if (self.date) {
+            self.date = new Date(self.date);
+        }
         // for (i = 0; i < args.accounting_transactions.length ; i++) {
         //     this.accounting_transactions[i] = new AccountingTransaction(args.accounting_transactions[i]);
         // }
@@ -34,7 +36,7 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", function($ht
             url: "/account_books/" + id + ".json"
         }).success(function(data){
             
-            deffered.resolve(new AccountBook(data.account_book));
+            deferred.resolve(new AccountBook(data.account_book));
         }).error(function(data){
             deferred.reject(function(){
                 page.redirect("/404");
@@ -44,19 +46,107 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", function($ht
     };
 
     AccountBook.prototype.removeTransaction = function(index){
-        var removed_transaction = this.accounting_transactions.splice(index, 1)[0];
-        var deffered = $q.defer();
+        var removed_transaction = this.accounting_transactions[index];
+        var deferred = $q.defer();
+        if(!confirm("Are you sure you want to delete transaction described by " + removed_transaction.description + " which occured on the " + removed_transaction.date )){
+            return;
+        }
+        this.accounting_transactions.splice(index, 1);
+        
         $http({
             method: "DELETE",
             url: "/accounting_transactions/" + removed_transaction.id + ".json"
         }).success(function(data){
-            deffered.resolve();
+            deferred.resolve();
         }).error(function(){
-            deffered.reject({ "error": "An unkown error has occured!" })
+            deferred.reject({ "error": "An unkown error has occured!" })
         })
 
-        return deffered.promise;
+        return deferred.promise;
     };
+
+    AccountBook.prototype.addNewTransaction = function(args){
+        console.log(args);
+        var data = {
+            accounting_transaction: args
+        }, deferred = $q.defer(), self = this;
+        console.log(data);
+        $http({
+            method: "POST",
+            url: "/account_books/" + this.id + "/create_accounting_transaction.json",
+            data: data,
+        }).
+        success(function(data, status){
+            deferred.resolve();
+            console.log(data.accounting_transaction);
+            self.accounting_transactions.push(data.accounting_transaction);          
+        }).
+        error(function(data, status){
+            deferred.reject();
+            alerts.push("danger", "error adding new transaction!");
+        })
+        return deferred.promise;
+    }
+
+    AccountBook.prototype.updateAttribute = function(attr, new_val){
+        var deferred = $q.defer();
+        var ori_val = this[attr];
+        var data = {
+            account_book: {}
+        };
+        this[attr] = new_val;
+        data.account_book[attr] = new_val;
+        $http({
+            method: "PATCH",
+            url: "/account_books/" + this.id + ".json",
+            data: data
+        }).success(function(data, status){
+            deferred.resolve();
+        }).error(function(data, status){
+            alerts.push("danger", data.error);
+            this[attr] = ori_val;
+            deferred.reject(ori_val);
+        });
+        return deferred.promise;
+    };
+
+    AccountBook.prototype.addNewExpenditure = function(args){
+        return this.addNewTransaction({
+            description: args.description,
+            date: args.date,
+            credit_records_attributes: [{
+                account_name: "cash",
+                account_type: "asset",
+                amount: args.amount
+            }],
+            debit_records_attributes: [{
+                account_name: args.account_name,
+                account_type: "equity",
+                amount: args.amount
+            }]
+        });
+    };
+
+    AccountBook.prototype.addNewIncome = function(args){
+        console.log(args);
+        return this.addNewTransaction({
+            description: args.description,
+            date: args.date,
+            debit_records_attributes: [{
+                account_name: "cash",
+                account_type: "asset",
+                amount: args.amount
+            }],
+            credit_records_attributes: [{
+                account_name: args.account_name,
+                account_type: "equity",
+                amount: args.amount
+            }]
+        });
+
+    };
+
+    return AccountBook;
 }]);
 
 app.factory("AccountingTransaction" , ["$http", "$q", "page", "alerts", function($http, $q, page, alerts){

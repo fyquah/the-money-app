@@ -1,7 +1,7 @@
 <div class="page-header">
     <div class="row">
         <div class="col-sm-8"><h2>{{ account_book.name }}</h2></div>
-        <div class="col-sm-4"><p style="margin-top: 20px; text-align :right"><a ng-click="edit.rename_account_book = true">Change your account book name</a></p></div>
+        <div class="col-sm-4"><p style="margin-top: 20px; text-align :right"><a ng-click="new_account_book_name = account_book.name; edit.rename_account_book = true">Change your account book name</a></p></div>
     </div>
 </div>
 <div class="row">
@@ -23,7 +23,7 @@
 <div ng-show="account_book.accounting_transactions.length === 0">
     Looks like you are still have to create any accounting transactions <strong>:(</strong>, go on and create one!
 </div>
-<div ng-repeat="transaction in account_book.accounting_transactions">
+<div ng-repeat="transaction in account_book.accounting_transactions | orderBy: 'date':true ">
     <div class="row" style="background-color : {{ $index % 2 == 0 ? 'white' : '#46b8da' }} ; padding-top : 10px; padding-bottom : 10px">
         <div class="col-xs-3 col-sm-2">{{ transaction.date }}</div>
         <div class="col-xs-9 col-sm-4">{{ transaction.description | limitWordsLength:50 }}</div>
@@ -40,7 +40,7 @@
     <form role="form" ng-submit="renameAccountBook()">
         <div class="form-group">
             <label>New Account Name</label>
-            <input required class="form-control" ng-model="account_book.name" placeholder="Enter new account name" />
+            <input required class="form-control" ng-model="new_account_book_name" placeholder="Enter new account name" />
         </div>
         <div class="form-group">
             <input required type="submit" value="Rename Account Book" class="btn btn-info form-control" />
