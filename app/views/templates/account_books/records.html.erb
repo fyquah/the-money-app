@@ -1,8 +1,8 @@
-<p style="text-align : right" ng-show="display_back_link"><a style="color: blue" ng-href="/account-books/{{ account_book_id }}/records">Back to all records</a></p>
-<p style="text-align : right"><a ng-href="/account-books/{{ account_book_id }}">Back to account book</a></p>
+<p style="text-align : right" ng-show="display_back_link"><a style="color: blue" ng-href="/account-books/{{ account_book.id }}/records">Back to all records</a></p>
+<p style="text-align : right"><a ng-href="/account-books/{{ account_book.id }}">Back to account book</a></p>
 <div ng-repeat="(account_name, account_obj) in accounts">
     <div class="page-header">
-        <h3 style="text-align : center"><a ng-href="/account-books/{{ account_book_id }}/records?account={{ account_name }}">{{ account_name }}</a><small> an {{ account_obj.account_type }} account - {{ (account_obj.debit_total - account_obj.credit_total) | currency:"$ " }} at {{ account_obj.debit_total - account_obj.credit_total > 0 ? "debit" : "credit" }}</small></h3>
+        <h3 style="text-align : center"><a ng-href="/account-books/{{ account_book.id }}/records?account={{ account_name }}">{{ account_name }}</a><small> an {{ account_obj.account_type }} account - {{ (account_obj.debit_total - account_obj.credit_total) | currency:"$ " }} at {{ account_obj.debit_total - account_obj.credit_total > 0 ? "debit" : "credit" }}</small></h3>
     </div>
     <div class="row">
         <div class="col-xs-5">

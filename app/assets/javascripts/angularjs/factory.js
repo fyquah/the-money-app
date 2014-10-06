@@ -146,6 +146,30 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
 
     };
 
+    AccountBook.prototype.records = function(acc_name){
+        var accounts = {},
+            deferred = $q.defer();
+        console.log("/account_books/" + this.id + "/records.json" + (typeof acc_name === "string" ? ("?account=" + unescape(acc_name)) : ""));
+        $http({
+            method: "GET",
+            url: "/account_books/" + this.id + "/records.json" + (typeof acc_name === "string" ? ("?account=" + unescape(acc_name)) : "")
+        }).success(function(data){
+            accounts = data.account_book_records
+            var sum_fnc = function(memo, record, index){
+                return memo + (record.amount || 0);
+            };
+            for(var acc_name in accounts){
+                accounts[acc_name].debit_total = accounts[acc_name].debit_records.reduce(sum_fnc, 0);
+                accounts[acc_name].credit_total = accounts[acc_name].credit_records.reduce(sum_fnc, 0);
+            }
+            deferred.resolve(accounts);
+        }).error(function(data){
+            deferred.reject();
+        });
+
+        return deferred.promise;
+    }
+
     return AccountBook;
 }]);
 

@@ -229,38 +229,26 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
     }, null, null);
 }]);
 
-app.controller('accountBooksRecordsCtrl', ['$scope', "$http", "alerts", "session", "$routeParams", "page", "spinner", function($scope, $http, alerts, session, $routeParams, page, spinner){
+app.controller('accountBooksRecordsCtrl', ['$scope', "$http", "alerts", "session", "$routeParams", "page", "spinner", "AccountBook", function($scope, $http, alerts, session, $routeParams, page, spinner, AccountBook){
     if(page.redirectUnlessSignedIn()){
         return;
     }
 
     spinner.start();
-    $scope.accounts = {};
-    $scope.account_book_id = $routeParams.id;
-    $http({
-        method: "GET",
-        url: "/account_books/" + $routeParams.id + "/records.json"
-    }).success(function(data){
+    AccountBook.find($routeParams.id).
+    then(function(acc_book){
+        $scope.account_book = acc_book; 
+        return acc_book.records($routeParams.account) 
+    }).
+    then(function(accounts){
+        $scope.accounts = accounts;
+    }).
+    catch(function(){
+        
+    }).
+    finally(function(){
         spinner.stop();
-        $scope.accounts = data.account_book_records;
-        if ($routeParams.account) {
-            $scope.accounts = {};
-            $scope.accounts[unescape($routeParams.account)] = data.account_book_records[unescape($routeParams.account)];
-            $scope.display_back_link = true;
-        }
-
-        for(var acc_name in $scope.accounts){
-            var sum_fnc = function(memo, record, index){
-                return memo + (record.amount || 0);
-            }
-            $scope.accounts[acc_name].debit_total = $scope.accounts[acc_name].debit_records.reduce(sum_fnc, 0);
-            $scope.accounts[acc_name].credit_total = $scope.accounts[acc_name].credit_records.reduce(sum_fnc, 0);
-        }
-        console.log(data);
-    }).error(function(data){
-        spinner.stop();
-        console.log(data);
-    })
+    });
 }])
 
 app.controller("accountingTransactionsShowCtrl" , ["$scope", "$http", "alerts", "session","$routeParams", "page", "spinner", function($scope, $http, alerts, session, $routeParams, page, spinner){

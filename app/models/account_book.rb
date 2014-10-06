@@ -39,18 +39,24 @@ class AccountBook < ActiveRecord::Base
     end
   end
 
-  def all_records
-    (asset_records + liability_records + equity_records)
+  def all_records acc_name
+    if acc_name
+      (asset_records.where(:account_name => acc_name) + liability_records.where(:account_name => acc_name) + equity_records.where(:account_name => acc_name))
+    else
+      asset_records + liability_records + equity_records
+    end
   end
 
-  def accounts_based_records
-    all_records.inject({}) do |memo, record|
-      memo[record.account_name.to_sym] ||= Hash[:debit_records, [], :credit_records, []]
-      memo[record.account_name.to_sym][:account_type] ||= record.account_type
-      if record.record_type == "debit"
-        memo[record.account_name.to_sym][:debit_records] << record
-      elsif record.record_type == "credit"
-        memo[record.account_name.to_sym][:credit_records] << record
+  def accounts_based_records acc_name
+    all_records(acc_name).inject({}) do |memo, record|
+      if acc_name == nil || acc_name.strip == record.account_name.strip
+        memo[record.account_name.to_sym] ||= Hash[:debit_records, [], :credit_records, []]
+        memo[record.account_name.to_sym][:account_type] ||= record.account_type
+        if record.record_type == "debit"
+          memo[record.account_name.to_sym][:debit_records] << record
+        elsif record.record_type == "credit"
+          memo[record.account_name.to_sym][:credit_records] << record
+        end
       end
       memo
     end

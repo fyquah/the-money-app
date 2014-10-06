@@ -45,14 +45,14 @@ class AccountBooksController < ApplicationController
   def create_accounting_transaction
     @accounting_transaction = @account_book.accounting_transactions.build(accounting_transaction_params)
     if @accounting_transaction.save
-      render :status => 201 , :json => { :accounting_transaction => @accounting_transaction.as_json }
+      render :status => 201 , :json => { :accounting_transaction => @accounting_transaction.as_json(:methods => [:amount]) }
     else
       render :status => 400 , :json => { :error => @accounting_transaction.errors.full_messages }
     end
   end
 
   def records
-    render :status => 200, :json => { :account_book_records => @account_book.accounts_based_records.as_json(:methods => [:accounting_transaction]) }
+    render :status => 200, :json => { :account_book_records => @account_book.accounts_based_records(params[:account]).as_json(:methods => [:accounting_transaction]) }
   end
 
   private
