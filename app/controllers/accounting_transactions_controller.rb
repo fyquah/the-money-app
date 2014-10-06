@@ -15,7 +15,7 @@ class AccountingTransactionsController < ApplicationController
     if @accounting_transaction.destroy
       render :status => 204 , :json => nil
     else
-      render :status => 505 , :json => { :erorr => "An unkown error occured!" }
+      render :status => 505 , :json => { :error => "An unkown error occured!" }
     end
   end
 

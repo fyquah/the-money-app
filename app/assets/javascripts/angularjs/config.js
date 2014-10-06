@@ -64,7 +64,8 @@ app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $l
     when("/home" , {
         templateUrl: "/templates/static_pages/home.html",
         controller: ["page" , function(page){
-            page.redirectUnlessSignedIn();
+            page.redirectUnlessSignedIn("/signin", false);
+            page.redirectIfSignedIn("/account-books", false);
         }]
     }).
     when("/account-books" , {
@@ -86,6 +87,9 @@ app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $l
     when("/accounting-transactions/:id", {
         templateUrl: "/templates/accounting_transactions/show.html",
         controller: "accountingTransactionsShowCtrl"
+    }).
+    when("/error", {
+        templateUrl: "/templates/error.html"
     }).
     otherwise({
         templateUrl: "/templates/404.html"
