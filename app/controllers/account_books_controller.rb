@@ -40,6 +40,8 @@ class AccountBooksController < ApplicationController
   end
 
   def destroy
+    @account_book.destroy
+    render :status => 204, :json => {}
   end
 
   def create_accounting_transaction

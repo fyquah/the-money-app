@@ -202,6 +202,15 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
             });
         };
 
+        $scope.removeAccountBook = function(){
+            if(confirm("Are you sure you want to remove " + account_book.name + " ?")){
+                account_book.remove().then(function(){
+                    page.redirect("/account-books");
+                    alerts.push("success", "account book " + account_book.name + " has been removed!");
+                })                
+            }
+        }
+
         $scope.addNewExpenditure = function(){
             account_book.addNewExpenditure($scope.new_expenditure).finally(function(){
                 $scope.edit.add_new_expenditure = false;
@@ -212,7 +221,7 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
             account_book.addNewIncome($scope.new_income).finally(function(){
                 $scope.edit.add_new_income = false;
             });
-        }
+        };
     }, null, null);
 }]);
 
@@ -238,90 +247,47 @@ app.controller('accountBooksRecordsCtrl', ['$scope', "$http", "alerts", "session
     });
 }])
 
-app.controller("accountingTransactionsShowCtrl" , ["$scope", "$http", "alerts", "session","$routeParams", "page", "spinner", function($scope, $http, alerts, session, $routeParams, page, spinner){
-    page.redirectUnlessSignedIn();
+app.controller("accountingTransactionsShowCtrl" , ["$scope", "$http", "alerts", "session","$routeParams", "page", "spinner", "AccountingTransaction", function($scope, $http, alerts, session, $routeParams, page, spinner, AccountingTransaction){
+    if(page.redirectUnlessSignedIn()){
+        return;
+    }
     spinner.start();
 
-    $http({
-        method: "GET",
-        url: "/accounting_transactions/" + $routeParams.id + ".json"
-    }).
-    success(function(data){
-        // data = data.accounting_transaction;
-        console.log(data);
-        $scope.accounting_transaction = data.accounting_transaction;
-        $scope.accounting_transaction.amount = function(){
-            var reduce_fnc = function(memo, record, index){
-                var x = record._destroy ? 0 : (record.amount || 0);
-                return memo + Number(x);
-            }
-            var d = $scope.accounting_transaction.debit_records.reduce(reduce_fnc, 0),
-                c = $scope.accounting_transaction.credit_records.reduce(reduce_fnc, 0);
-            return (d === c ? d : ("NOT BALANCED!"));
+    AccountingTransaction.find($routeParams.id).
+    then(function(accounting_transaction){
+        $scope.accounting_transaction = accounting_transaction;
+        $scope.edit = {
+            accounting_transaction: {}
         };
-        spinner.stop();
+
+        $scope.update = function(component){
+            accounting_transaction.update().finally(function(){
+                spinner.stop();
+            })
+        };
+
+        $scope.newRecord = function(r_type){
+            $scope.new_account_record = {
+                record_type: r_type
+            }
+            $scope.edit.add_new_record = true;
+        };
+
+        $scope.addNewRecord = function(){
+            var r_type = $scope.new_account_record.record_type;
+            delete $scope.new_account_record.record_type;
+            if (r_type === "debit") {
+                $scope.accounting_transaction.addDebitRecord($scope.new_account_record);
+            } else if (r_type === "credit") {
+                $scope.accounting_transaction.addCreditRecord($scope.new_account_record);
+            }
+            $scope.edit.add_new_record = false;
+        }
+        
+    }, function(){
+        return;  
     }).
-    error(function(data, status){
-        alerts.push("danger", "An unkown error occured!");
+    finally(function(){
         spinner.stop();
     });
-
-    $scope.edit = {
-        accounting_transaction: {}
-    };
-
-    $scope.update = function(component){
-        spinner.start();
-        var save_promise, data = {};
-        if (component === "records") {
-            ["debit_records" , "credit_records"].forEach(function(prop){
-                data[prop + "_attributes"] = $scope.accounting_transaction[prop];
-            });
-        }
-        else if (component) { // update one component
-            data[component] = $scope.accounting_transaction[component];
-        } else { // update everything
-            for (var prop in $scope.accounting_transaction) {
-                data[prop] = $scope.accounting_transaction[prop];
-            }
-            console.log(data);
-        }
-        save_promise = $http({
-            method: "PATCH",
-            url: "/accounting_transactions/" + $routeParams.id + ".json",
-            data: {
-                accounting_transaction: data
-            }
-        }).
-        success(function(data){
-            alerts.push("success", "updated your " + component);
-            spinner.stop();
-        }).
-        error(function(data){
-            alerts.push("danger", "Error updating " + component);
-            spinner.stop();
-        });
-    };
-
-    $scope.prompt_record = function(r_type) {
-        $scope.new_account_record = {
-            record_type: r_type
-        }
-        $scope.edit.add_new_record = true;
-    };
-
-    $scope.addNewRecord = function(){
-        var r_type = $scope.new_account_record.record_type;
-        delete $scope.new_account_record.record_type;
-        if (r_type === "debit") {
-            $scope.accounting_transaction.debit_records.push($scope.new_account_record);
-        } else if (r_type === "credit") {
-            $scope.accounting_transaction.credit_records.push($scope.new_account_record);
-        }
-        $scope.edit.add_new_record = false;
-    };
-
-    $scope.removeRecord = function(r_type, index){
-
-    }
 }])

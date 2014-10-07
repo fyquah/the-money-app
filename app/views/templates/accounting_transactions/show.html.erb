@@ -3,50 +3,44 @@
         <p style="text-align : right"><a ng-href="/account-books/{{ accounting_transaction.account_book_id }}">Back to Account Book</a></p>
         <h3>Description</h3>
         <div class="row" ng-hide="edit.accounting_transaction.description || edit.accounting_transaction.all">
-            <div class="col-xs-10">{{ accounting_transaction.description }}</div>
-            <div class="col-xs-2"><a class="btn btn-success" ng-click="edit.accounting_transaction.description = true">Edit</a></div>
+            <div style="cursor :pointer" class="col-xs-10" ng-click="edit.accounting_transaction.description = true">{{ accounting_transaction.description }}</div>
         </div>
         <div class="row" ng-show="edit.accounting_transaction.description || edit.accounting_transaction.all">
-            <div class="col-xs-8"><textarea class="form-control" ng-model="accounting_transaction.description" rows="2"></textarea></div>
-            <div class="col-xs-2"><a class="btn btn-info" ng-click="update('description')">Update</a></div>    
+            <div class="col-xs-10"><textarea class="form-control" ng-model="accounting_transaction.description" rows="2"></textarea></div>
+            <!-- <div class="col-xs-2"><a class="btn btn-info" ng-click="update('description')">Update</a></div>   -->  
             <div class="col-xs-2"><a class="btn btn-warning" ng-click="edit.accounting_transaction.description = false">Back</a></div>
         </div>
         <h3>Date of Transaction</h3>
         <div class="row" ng-hide="edit.accounting_transaction.date || edit.accounting_transaction.all">
-            <div class="col-xs-10">{{ accounting_transaction.date }}</div>
-            <div class="col-xs-2"><a class="btn btn-success" ng-click="edit.accounting_transaction.date = true">Edit</a></div>
+            <div style="cursor: pointer" class="col-xs-10" ng-click="edit.accounting_transaction.date = true">{{ accounting_transaction.date }}</div>
         </div>
         <div class="row" ng-show="edit.accounting_transaction.date || edit.accounting_transaction.all">
-            <div class="col-xs-8"><input type="date" class="form-control" ng-model="accounting_transaction.date" /></div>
-            <div class="col-xs-2"><a class="btn btn-info" ng-click="update('date')">Update</a></div>    
+            <div class="col-xs-10"><input type="date" class="form-control" ng-model="accounting_transaction.date" /></div>
+            <!-- <div class="col-xs-2"><a class="btn btn-info" ng-click="update('date')">Update</a></div>     -->
             <div class="col-xs-2"><a class="btn btn-warning" ng-click="edit.accounting_transaction.date = false">Back</a></div>
         </div>
         <h3>Amount</h3>
-        <p>{{ accounting_transaction.amount ? accounting_transaction.amount() : 0 | currency:"$ "}}</p>
+        <p>{{ (accounting_transaction.amount() | currency:"$ ") || accounting_transaction.amount() }}</p>
         <div class='row'>
             <div class='col-sm-6'>
                 <h3>Debited Records</h3>
-                <a ng-click="prompt_record('debit')">Add new debit records</a>
-                <div class="row" ng-repeat="record in accounting_transaction.debit_records">
-                    <div ng-hide="record._destroy">
-                        <div class="col-xs-2"><a style="color : red" ng-click="record._destroy = true">X</a></div>
-                        <div class='col-xs-4'>{{ record.account_name }}</div>
-                        <div class='col-xs-3'>{{ record.account_type }}</div>
-                        <div class='col-xs-3'>{{ record.amount | currency:"$ " }}</div>
-                    </div>
+                <a ng-click="newRecord('debit')">Add new debit records</a>
+                <div class="row" ng-repeat="record in accounting_transaction.debitRecords()">
+                    <div class="col-xs-2"><a style="color : red" ng-click="accounting_transaction.removeDebitRecord($index)">X</a></div>
+                    <div class='col-xs-4'>{{ record.account_name }}</div>
+                    <div class='col-xs-3'>{{ record.account_type }}</div>
+                    <div class='col-xs-3'>{{ record.amount | currency:"$ " }}</div>
                 </div>
                 <br />
             </div>
             <div class='col-sm-6'>
                 <h3>Credited Records</h3>
-                <a ng-click="prompt_record('credit')">Add new credit records</a>
-                <div class="row" ng-repeat="record in accounting_transaction.credit_records">
-                    <div ng-hide="record._destroy">
-                        <div class="col-xs-2"><a style="color : red" ng-click="record._destroy = true">X</a></div>
-                        <div class='col-xs-4'>{{ record.account_name }}</div>
-                        <div class='col-xs-3'>{{ record.account_type }}</div>
-                        <div class='col-xs-3'>{{ record.amount | currency:"$ " }}</div>
-                    </div>
+                <a ng-click="newRecord('credit')">Add new credit records</a>
+                <div class="row" ng-repeat="record in accounting_transaction.creditRecords()">
+                    <div class="col-xs-2"><a style="color : red" ng-click="accounting_transaction.removeCreditRecord($index)">X</a></div>
+                    <div class='col-xs-4'>{{ record.account_name }}</div>
+                    <div class='col-xs-3'>{{ record.account_type }}</div>
+                    <div class='col-xs-3'>{{ record.amount | currency:"$ " }}</div>
                 </div>
                 <br />
             <br />

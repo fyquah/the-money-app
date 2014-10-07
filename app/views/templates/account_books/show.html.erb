@@ -1,7 +1,10 @@
 <div class="page-header">
     <div class="row">
         <div class="col-sm-8"><h2>{{ account_book.name }}</h2></div>
-        <div class="col-sm-4"><p style="margin-top: 20px; text-align :right"><a ng-click="edit.rename_account_book = true;">Change your account book name</a></p></div>
+        <div class="col-sm-4">
+            <p style="margin-top: 20px; text-align :right"><a ng-click="edit.rename_account_book = true;">Change your account book name</a></p>
+            <p style="margin-top: 20px; text-align :right"><a style="color: red" ng-click="removeAccountBook()">Remove this account book</a></p>
+        </div>
     </div>
 </div>
 <div class="row">

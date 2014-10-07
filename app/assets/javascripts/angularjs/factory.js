@@ -46,11 +46,11 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
             deferred.reject();
         });
         return deferred.promise;
-    }
+    };
 
     AccountBook.attributes = function(){
         return ["id", "name", "user_id", "accounting_transactions"];
-    }
+    };
 
     AccountBook.find = function(id){
         var deferred = $q.defer();
@@ -96,6 +96,21 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
             deferred.reject();
         });
         return deferred.promise;
+    };
+
+    AccountBook.prototype.remove = function(){
+        var deferred = $q.defer(), self = this;
+        $http({
+            method: "DELETE",
+            url: "/account_books/" + self.id + ".json"
+        }).
+        success(function(data){
+            deferred.resolve();
+        }).
+        error(function(data){
+            deferred.reject();
+        });
+        return deferred.promise;
     }
 
     AccountBook.prototype.removeTransaction = function(id){
@@ -133,7 +148,7 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
         success(function(data, status){
             var lo, hi, mid;
             deferred.resolve();
-            self.accounting_transactions.push(data.accounting_transaction);          
+            self.accounting_transactions.push(new AccountingTransaction(data.accounting_transaction));          
         }).
         error(function(data, status){
             deferred.reject();
@@ -238,38 +253,43 @@ app.factory("AccountingTransaction" , ["$http", "$q", "page", "alerts", function
             _amount;
         // demonstrating the power of JS private variables combo closure!
         AccountingTransaction.attributes().forEach(function(attr){
-            if (attr === "debit_records" || attr === "credit_records") {
+            if (attr === "debit_records") {
                 _debit_records_attributes = args[attr] || [];
+            } else if (attr === "credit_records") {
                 _credit_records_attributes = args[attr] || [];
             } else if(attr === "amount") {
                 _records_has_been_modified = false;
                 _amount = args[attr];
+            } else {
+                self[attr] = args[attr];
             }
-            self[attr] = args[attr];
         });
 
         this.amount = function(){
             var reduce_fnc = function(memo, record, index){
                 var x = record._destroy ? 0 : (record.amount || 0);
-                    return memo + Number(x);
+                return memo + Number(x);
             };
 
             return function(){
                 if (!_records_has_been_modified) {
                     return _amount;
+                } else {
+                    var d = _debit_records_attributes.reduce(reduce_fnc, 0),
+                        c = _credit_records_attributes.reduce(reduce_fnc, 0);
+                    console.log("d id " + d + " while c is " + c);
+                    _records_has_been_modified = false;
+                    _amount = (d === c ? d : "NOT BALANCED");
+                    return _amount;
                 }
-                var d = self.debit_records.reduce(reduce_fnc, 0),
-                    c = self.credit_records.reduce(reduce_fnc, 0);
-                _records_has_been_modified = false;
-                return _amount = (d === c ? d : ("NOT BALANCED!"));
-            }
+            };
         }();
 
         this.debitRecords = function() {
             var return_arr = [], i;
             for (i =0 ; i < _debit_records_attributes.length ; i++) {
                 if (_debit_records_attributes[i]._destroy != true) {
-                    return_arr.push(angular.copy(_debit_records_attributes[i]));
+                    return_arr.push(_debit_records_attributes[i]);
                 }
             }
             return return_arr;
@@ -279,7 +299,7 @@ app.factory("AccountingTransaction" , ["$http", "$q", "page", "alerts", function
             var return_arr = [], i;
             for (i =0 ; i < _credit_records_attributes.length ; i++) {
                 if (_credit_records_attributes[i]._destroy != true) {
-                    return_arr.push(angular.copy(_credit_records_attributes[i]));
+                    return_arr.push(_credit_records_attributes[i]);
                 }
             }
             return return_arr;
@@ -287,27 +307,29 @@ app.factory("AccountingTransaction" , ["$http", "$q", "page", "alerts", function
 
         this.addDebitRecord = function(args){
             _debit_records_attributes.push(args);
-            _records_has_been_modified = false;
+            _records_has_been_modified = true;
             return args;
         };
 
         this.addCreditRecord = function(args){
             _credit_records_attributes.push(args);
-            _records_has_been_modified = false;
+            _records_has_been_modified = true;
             return args;
         };
 
-        this.removeDebitRecords = function(index){
-            _debit_records_attributes[index]._destroy = false;
+        this.removeDebitRecord = function(index){
+            _debit_records_attributes[index]._destroy = true;
+            _records_has_been_modified = true;
         };
 
         this.removeCreditRecord = function(index){
             _credit_records_attributes[index]._destroy = true;
+            _records_has_been_modified = true;
         };
 
         this.data = function(){
             var data = {}, self = this;
-            self.attributes.forEach(function(attr){
+            self.constructor.attributes().forEach(function(attr){
                 if(attr == "debit_records") {
                     data.debit_records_attributes = _debit_records_attributes;
                 } else if (attr === "credit_records") {
