@@ -55,6 +55,7 @@
         <p>Note : You have to mannualy press update records if you make any ammendments to the account records!</p>
         <p style="text-align : right">
             <a class="btn btn-info" ng-click="update('records')">Update Records!</a>
+            <a class="btn btn-danger" style="margin-left : 10px" data-confirm="Are you sure you want to remove this transaction?" ng-click="removeTransaction()">Delete Transaction!</a>
         </p>
         <br />
         <app-pop-up-window ng-show="edit.add_new_record">

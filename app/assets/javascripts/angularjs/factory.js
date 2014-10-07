@@ -21,9 +21,12 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
         if (self.date) {
             self.date = new Date(self.date);
         }
-        // for (i = 0; i < args.accounting_transactions.length ; i++) {
-        //     this.accounting_transactions[i] = new AccountingTransaction(args.accounting_transactions[i]);
-        // }
+
+        for (i = 0; i < self.accounting_transactions.length ; i++) {
+            // console.log(this.accounting_transactions[i]);
+            this.accounting_transactions[i] = new AccountingTransaction(self.accounting_transactions[i]);
+            // console.log(this.accounting_transactions[i]);
+        }
     };
 
     AccountBook.all = function(){
@@ -95,24 +98,25 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
         return deferred.promise;
     }
 
-    AccountBook.prototype.removeTransaction = function(index){
-        var removed_transaction = this.accounting_transactions[index];
-        var deferred = $q.defer();
-        if(!confirm("Are you sure you want to delete transaction described by " + removed_transaction.description + " which occured on the " + removed_transaction.date )){
+    AccountBook.prototype.removeTransaction = function(id){
+        var index, i, removed_transaction = null, self = this;
+        for(i = 0; i < this.accounting_transactions.length; i++) {
+            if(this.accounting_transactions[i].id === id) {
+                index = i;
+                removed_transaction = this.accounting_transactions[i];
+                break;
+            }
+        }
+
+        if(removed_transaction == null){
             return;
         }
-        this.accounting_transactions.splice(index, 1);
-        
-        $http({
-            method: "DELETE",
-            url: "/accounting_transactions/" + removed_transaction.id + ".json"
-        }).success(function(data){
-            deferred.resolve();
-        }).error(function(){
-            deferred.reject({ "error": "An unkown error has occured!" })
-        })
 
-        return deferred.promise;
+        return removed_transaction.remove().then(function(){
+            self.accounting_transactions.splice(index, 1);
+        }, function(){
+            alert("An unkown error has occured");
+        })
     };
 
     AccountBook.prototype.addNewTransaction = function(args){
@@ -127,8 +131,8 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
             data: data,
         }).
         success(function(data, status){
+            var lo, hi, mid;
             deferred.resolve();
-            console.log(data.accounting_transaction);
             self.accounting_transactions.push(data.accounting_transaction);          
         }).
         error(function(data, status){
@@ -227,15 +231,100 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
 app.factory("AccountingTransaction" , ["$http", "$q", "page", "alerts", function($http, $q, page, alerts){
     var AccountingTransaction = function(args){
         args = args || {};
-        var self = this;
-        ["description", "id", "account_book_id", "author_id", "debit_records", "credit_records", "date"].forEach(function(attr){
-            this[attr] = args[attr];
+        var self = this,
+            _debit_records_attributes = [], 
+            _credit_records_attributes = [],
+            _records_has_been_modified = true,
+            _amount;
+        // demonstrating the power of JS private variables combo closure!
+        AccountingTransaction.attributes().forEach(function(attr){
+            if (attr === "debit_records" || attr === "credit_records") {
+                _debit_records_attributes = args[attr] || [];
+                _credit_records_attributes = args[attr] || [];
+            } else if(attr === "amount") {
+                _records_has_been_modified = false;
+                _amount = args[attr];
+            }
+            self[attr] = args[attr];
         });
+
+        this.amount = function(){
+            var reduce_fnc = function(memo, record, index){
+                var x = record._destroy ? 0 : (record.amount || 0);
+                    return memo + Number(x);
+            };
+
+            return function(){
+                if (!_records_has_been_modified) {
+                    return _amount;
+                }
+                var d = self.debit_records.reduce(reduce_fnc, 0),
+                    c = self.credit_records.reduce(reduce_fnc, 0);
+                _records_has_been_modified = false;
+                return _amount = (d === c ? d : ("NOT BALANCED!"));
+            }
+        }();
+
+        this.debitRecords = function() {
+            var return_arr = [], i;
+            for (i =0 ; i < _debit_records_attributes.length ; i++) {
+                if (_debit_records_attributes[i]._destroy != true) {
+                    return_arr.push(angular.copy(_debit_records_attributes[i]));
+                }
+            }
+            return return_arr;
+        };
+
+        this.creditRecords = function() {
+            var return_arr = [], i;
+            for (i =0 ; i < _credit_records_attributes.length ; i++) {
+                if (_credit_records_attributes[i]._destroy != true) {
+                    return_arr.push(angular.copy(_credit_records_attributes[i]));
+                }
+            }
+            return return_arr;
+        };
+
+        this.addDebitRecord = function(args){
+            _debit_records_attributes.push(args);
+            _records_has_been_modified = false;
+            return args;
+        };
+
+        this.addCreditRecord = function(args){
+            _credit_records_attributes.push(args);
+            _records_has_been_modified = false;
+            return args;
+        };
+
+        this.removeDebitRecords = function(index){
+            _debit_records_attributes[index]._destroy = false;
+        };
+
+        this.removeCreditRecord = function(index){
+            _credit_records_attributes[index]._destroy = true;
+        };
+
+        this.data = function(){
+            var data = {}, self = this;
+            self.attributes.forEach(function(attr){
+                if(attr == "debit_records") {
+                    data.debit_records_attributes = _debit_records_attributes;
+                } else if (attr === "credit_records") {
+                    data.credit_records_attributes = _credit_records_attributes;
+                } else if (attr == "amount") {
+                    // do nothing
+                } else {
+                    data[attr] = self[attr];
+                }
+            });
+            return data;
+        };
     };
 
     AccountingTransaction.attributes = function(){
-        return ["description", "id", "account_book_id", "author_id", "debit_records", "credit_records", "date"];
-    }
+        return ["description", "id", "account_book_id", "author_id", "debit_records", "credit_records", "date", "amount"];
+    };
 
     AccountingTransaction.find = function(id){
         var deferred = $q.defer();
@@ -249,60 +338,91 @@ app.factory("AccountingTransaction" , ["$http", "$q", "page", "alerts", function
                 page.redirect("/404");
             })
         });
-        return deferred;
+        return deferred.promise;
     };
 
-    AccountingTransaction.prototype.create = function(args){
-        var deferred = $q.defer();
+    AccountingTransaction.prototype.create = function(){
+        var deferred = $q.defer(), self = this;
         $http({
             method: "POST",
-            url: "/accounting_transaction.json",
-            data: args
+            url: "/accounting_transactions.json",
+            data: this.data()
         }).success(function(data){
+            self.id = data.accounting_transaction.id;
             deferred.resolve(data.accounting_transaction);
         }).error(function(){
             deferred.reject(function(){
                 page.redirect("/error");
             })
         });
-        return deferred;
+        return deferred.promise;
     };
 
-    AccountingTransaction.prototype.updateAttribute = function(attr_name, new_val){
+    AccountingTransaction.prototype.remove = function(){
+        if (!this.id) {
+            return;
+        }
         var deferred = $q.defer();
-        var data = {
-            accounting_transaction: {}
-        };
-        data.accounting_transaction[attr_name] = new_val;
         $http({
-            method: "POST",
-            url: "/accounting_transaction/" + this.id + ".json",
-            data: data
-        }).success(function(data){
-
-        }).error(function(data){
-
-        })
+            method: "DELETE",
+            url: "/accounting_transactions/" + this.id + ".json"
+        }).success(function(){
+            deferred.resolve();
+        }).error(function(){
+            deferred.reject();
+        });
+        return deferred.promise;
     };
 
     AccountingTransaction.prototype.update = function(){
-        var deffered = $q.defer();
-        var data = {
-            accounting_transaction: {}
-        };
-        AccountingTransaction.attributes().forEach(function(attr){
-            data.accounting_transaction[attr] = this[attr];
-        });
+        var deferred = $q.defer(), self = this;
         $http({
             method: "PATCH",
-            url: "/accounting_transaction/" + this.id + ".json",
-            data: data
+            url: "/accounting_transactions/" + self.id + ".json",
+            data: self.data()
         }).success(function(data){
-            deffered.resolve(data.accounting_transaction);
-        }).error(function(data){
-            
+            deferred.resolve();
+        }).error(function(data, status){
+            deferred.reject();
         });
+        return deferred.promise;
     };
+
+    // AccountingTransaction.prototype.updateAttribute = function(attr_name, new_val){
+    //     var deferred = $q.defer();
+    //     var data = {
+    //         accounting_transaction: {}
+    //     };
+    //     data.accounting_transaction[attr_name] = new_val;
+    //     $http({
+    //         method: "POST",
+    //         url: "/accounting_transaction/" + this.id + ".json",
+    //         data: data
+    //     }).success(function(data){
+
+    //     }).error(function(data){
+
+    //     })
+    // };
+
+    // AccountingTransaction.prototype.update = function(){
+    //     var deffered = $q.defer();
+    //     var data = {
+    //         accounting_transaction: {}
+    //     };
+    //     AccountingTransaction.attributes().forEach(function(attr){
+    //         data.accounting_transaction[attr] = this[attr];
+    //     });
+    //     $http({
+    //         method: "PATCH",
+    //         url: "/accounting_transaction/" + this.id + ".json",
+    //         data: data
+    //     }).success(function(data){
+    //         deffered.resolve(data.accounting_transaction);
+    //     }).error(function(data){
+            
+    //     });
+    // };
 
     return AccountingTransaction;
 }]);

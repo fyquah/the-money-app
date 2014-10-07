@@ -171,13 +171,14 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
     }
     spinner.start();
     $scope.edit = {};
-    // query ajax data to get all the 
+
     AccountBook.find($routeParams.id).then(function(account_book){
         $scope.account_book = account_book;
         spinner.stop();
 
-        $scope.removeTransaction = function(index){
-            account_book.removeTransaction(index).catch(function(){
+        $scope.removeTransaction = function(id){
+            alert("Are you sure you want to remove transaction?");
+            account_book.removeTransaction(id).catch(function(){
                 alerts.push("danger", "An unkown error has just occured while removing transaction");
             });
         };
@@ -190,7 +191,7 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
         };
 
         $scope.renameAccountBook = function(){
-            account_book.updateAttribute("name", $scope.account_book.name).
+            var save_promise = account_book.updateAttribute("name", $scope.account_book.name).
             catch(function(msg){
                 if (msg.err) {
                     alerts.push("danger", msg.err);
@@ -203,13 +204,13 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
 
         $scope.addNewExpenditure = function(){
             account_book.addNewExpenditure($scope.new_expenditure).finally(function(){
-                edit.add_new_expenditure = false;
+                $scope.edit.add_new_expenditure = false;
             });
         };
 
         $scope.addNewIncome = function(){
             account_book.addNewIncome($scope.new_income).finally(function(){
-                edit.add_new_income = false;
+                $scope.edit.add_new_income = false;
             });
         }
     }, null, null);
