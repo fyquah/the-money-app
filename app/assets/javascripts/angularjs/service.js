@@ -1,18 +1,29 @@
-app.service("session" , [ "$location" , "User" , "$http" , "alerts" ,function($location , User , $http, alerts){
+app.service("session" , [ "$location" , "User" , "$http" , "alerts", "$q", "$location" ,function($location , User , $http, alerts, $q, $location){
     var current_user = false,
         self = this;
 
     this.create = function(obj){
-        return $http({
+        var deferred = $q.defer();
+        $http({
             method: "POST",
-            url: "/sessions/new.json",
+            url: "/sessions.json",
             data: {
                 user: {
                     email: obj.email,
                     password: obj.password
                 }
             }
+        }).success(function(data){
+            self.currentUser(new User(data.user));
+            $location.path("/account-books");
+            alerts.push("success" , "Log in successful! Welcome to the money app");
+            deferred.resolve();
+        }).error(function(){
+            alerts.push("danger", "Invalid credentials!");
+            deferred.reject();
         });
+
+        return deferred.promise;
     };
 
     this.currentUser = function(args){

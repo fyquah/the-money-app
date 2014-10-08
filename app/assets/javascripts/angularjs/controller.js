@@ -1,125 +1,87 @@
 app.controller("sessionsNewCtrl" , [ "$scope" , "$http" , "session" , "page" , "User" , "spinner" , "alerts" , "$timeout" , 
 function($scope , $http , session , page , User , spinner , alerts , $timeout){
-    page.redirectIfSignedIn();
-    $scope.user = {};
+    if(page.redirectIfSignedIn()){
+        return;
+    }
+
     $scope.submit = function(){
         spinner.start();
-        if( !$scope.user.email && !$scope.user.password) {
-            alerts.push("danger" , "user and password combination incorrect!");
+        session.create({
+            email: $scope.email,
+            password: $scope.password
+        }).finally(function(){
             spinner.stop();
-            return;
-        }
-        var data = {
-            user: {
-                email: $scope.user.email,
-                password: $scope.user.password
-            }
-        };
-        $http({
-            method: "POST",
-            url: "/sessions.json",
-            data: data
-        }).success(function(data){
-            console.log(data);
-            session.currentUser(new User(data.user));
-            console.log(session.currentUser());
-            alerts.removeAll();
-            page.redirect("/home");
-            alerts.push("success" , "Log in successful! Welcome to the money app");
-            spinner.stop();
-        }).error(function(data , status){
-            try {
-                console.log(data);
-                // kemungkinan invalid credential
-                if (status === 400 && data.error) {
-                    alerts.removeAll();
-                    alerts.push("danger" , data.error);
-                }
-            } catch (e) {
-                // error 5** [ISE] !!!
-                alert("an unkown error occured");
-            }
-            spinner.stop();
-        });
+        })
     };
 
 }]);
 
 app.controller("usersNewCtrl" , ["page" , "User" , "$scope" , "session" , "$http" , "alerts" , "$location" , function(page , User , $scope , session , $http , alerts , $location){
     page.redirectIfSignedIn();
-    (function(){
-        $scope.user = {};
-    })();
+    $scope.user = new User();
 
     $scope.submit = function(){
-        var data = {
-            user: {
-                name: $scope.user.name,
-                email: $scope.user.email,
-                password: $scope.user.password,
-                password_confirmation: $scope.user.password_confirmation
-            }
-        };
-        $http({
-            method: "POST" ,
-            url: "/users.json" ,
-            data: data
-        }).
-        success(function(data){
-            session.currentUser(new User(data.user));
-            $location.path("/home");
-        }).
-        error(function(data , status){;
-            if (status === 400) {
-                alerts.removeAll();
-                angular.forEach(data.error , function(err , index , obj){
-                    alerts.push({type: "danger" , msg: err});
-                });
-            } else {
-                console.log(data);
-                alert("an unkown error has occurred!");
-            }
+        $scope.user.create().then(function(){ // success callback
+            page.redirect("/signin");
+            alerts.push("info", "Created your account! You can now sign in with the credentials!");
+        }, function(){ // error callback
+
         });
-    }
+    };
 }]);
 
 app.controller("usersEditCtrl" , function($scope , $http , $routeParams, session , User, page , alerts , spinner){
-    if($routeParams.id.toString() !== session.currentUser().id.toString()){
-        page.redirect("/home");
-        alerts.push("danger" , "You are not authorized to view this page");
-        return;
-    }
-    $scope.user = angular.copy(session.currentUser());
 
-    $scope.submit = function(){
-        var data = {
-            user: $scope.user
-        };
-        spinner.start();
-        // update then change current user into that
-        $http({
-            method: "PATCH",
-            url: "/users/" + session.currentUser().id + ".json",
-            data: data
-        }).
-        success(function(data){
-            session.currentUser(new User(data.user));
-            console.log(session.currentUser());
-            alerts.push("success" , "Updated your user credentials!");
-            spinner.stop();
-        }).
-        error(function(data , status){
-            if (status === 400) {
-                console.log(data);
-                angular.forEach(data.error , function(err){
-                    alerts.push("danger" , err);
-                });
-            } else {
-                alert("An unkown error has happened!");
-            }
-            spinner.stop();
-        });
-    }
+    User.find($routeParams.id).then(function(user){ //callback
+        $scope.user = user;
+
+        $scope.submit = function(){
+            spinner.start();
+            user.update().then(function(){
+                alerts.push("success", "Updated your users' credentials!");
+            }).finally(function(){
+                spinner.stop();
+            })
+        }
+    }, function(){ //fallback
+
+    });
+
+    // if($routeParams.id.toString() !== session.currentUser().id.toString()){
+    //     page.redirect("/home");
+    //     alerts.push("danger" , "You are not authorized to view this page");
+    //     return;
+    // }
+
+    // $scope.submit = function(){
+    //     var data = {
+    //         user: $scope.user
+    //     };
+    //     spinner.start();
+    //     // update then change current user into that
+    //     $http({
+    //         method: "PATCH",
+    //         url: "/users/" + session.currentUser().id + ".json",
+    //         data: data
+    //     }).
+    //     success(function(data){
+    //         session.currentUser(new User(data.user));
+    //         console.log(session.currentUser());
+    //         alerts.push("success" , "Updated your user credentials!");
+    //         spinner.stop();
+    //     }).
+    //     error(function(data , status){
+    //         if (status === 400) {
+    //             console.log(data);
+    //             angular.forEach(data.error , function(err){
+    //                 alerts.push("danger" , err);
+    //             });
+    //         } else {
+    //             alert("An unkown error has happened!");
+    //         }
+    //         spinner.stop();
+    //     });
+    // }
 });
 
 app.controller("alertsCtrl" , [ "alerts" , "$scope" , function(alerts , $scope){
@@ -245,7 +207,7 @@ app.controller('accountBooksRecordsCtrl', ['$scope', "$http", "alerts", "session
     finally(function(){
         spinner.stop();
     });
-}])
+}]);
 
 app.controller("accountingTransactionsShowCtrl" , ["$scope", "$http", "alerts", "session","$routeParams", "page", "spinner", "AccountingTransaction", function($scope, $http, alerts, session, $routeParams, page, spinner, AccountingTransaction){
     if(page.redirectUnlessSignedIn()){
@@ -290,4 +252,4 @@ app.controller("accountingTransactionsShowCtrl" , ["$scope", "$http", "alerts", 
     finally(function(){
         spinner.stop();
     });
-}])
+}]);

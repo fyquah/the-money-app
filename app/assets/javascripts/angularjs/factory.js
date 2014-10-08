@@ -1,13 +1,88 @@
-app.factory("User" , function(){
+app.factory("User" , ["$q", "$http", function($q, $http){
     var User = function(args){
         args = args || {};
         this.name = args.name;
         this.id = args.id;
         this.email = args.email;
+        this.password = args.password;
+        this.password_confirmation = args.password_confirmation;
     };
+
+    User.find = function(id){
+        var self = this, deferred = $q.defer();
+        $http({
+            method: "GET",
+            url: "/users/" + id + ".json"
+        }).success(function(data){
+            deferred.resolve(new User(data.user));
+        }).error(function(data){
+            deferred.reject();
+        });
+        return deferred.promise;
+    }
+
+    User.prototype.data = function(){
+        var obj = {
+            user: {}
+        }, self = this;
+        ["name", "id", "email", "password", "password_confirmation"].forEach(function(attr){
+            obj.user[attr] = self[attr];
+        });
+        return obj;
+    };
+
+    User.prototype.create = function(){
+        var self = this, deferred = $q.defer();
+        $http({
+            method: "POST",
+            url: "/users.json",
+            data: self.data()
+        }).success(function(data){
+            self.id = data.user.id;
+            deferred.resolve();
+        }).error(function(data){
+            deferred.reject();
+        });
+        return deferred.promise;
+    };
+
+    User.prototype.update = function(){
+        var self = this, deferred = $q.defer();
+        $http({
+            method: "PATCH",
+            url: "/users/" + self.id + ".json",
+            data: self.data()
+        }).success(function(data){
+            deferred.resolve();
+        }).error(function(){
+            deferred.reject();
+        });
+        return deferred.promise;
+    };
+
+    // User.prototype.authenticate = function(password){
+    //     var data = {
+    //         user: {}
+    //     };
+    //     var self = this;
+    //     var deferred = $q.defer();
+    //     data.user.email = self.email;
+    //     data.user.password = password
+        
+    //     $http({
+    //         method: "POST",
+    //         url: "/sessions.json",
+    //         data: data
+    //     }).success(function(){
+
+    //     }).error(function(){
+
+    //     });
+    //     return deferred.promise;
+    // };
     // declare some class functions here
     return User;
-});
+}]);
 
 app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", function($http, $q, AccountingTransaction, alerts){
 
@@ -409,42 +484,6 @@ app.factory("AccountingTransaction" , ["$http", "$q", "page", "alerts", function
         });
         return deferred.promise;
     };
-
-    // AccountingTransaction.prototype.updateAttribute = function(attr_name, new_val){
-    //     var deferred = $q.defer();
-    //     var data = {
-    //         accounting_transaction: {}
-    //     };
-    //     data.accounting_transaction[attr_name] = new_val;
-    //     $http({
-    //         method: "POST",
-    //         url: "/accounting_transaction/" + this.id + ".json",
-    //         data: data
-    //     }).success(function(data){
-
-    //     }).error(function(data){
-
-    //     })
-    // };
-
-    // AccountingTransaction.prototype.update = function(){
-    //     var deffered = $q.defer();
-    //     var data = {
-    //         accounting_transaction: {}
-    //     };
-    //     AccountingTransaction.attributes().forEach(function(attr){
-    //         data.accounting_transaction[attr] = this[attr];
-    //     });
-    //     $http({
-    //         method: "PATCH",
-    //         url: "/accounting_transaction/" + this.id + ".json",
-    //         data: data
-    //     }).success(function(data){
-    //         deffered.resolve(data.accounting_transaction);
-    //     }).error(function(data){
-            
-    //     });
-    // };
-
+    
     return AccountingTransaction;
 }]);
