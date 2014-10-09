@@ -12,24 +12,25 @@ class AccountingTransactionsController < ApplicationController
   # to_json
 
   def destroy
-    if @accounting_transaction.destroy
-      render :status => 204 , :json => nil
-    else
-      render :status => 505 , :json => { :error => "An unkown error occured!" }
-    end
+    @accounting_transaction.destroy
+    render :status => 204 , :json => nil
   end
 
   def update
+    puts "parameters:"
+    puts accounting_transaction_params
+    puts "ori parameters"
+    puts params
     if @accounting_transaction.update_attributes(accounting_transaction_params)
       render :json => { :accounting_transaction => @accounting_transaction.as_json(:methods => [:amount, :debit_records , :credit_records]) } , :status => 201
     else
-      render :json => { :error => @accounting_transaction.errors.full_messages } , :status => 404
+      render :json => { :error => @accounting_transaction.errors.full_messages } , :status => 401
     end
   end
 
   private 
     def accounting_transaction_params
-      params.require(:accounting_transaction).permit(:id , :description, :date , :debit_records_attributes => [:id , :account_name , :amount , :account_type , :_destroy] , :credit_records_attributes => [:id , :account_name , :amount , :account_type , :_destroy])
+      params.require(:accounting_transaction).permit(:id , :description, :date , :debit_records_attributes => [:id , :account_name , :amount , :account_type , :_destroy, :accounting_transaction_id, :account_book_id] , :credit_records_attributes => [:id , :account_name , :amount , :account_type , :_destroy, :accounting_transaction_id, :account_book_id])
     end
 
     def account_book_must_be_viewable

@@ -26,10 +26,12 @@
                 <h3>Debited Records</h3>
                 <a ng-click="newRecord('debit')">Add new debit records</a>
                 <div class="row" ng-repeat="record in accounting_transaction.debitRecords()">
-                    <div class="col-xs-2"><a style="color : red" ng-click="accounting_transaction.removeDebitRecord($index)">X</a></div>
-                    <div class='col-xs-4'>{{ record.account_name }}</div>
-                    <div class='col-xs-3'>{{ record.account_type }}</div>
-                    <div class='col-xs-3'>{{ record.amount | currency:"$ " }}</div>
+                    <div ng-hide="record._destroy">
+                        <div class="col-xs-2"><a style="color : red" ng-click="accounting_transaction.removeDebitRecord($index)">X</a></div>
+                        <div class='col-xs-4'>{{ record.account_name }}</div>
+                        <div class='col-xs-3'>{{ record.account_type }}</div>
+                        <div class='col-xs-3'>{{ record.amount | currency:"$ " }}</div>
+                    </div>
                 </div>
                 <br />
             </div>
@@ -37,10 +39,12 @@
                 <h3>Credited Records</h3>
                 <a ng-click="newRecord('credit')">Add new credit records</a>
                 <div class="row" ng-repeat="record in accounting_transaction.creditRecords()">
-                    <div class="col-xs-2"><a style="color : red" ng-click="accounting_transaction.removeCreditRecord($index)">X</a></div>
-                    <div class='col-xs-4'>{{ record.account_name }}</div>
-                    <div class='col-xs-3'>{{ record.account_type }}</div>
-                    <div class='col-xs-3'>{{ record.amount | currency:"$ " }}</div>
+                    <div ng-hide="record._destroy">
+                        <div class="col-xs-2"><a style="color : red" ng-click="accounting_transaction.removeCreditRecord($index)">X</a></div>
+                        <div class='col-xs-4'>{{ record.account_name }}</div>
+                        <div class='col-xs-3'>{{ record.account_type }}</div>
+                        <div class='col-xs-3'>{{ record.amount | currency:"$ " }}</div>
+                    </div>
                 </div>
                 <br />
             <br />

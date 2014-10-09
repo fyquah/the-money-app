@@ -20,7 +20,7 @@ class UsersController < ApplicationController
 			render :json => { :user => @user } , :status => 201
       # redirect_to "/"
 		else
-      render :json => { :error => @user.errors.full_messages } , :status => 400
+      render :json => { :error => @user.errors.full_messages } , :status => 401
 			# render 'new'
 		end
 	end
@@ -37,7 +37,7 @@ class UsersController < ApplicationController
       # redirect_to edit_user_path(@user)
       render :json => { :user => @user } , :status => 203
     else
-      render :json => { :error => @user.errors.full_messages } , :status => 400
+      render :json => { :error => @user.errors.full_messages } , :status => 401
       # render 'edit'
 	   end
   end

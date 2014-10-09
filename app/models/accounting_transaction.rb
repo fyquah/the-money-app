@@ -23,6 +23,16 @@ class AccountingTransaction < ActiveRecord::Base
     self.date ||= Time.now.to_date
   end
 
+  def account_type_must_be_consistent
+    (credit_records + debit_records).each do |record|
+      a = AccountingRecord.where(:account_name => record.account_name, :account_book_id => account_book_id)
+      return unless a.length != 0
+      if a[0].account_type != r.account_type
+        errors.add(:account_type, "cannot be different from previously declared! (Previously declared #{account_name} as a/an #{a[0].account_type} account, but declaring it as a #{r.account_type} account now)")
+      end
+    end
+  end
+
   def amount
     if balance?
       debit_records.reject(&:marked_for_destruction?).inject(0 , &self.class.records_sum)
@@ -89,7 +99,7 @@ class AccountingTransaction < ActiveRecord::Base
   # Class methods
   def self.records_sum
     Proc.new do |x, record|
-      x += record.amount
+      x += (record.amount || 0)
     end
   end
 end

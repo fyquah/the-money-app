@@ -19,8 +19,9 @@ app.service("session" , [ "$location" , "User" , "$http" , "alerts", "$q", "$loc
             alerts.push("success" , "Log in successful! Welcome to the money app");
             deferred.resolve();
         }).error(function(){
-            alerts.push("danger", "Invalid credentials!");
-            deferred.reject();
+            deferred.reject({
+                error: "Invalid username and password combination!"
+            });
         });
 
         return deferred.promise;

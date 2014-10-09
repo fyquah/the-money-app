@@ -1,4 +1,8 @@
-app.factory("User" , ["$q", "$http", function($q, $http){
+app.constant('unkownErrorMessage', {
+    error: "Oops! We did not expect that. Please wait while we look for a fix!"
+});
+
+app.factory("User" , ["$q", "$http", "unkownErrorMessage", function($q, $http, unkownErrorMessage){
     var User = function(args){
         args = args || {};
         this.name = args.name;
@@ -15,8 +19,12 @@ app.factory("User" , ["$q", "$http", function($q, $http){
             url: "/users/" + id + ".json"
         }).success(function(data){
             deferred.resolve(new User(data.user));
-        }).error(function(data){
-            deferred.reject();
+        }).error(function(data, status){
+            if (status === 404) {
+                deferred.reject({ error: "User not found!"});
+            } else {
+                deferred.reject(unkownErrorMessage); 
+            }
         });
         return deferred.promise;
     }
@@ -40,8 +48,12 @@ app.factory("User" , ["$q", "$http", function($q, $http){
         }).success(function(data){
             self.id = data.user.id;
             deferred.resolve();
-        }).error(function(data){
-            deferred.reject();
+        }).error(function(data, status){
+            if (status === 401) {
+                deferred.reject(data);
+            } else {
+                deferred.reject(unkownErrorMessage);
+            }
         });
         return deferred.promise;
     };
@@ -54,37 +66,19 @@ app.factory("User" , ["$q", "$http", function($q, $http){
             data: self.data()
         }).success(function(data){
             deferred.resolve();
-        }).error(function(){
-            deferred.reject();
+        }).error(function(data, status){
+            if (status === 401) {
+                deferred.reject(data);
+            } else {
+                deferred.reject(unkownErrorMessage);
+            }
         });
         return deferred.promise;
     };
-
-    // User.prototype.authenticate = function(password){
-    //     var data = {
-    //         user: {}
-    //     };
-    //     var self = this;
-    //     var deferred = $q.defer();
-    //     data.user.email = self.email;
-    //     data.user.password = password
-        
-    //     $http({
-    //         method: "POST",
-    //         url: "/sessions.json",
-    //         data: data
-    //     }).success(function(){
-
-    //     }).error(function(){
-
-    //     });
-    //     return deferred.promise;
-    // };
-    // declare some class functions here
     return User;
 }]);
 
-app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", function($http, $q, AccountingTransaction, alerts){
+app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", "unkownErrorMessage", function($http, $q, AccountingTransaction, alerts, unkownErrorMessage){
 
     var AccountBook = function(args){
         var i, self = this;
@@ -98,9 +92,7 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
         }
 
         for (i = 0; i < self.accounting_transactions.length ; i++) {
-            // console.log(this.accounting_transactions[i]);
             this.accounting_transactions[i] = new AccountingTransaction(self.accounting_transactions[i]);
-            // console.log(this.accounting_transactions[i]);
         }
     };
 
@@ -118,7 +110,7 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
             deferred.resolve(account_books);
         }).
         error(function(data , status){
-            deferred.reject();
+            deferred.reject(unkownErrorMessage);
         });
         return deferred.promise;
     };
@@ -135,10 +127,12 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
         }).success(function(data){
             
             deferred.resolve(new AccountBook(data.account_book));
-        }).error(function(data){
-            deferred.reject(function(){
-                page.redirect("/404");
-            })
+        }).error(function(data, status){
+            if (status === 404) {
+                deferred.reject({ error: "Account Book cannot be found!"});
+            } else {
+                deferred.reject(unkownErrorMessage);
+            }
         });
         return deferred.promise;
     };
@@ -167,8 +161,11 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
             deferred.resolve(self);
         }).
         error(function(data, status){
-            console.log(data);
-            deferred.reject();
+            if (status === 401) {
+                deferred.reject(data);
+            } else {
+                deferred.reject(unkownErrorMessage);
+            }
         });
         return deferred.promise;
     };
@@ -183,7 +180,7 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
             deferred.resolve();
         }).
         error(function(data){
-            deferred.reject();
+            deferred.reject(unkownErrorMessage);
         });
         return deferred.promise;
     }
@@ -226,9 +223,12 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
             self.accounting_transactions.push(new AccountingTransaction(data.accounting_transaction));          
         }).
         error(function(data, status){
-            deferred.reject();
-            alerts.push("danger", "error adding new transaction!");
-        })
+            if (status === 401) {
+                deferred.reject(data);
+            } else {
+                deferred.reject(unkownErrorMessage);
+            }
+        });
         return deferred.promise;
     }
 
@@ -248,9 +248,11 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
         }).success(function(data, status){
             deferred.resolve();
         }).error(function(data, status){
-            alerts.push("danger", data.error);
-            this[attr] = ori_val;
-            deferred.reject(ori_val);
+            if (status === 401) {
+                deferred.reject(data);
+            } else {
+                deferred.reject(unkownErrorMessage);
+            }
         });
         return deferred.promise;
     };
@@ -308,8 +310,8 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
                 accounts[acc_name].credit_total = accounts[acc_name].credit_records.reduce(sum_fnc, 0);
             }
             deferred.resolve(accounts);
-        }).error(function(data){
-            deferred.reject();
+        }).error(function(data, status){
+            deferred.reject(unkownErrorMessage);
         });
 
         return deferred.promise;
@@ -318,7 +320,7 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", fu
     return AccountBook;
 }]);
 
-app.factory("AccountingTransaction" , ["$http", "$q", "page", "alerts", function($http, $q, page, alerts){
+app.factory("AccountingTransaction" , ["$http", "$q", "page", "alerts", "unkownErrorMessage", function($http, $q, page, alerts, unkownErrorMessage){
     var AccountingTransaction = function(args){
         args = args || {};
         var self = this,
@@ -363,9 +365,7 @@ app.factory("AccountingTransaction" , ["$http", "$q", "page", "alerts", function
         this.debitRecords = function() {
             var return_arr = [], i;
             for (i =0 ; i < _debit_records_attributes.length ; i++) {
-                if (_debit_records_attributes[i]._destroy != true) {
-                    return_arr.push(_debit_records_attributes[i]);
-                }
+                return_arr.push(_debit_records_attributes[i]);
             }
             return return_arr;
         };
@@ -373,9 +373,7 @@ app.factory("AccountingTransaction" , ["$http", "$q", "page", "alerts", function
         this.creditRecords = function() {
             var return_arr = [], i;
             for (i =0 ; i < _credit_records_attributes.length ; i++) {
-                if (_credit_records_attributes[i]._destroy != true) {
-                    return_arr.push(_credit_records_attributes[i]);
-                }
+                return_arr.push(_credit_records_attributes[i]);
             }
             return return_arr;
         };
@@ -403,16 +401,18 @@ app.factory("AccountingTransaction" , ["$http", "$q", "page", "alerts", function
         };
 
         this.data = function(){
-            var data = {}, self = this;
+            var data = {
+                accounting_transaction: {}
+            }, self = this;
             self.constructor.attributes().forEach(function(attr){
                 if(attr == "debit_records") {
-                    data.debit_records_attributes = _debit_records_attributes;
+                    data.accounting_transaction.debit_records_attributes = _debit_records_attributes;
                 } else if (attr === "credit_records") {
-                    data.credit_records_attributes = _credit_records_attributes;
+                    data.accounting_transaction.credit_records_attributes = _credit_records_attributes;
                 } else if (attr == "amount") {
                     // do nothing
                 } else {
-                    data[attr] = self[attr];
+                    data.accounting_transaction[attr] = self[attr];
                 }
             });
             return data;
@@ -430,10 +430,12 @@ app.factory("AccountingTransaction" , ["$http", "$q", "page", "alerts", function
             url: "/accounting_transactions/" + id + ".json"
         }).success(function(data){
             deferred.resolve(new AccountingTransaction(data.accounting_transaction));
-        }).error(function(data){
-            deferred.reject(function(){
-                page.redirect("/404");
-            })
+        }).error(function(data, status){
+            if (status === 404) {
+                deferred.reject({ error: "Account Book not found!"});
+            } else {
+                deferred.reject(unkownErrorMessage);
+            }
         });
         return deferred.promise;
     };
@@ -447,10 +449,12 @@ app.factory("AccountingTransaction" , ["$http", "$q", "page", "alerts", function
         }).success(function(data){
             self.id = data.accounting_transaction.id;
             deferred.resolve(data.accounting_transaction);
-        }).error(function(){
-            deferred.reject(function(){
-                page.redirect("/error");
-            })
+        }).error(function(data, status){
+            if (status === 401) {
+                deferred.reject(data);
+            } else {
+                deferred.reject(unkownErrorMessage);
+            }
         });
         return deferred.promise;
     };
@@ -465,8 +469,12 @@ app.factory("AccountingTransaction" , ["$http", "$q", "page", "alerts", function
             url: "/accounting_transactions/" + this.id + ".json"
         }).success(function(){
             deferred.resolve();
-        }).error(function(){
-            deferred.reject();
+        }).error(function(data, status){
+            if (status === 401) {
+                deferred.reject(data);
+            } else {
+                deferred.reject(unkownErrorMessage);
+            }
         });
         return deferred.promise;
     };
@@ -480,7 +488,11 @@ app.factory("AccountingTransaction" , ["$http", "$q", "page", "alerts", function
         }).success(function(data){
             deferred.resolve();
         }).error(function(data, status){
-            deferred.reject();
+            if (status === 401) {
+                deferred.reject(data);
+            } else {
+                deferred.reject(unkownErrorMessage);
+            }
         });
         return deferred.promise;
     };

@@ -9,6 +9,8 @@ function($scope , $http , session , page , User , spinner , alerts , $timeout){
         session.create({
             email: $scope.email,
             password: $scope.password
+        }).catch(function(err){
+            alerts.push("danger", err.error);
         }).finally(function(){
             spinner.stop();
         })
@@ -24,8 +26,8 @@ app.controller("usersNewCtrl" , ["page" , "User" , "$scope" , "session" , "$http
         $scope.user.create().then(function(){ // success callback
             page.redirect("/signin");
             alerts.push("info", "Created your account! You can now sign in with the credentials!");
-        }, function(){ // error callback
-
+        }, function(err){ // error callback
+            alerts.push("danger", err.error);
         });
     };
 }]);
@@ -39,6 +41,8 @@ app.controller("usersEditCtrl" , function($scope , $http , $routeParams, session
             spinner.start();
             user.update().then(function(){
                 alerts.push("success", "Updated your users' credentials!");
+            }, function(){
+                alerts.push("danger", err.error);
             }).finally(function(){
                 spinner.stop();
             })
@@ -46,42 +50,6 @@ app.controller("usersEditCtrl" , function($scope , $http , $routeParams, session
     }, function(){ //fallback
 
     });
-
-    // if($routeParams.id.toString() !== session.currentUser().id.toString()){
-    //     page.redirect("/home");
-    //     alerts.push("danger" , "You are not authorized to view this page");
-    //     return;
-    // }
-
-    // $scope.submit = function(){
-    //     var data = {
-    //         user: $scope.user
-    //     };
-    //     spinner.start();
-    //     // update then change current user into that
-    //     $http({
-    //         method: "PATCH",
-    //         url: "/users/" + session.currentUser().id + ".json",
-    //         data: data
-    //     }).
-    //     success(function(data){
-    //         session.currentUser(new User(data.user));
-    //         console.log(session.currentUser());
-    //         alerts.push("success" , "Updated your user credentials!");
-    //         spinner.stop();
-    //     }).
-    //     error(function(data , status){
-    //         if (status === 400) {
-    //             console.log(data);
-    //             angular.forEach(data.error , function(err){
-    //                 alerts.push("danger" , err);
-    //             });
-    //         } else {
-    //             alert("An unkown error has happened!");
-    //         }
-    //         spinner.stop();
-    //     });
-    // }
 });
 
 app.controller("alertsCtrl" , [ "alerts" , "$scope" , function(alerts , $scope){
@@ -104,10 +72,8 @@ app.controller("accountBooksNewCtrl" , ["alerts" , "page" , "$http", "$scope" , 
     $scope.submit = function(){
         $scope.new_account_book.create().then(function(account_book){
             page.redirect("/account-books/" + account_book.id);
-        }).catch(function(){
-
-        }).finally(function(){
-
+        }, function(err){
+            alerts.push("danger", err.error);
         })
     };
 }]);
@@ -120,8 +86,8 @@ app.controller("accountBooksIndexCtrl" , ["alerts" , "page" , "$http", "$scope" 
     // query ajax data to get all the 
     AccountBook.all().then(function(account_books){
         $scope.account_books = account_books;
-    }).catch(function(){
-
+    }, function(err){
+        alerts.push("danger", err.error);
     }).finally(function(){
         spinner.stop();
     })
@@ -139,25 +105,32 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
         spinner.stop();
 
         $scope.removeTransaction = function(id){
-            alert("Are you sure you want to remove transaction?");
-            account_book.removeTransaction(id).catch(function(){
-                alerts.push("danger", "An unkown error has just occured while removing transaction");
-            });
+            if (confirm("Are you sure you want to remove transaction?")) {
+                account_book.removeTransaction(id).catch(function(err){
+                    alerts.push("danger", err.error);
+                });
+            }
         };
 
         $scope.addNewTransaction = function(){
             account_book.addNewTransaction({
                 description: $scope.new_accounting_transaction.description,
                 date: $scope.new_accounting_transaction.date
-            });
+            }).then(function(){
+                alerts.push("success", "A new transaction has been created!");
+            }, function(err){
+                alerts.push("danger", err.error);
+            }).finally(function(){
+                $scope.edit.add_new_transaction = false;
+            })
         };
 
         $scope.renameAccountBook = function(){
             var save_promise = account_book.updateAttribute("name", $scope.account_book.name).
-            catch(function(msg){
-                if (msg.err) {
-                    alerts.push("danger", msg.err);
-                }
+            then(function(){
+                alerts.push("success", "Successfully renamed account book!");
+            }, function(err){
+                alerts.push("danger", err.error);
             }).
             finally(function(){
                 $scope.edit.rename_account_book = false;
@@ -169,18 +142,32 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
                 account_book.remove().then(function(){
                     page.redirect("/account-books");
                     alerts.push("success", "account book " + account_book.name + " has been removed!");
-                })                
+                }, function(err){
+                    alerts.push('danger', err.error);
+                })
             }
         }
 
         $scope.addNewExpenditure = function(){
-            account_book.addNewExpenditure($scope.new_expenditure).finally(function(){
+            account_book.addNewExpenditure($scope.new_expenditure).
+            then(function(){
+                alerts.push("success", "Created a new expenditure record!");
+            }, function(err){
+                alerts.push("danger", err.error);
+            }).
+            finally(function(){
                 $scope.edit.add_new_expenditure = false;
             });
         };
 
         $scope.addNewIncome = function(){
-            account_book.addNewIncome($scope.new_income).finally(function(){
+            account_book.addNewIncome($scope.new_income).
+            then(function(){
+                alerts.push("success", "Created a new income record!");
+            }, function(err){
+                alerts.push("danger", err.error);
+            }).
+            finally(function(){
                 $scope.edit.add_new_income = false;
             });
         };
@@ -200,9 +187,8 @@ app.controller('accountBooksRecordsCtrl', ['$scope', "$http", "alerts", "session
     }).
     then(function(accounts){
         $scope.accounts = accounts;
-    }).
-    catch(function(){
-        
+    }, function(err){
+        alerts.push("danger", err.error);
     }).
     finally(function(){
         spinner.stop();
@@ -223,7 +209,11 @@ app.controller("accountingTransactionsShowCtrl" , ["$scope", "$http", "alerts", 
         };
 
         $scope.update = function(component){
-            accounting_transaction.update().finally(function(){
+            accounting_transaction.update().then(function(){
+                alerts.push("success", "Successfully updated accounting transaction!");
+            }, function(err){
+                alerts.push("danger", err.error);
+            }).finally(function(){
                 spinner.stop();
             })
         };

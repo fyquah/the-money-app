@@ -27,7 +27,7 @@ class AccountBooksController < ApplicationController
     if @account_book.save
       render :status => 201 , :json => { :account_book => @account_book.as_json }
     else
-      render :status => 400 , :json => { :error => @account_book.errors.full_messages }
+      render :status => 401 , :json => { :error => @account_book.errors.full_messages }
     end
   end
 
@@ -35,7 +35,7 @@ class AccountBooksController < ApplicationController
     if @account_book.update_attributes(account_book_params)
       render :status => 200 , :json => { :account_book => @account_book.as_json }
     else
-      render :status => 400 , :json => { :error => @account_book.errors.full_messages }
+      render :status => 401 , :json => { :error => @account_book.errors.full_messages }
     end
   end
 
@@ -49,7 +49,7 @@ class AccountBooksController < ApplicationController
     if @accounting_transaction.save
       render :status => 201 , :json => { :accounting_transaction => @accounting_transaction.as_json(:methods => [:amount]) }
     else
-      render :status => 400 , :json => { :error => @accounting_transaction.errors.full_messages }
+      render :status => 401 , :json => { :error => @accounting_transaction.errors.full_messages }
     end
   end
 
@@ -64,19 +64,19 @@ class AccountBooksController < ApplicationController
 
     def account_book_must_be_editable
       unless @account_book.can_be_viewed_by? current_user
-        render :json => { :error => "You are not authorized to peform this action" } , :status => 401
+        render :json => { :error => "You are not allowed to perform the action!" } , :status => 401
       end
     end
 
     def account_book_must_be_viewable
       unless @account_book.can_be_edited_by? current_user
-        render :json => { :error => "You are not authorized to peform this action" } , :status => 401
+        render :json => { :error => "You are not allowed to perform the action!" } , :status => 401
       end
     end
 
     def account_book_must_be_owned
       unless @account_book.user == current_user
-        render :json => { :error => "You are not authorized to peform this action! Only account book owners can destroy the account book!" } , :status => 401
+        render :json => { :error => "You are not allowed to perform the action!" } , :status => 401
       end
     end
 
