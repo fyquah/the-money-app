@@ -234,6 +234,18 @@ app.controller("accountingTransactionsShowCtrl" , ["$scope", "$http", "alerts", 
                 $scope.accounting_transaction.addCreditRecord($scope.new_account_record);
             }
             $scope.edit.add_new_record = false;
+        };
+
+        $scope.removeTransaction = function(){
+            if (!confirm("Are you sure you want to remove the transation " + accounting_transaction.description + " ?")) {
+                return;
+            }
+            accounting_transaction.remove().then(function(){
+                page.redirect("/account-books/" + accounting_transaction.account_book_id);
+                alerts.push("success", "transation has been removed!");
+            }, function(err){
+                alerts.push('danger', err.error);
+            });
         }
         
     }, function(){

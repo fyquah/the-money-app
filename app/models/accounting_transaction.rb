@@ -6,6 +6,7 @@ class AccountingTransaction < ActiveRecord::Base
   accepts_nested_attributes_for :debit_records , :credit_records , :allow_destroy => true
   # validation => must be balance before saving the transaction
   validate :account_records_must_be_able_to_balance
+  validate :account_type_must_be_consistent
   validates :description , :presence => true
   validates :date , :presence => true
 
@@ -25,10 +26,10 @@ class AccountingTransaction < ActiveRecord::Base
 
   def account_type_must_be_consistent
     (credit_records + debit_records).each do |record|
-      a = AccountingRecord.where(:account_name => record.account_name, :account_book_id => account_book_id)
-      return unless a.length != 0
-      if a[0].account_type != r.account_type
-        errors.add(:account_type, "cannot be different from previously declared! (Previously declared #{account_name} as a/an #{a[0].account_type} account, but declaring it as a #{r.account_type} account now)")
+      existing_records = AccountingRecord.where(:account_name => record.account_name, :account_book_id => account_book_id)
+      return unless existing_records.length != 0
+      if existing_records[0].account_type != record.account_type
+        errors.add(:account_type, "cannot be different from previously declared! (Previously declared #{record.account_name} as a/an #{existing_records[0].account_type} account, but now using it as a #{record.account_type} account)")
       end
     end
   end
