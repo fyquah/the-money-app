@@ -18,3 +18,20 @@ app.filter("limitWordsLength", function(){
         return str.substr(0, len) + s.substr(0, s.indexOf(" ")) + (str.length > len ? "..." : "");
     };
 });
+
+app.filter("orderObjectBy", function(){
+    return function(items, field, reverse){
+        var filtered = [];
+        angular.forEach(items, function(item){
+            filtered.push(item);
+        });
+        console.log(filtered);
+        filtered.sort(function(a,b){
+            return a[field] > b[field] ? 1 : -1;
+        });
+        if (reverse) {
+            filtered.reverse();
+        }
+        return filtered;
+    }
+})

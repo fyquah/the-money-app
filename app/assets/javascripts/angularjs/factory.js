@@ -306,8 +306,24 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", "u
                 return memo + (record.amount || 0);
             };
             for(var acc_name in accounts){
-                accounts[acc_name].debit_total = accounts[acc_name].debit_records.reduce(sum_fnc, 0);
-                accounts[acc_name].credit_total = accounts[acc_name].credit_records.reduce(sum_fnc, 0);
+                var d = accounts[acc_name].debit_records.reduce(sum_fnc, 0);
+                var c = accounts[acc_name].credit_records.reduce(sum_fnc, 0);
+                var balance_obj = {
+                    accounting_transaction: {
+                        data: null,
+                        description: "BALANCE"
+                    },
+                    amount: Math.abs(d-c)
+                };
+                accounts[acc_name].account_name = acc_name;
+                accounts[acc_name].debit_total = d;
+                accounts[acc_name].credit_total  = c;
+                if ( d > c) {
+                    accounts[acc_name].credit_records.push(balance_obj);
+                } else if ( c > d ) {
+                    accounts[acc_name].debit_records.push(balance_obj);
+                }
+                accounts[acc_name].total = d > c ? d : c;
             }
             deferred.resolve(accounts);
         }).error(function(data, status){

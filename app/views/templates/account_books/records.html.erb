@@ -1,14 +1,14 @@
 <p style="text-align : right" ng-show="display_back_link"><a style="color: blue" ng-href="/account-books/{{ account_book.id }}/records">Back to all records</a></p>
 <p style="text-align : right"><a ng-href="/account-books/{{ account_book.id }}">Back to account book</a></p>
-<div ng-repeat="(account_name, account_obj) in accounts">
+<div ng-repeat="account_obj in accounts | orderObjectBy:'account_type' ">
     <div class="page-header">
-        <h3 style="text-align : center"><a ng-href="/account-books/{{ account_book.id }}/records?account={{ account_name }}">{{ account_name }}</a><small> an {{ account_obj.account_type }} account - {{ (account_obj.debit_total - account_obj.credit_total) | currency:"$ " }} at {{ account_obj.debit_total - account_obj.credit_total > 0 ? "debit" : "credit" }}</small></h3>
+        <h3 style="text-align : center"><a ng-href="/account-books/{{ account_book.id }}/records?account={{ account_name }}">{{ account_obj.account_name }}</a><small> {{ account_obj.account_type }}</small></h3>
     </div>
     <div class="row">
         <div class="col-xs-5">
             <div ng-repeat="record in account_obj.debit_records" class="row">
                 <div class="col-xs-4"><a>{{ record.accounting_transaction.date }}</a></div>
-                <div class="col-xs-5"><a ng-href="/accounting-transactions/{{ record.accounting_transaction_id }}">{{ record.accounting_transaction.description | limitWordsLength:20 }}</a></div>
+                <div class="col-xs-5"><a ng-href="{{ record.accounting_transaction.description === 'BALANCE' ? '' : '/accounting-transactions/' + record.accounting_transaction_id }}">{{ record.accounting_transaction.description | limitWordsLength:20 }}</a></div>
                 <div style="text-align : right" class="col-xs-3">{{ record.amount | currency:"" }}</div>
             </div>
         </div>
@@ -16,7 +16,7 @@
         <div class="col-xs-5 col-xs-offset-2">
             <div ng-repeat="record in account_obj.credit_records" class="row">
                 <div class="col-xs-4"><a>{{ record.accounting_transaction.date }}</a></div>
-                <div class="col-xs-5"><a ng-href="/accounting-transactions/{{ record.accounting_transaction_id }}">{{ record.accounting_transaction.description | limitWordsLength:20 }}</a></div>
+                <div class="col-xs-5"><a ng-href="{{ record.accounting_transaction.description === 'BALANCE' ? '' : '/accounting-transactions/' + record.accounting_transaction_id }}">{{ record.accounting_transaction.description | limitWordsLength:20 }}</a></div>
                 <div style="text-align : right" class="col-xs-3">{{ record.amount  | currency:""}}</div>
             </div>
         </div>
@@ -24,12 +24,12 @@
     <div class="row">
         <div class="col-xs-5">
             <div class="row">
-                <div style="text-align : right" class="col-xs-offset-9 col-xs-3"><strong>{{ account_obj.debit_total | currency:"$ " }}</strong></div>
+                <div style="text-align : right" class="col-xs-offset-9 col-xs-3"><strong>{{ account_obj.total | currency:"$ " }}</strong></div>
             </div>
         </div>
         <div class="col-xs-offset-2 col-xs-5">
             <div class="row">
-                <div style="text-align : right" class="col-xs-offset-9 col-xs-3"><strong>{{ account_obj.credit_total | currency:"$ " }}</strong></div>
+                <div style="text-align : right" class="col-xs-offset-9 col-xs-3"><strong>{{ account_obj.total | currency:"$ " }}</strong></div>
             </div>
         </div>        
     </div>
