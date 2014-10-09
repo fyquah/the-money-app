@@ -126,6 +126,7 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
         };
 
         $scope.renameAccountBook = function(){
+            console.log($scope.new_account_book_name)
             var save_promise = account_book.updateAttribute("name", $scope.account_book.name).
             then(function(){
                 alerts.push("success", "Successfully renamed account book!");
