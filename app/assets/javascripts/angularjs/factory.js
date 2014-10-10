@@ -220,7 +220,14 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", "u
         success(function(data, status){
             var lo, hi, mid;
             deferred.resolve();
-            self.accounting_transactions.push(new AccountingTransaction(data.accounting_transaction));          
+            self.accounting_transactions.push(new AccountingTransaction(data.accounting_transaction));
+            self.accounting_transactions.sort(function(a,b){
+                if (a.date == b.date) {
+                    return (new Date(a.created_at) > new Date(b.created_at)) ? 1 : -1;
+                } else {
+                    return a.date > b.date ? 1 : -1;
+                }
+            })      
         }).
         error(function(data, status){
             if (status === 401) {

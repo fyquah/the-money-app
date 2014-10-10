@@ -13,7 +13,7 @@ class AccountingTransaction < ActiveRecord::Base
   scope :contains_records_of , ->(account_name) do
     where(:id => AccountingRecord.where(:account_name => account_name.downcase).select(:accounting_transaction_id))
   end
-  default_scope ->{ order(:date => :desc )}
+  default_scope ->{ order(:date => :desc , :created_at => :desc)}
 
   before_save do
     debit_records.each { |r| r.account_book ||= self.account_book }
