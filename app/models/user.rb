@@ -4,6 +4,8 @@ class User < ActiveRecord::Base
   has_many :account_books , :foreign_key => "user_id" , :class_name => "AccountBook" , :autosave => false
   has_and_belongs_to_many :viewable_account_books , :class_name => "AccountBook" , :foreign_key => "user_id" , :join_table => "users_viewable_account_books"
   has_and_belongs_to_many :editable_account_books , :class_name => "AccountBook" , :foreign_key => "user_id" , :join_table => "users_editable_account_books"
+  has_many :borrowed_debts , :class_name => "Debt", :foreign_key => "borrower_id"
+  has_many :lent_debts, :class_name => "Debt", :foreign_key => "lender_id"
   
   validates :name , presence: true
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-])*.[a-z]+\z/i

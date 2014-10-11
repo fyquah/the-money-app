@@ -10,7 +10,10 @@ Rails.application.routes.draw do
     resources :account_books
     match "account_books/:id/create_accounting_transaction", :to => "account_books#create_accounting_transaction", :via => "post"
     match "account_books/:id/records", :to => "account_books#records", :via => "get"
-    resources :accounting_transactions , :only => [:update , :show , :destroy]    
+    # Accounting Transactions
+    resources :accounting_transactions , :only => [:update , :show , :destroy]
+    # Debts
+    resources :debts, :only => [:update , :show , :index, :destroy]
   end
 
   # The client parts come here
