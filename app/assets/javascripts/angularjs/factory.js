@@ -4,13 +4,20 @@ app.constant('unkownErrorMessage', {
 
 app.factory("User" , ["$q", "$http", "unkownErrorMessage", function($q, $http, unkownErrorMessage){
     var User = function(args){
+        var self = this;
         args = args || {};
-        this.name = args.name;
-        this.id = args.id;
-        this.email = args.email;
-        this.password = args.password;
-        this.password_confirmation = args.password_confirmation;
+        self.constructor.attributes().forEach(function(attr){
+            if (attr === "created_at") {
+                self[attr] = new Date(args[attr]);
+            } else {
+                self[attr] = args[attr];
+            }
+        });
     };
+
+    User.attributes = function(){
+        return ["id", "name" , "email", "password" , "password_confirmation", "created_at"];
+    }
 
     User.find = function(id){
         var self = this, deferred = $q.defer();
@@ -83,8 +90,12 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", "u
     var AccountBook = function(args){
         var i, self = this;
         args = args || {};
-        AccountBook.attributes().forEach(function(attr){
-            self[attr] = args[attr];
+        self.constructor.attributes().forEach(function(attr){
+            if (attr === "created_at") {
+                self[attr] = new Date(args[attr])
+            } else {
+                self[attr] = args[attr];
+            }
         });
         self.accounting_transactions = self.accounting_transactions || [];
         if (self.date) {
@@ -116,7 +127,7 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", "u
     };
 
     AccountBook.attributes = function(){
-        return ["id", "name", "user_id", "accounting_transactions"];
+        return ["id", "name", "user_id", "accounting_transactions", "created_at"];
     };
 
     AccountBook.find = function(id){
@@ -352,7 +363,7 @@ app.factory("AccountingTransaction" , ["$http", "$q", "page", "alerts", "unkownE
             _records_has_been_modified = true,
             _amount;
         // demonstrating the power of JS private variables combo closure!
-        AccountingTransaction.attributes().forEach(function(attr){
+        self.constructor.attributes().forEach(function(attr){
             if (attr === "debit_records") {
                 _debit_records_attributes = args[attr] || [];
             } else if (attr === "credit_records") {
