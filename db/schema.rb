@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141011162527) do
+ActiveRecord::Schema.define(version: 20141011201244) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -62,7 +62,7 @@ ActiveRecord::Schema.define(version: 20141011162527) do
     t.integer  "lender_id"
     t.string   "status",         default: "pending"
     t.string   "description"
-    t.boolean  "seen_by_sender", default: false
+    t.boolean  "seen_by_lender", default: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

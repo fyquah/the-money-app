@@ -257,13 +257,37 @@ app.controller("accountingTransactionsShowCtrl" , ["$scope", "$http", "alerts", 
     });
 }]);
 
-app.controller('debtsNewCtrl', ['$scope', 'User', function($scope, User){
-    $scope.new_debt = {};
+app.controller('debtsNewCtrl', ['$scope', 'User', 'Debt', 'alerts', 'session', function($scope, User, Debt, alerts, session){    
+    var new_debt = new Debt(), all_users;
     User.all().then(function(all_users){
-        $scope.all_users = all_users;
+        $scope.all_users = all_users.filter(function(user){
+            return user.id != session.currentUser().id;
+        })
     });
 
+    $scope.new_debt = new_debt;
     $scope.submit = function(){
-        
+        new_debt.create().then(function(){
+            alerts.push("success", "sent your debt request!");
+        }, function(err){
+            alerts.push("danger", err.error);
+        })
     }
+}]);
+
+app.controller('debtsIndexCtrl', ['$scope', 'Debt', function($scope, Debt){
+    var borrowed_debts , lent_debts;
+    Debt.all().then(function(r){
+        borrowed_debts = r.borrowed_debts;
+        lent_debts = r.lent_debts;
+
+        $scope.borrowed_debts = borrowed_debts;
+        $scope.lent_debts = lent_debts;
+        $scope.status_color_class = {
+            pending: "warning",
+            rejected: "danger",
+            approved: "success",
+            resolved: "info"
+        }
+    });
 }])

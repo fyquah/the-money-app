@@ -1,0 +1,28 @@
+<h2>Debt Requests Menu</h2>
+<a href="/debts/new" class="btn btn-link">Click here to make a new debt request!</a>
+<h3>All your borrowed debts</h3>
+
+    <div ng-show="borrowed_debts.length == 0">
+        Looks like you have no standing debts (Yay!)
+    </div>
+<div ng-repeat="debt in borrowed_debts">
+    <div class="row">
+        <div class="col-xs-6">{{ debt.description }}</div>
+        <div class="col-xs-2">{{ debt.amount }}</div>
+        <div class="col-xs-2">{{ debt.lender.name }}</div>
+        <div class="col-xs-2 alert-{{ status_color_class[debt.status] }}">{{ debt.status }}</div>
+    </div>
+</div>
+
+<h3>All your lent debts</h3>
+<div ng-show="lent_debts.length == 0">
+    Looks like you have no debt requests!
+</div>
+<div ng-repeat="debt in lent_debts">
+    <div class="row">
+        <div class="col-xs-6">{{ debt.description }}</div>
+        <div class="col-xs-1">{{ debt.amount }}</div>
+        <div class="col-xs-2">{{ debt.borrower.name }}</div>
+        <div class="col-xs-1 alert-{{ status_color_class[debt.status] }}">{{ debt.status }}</div>
+    </div>
+</div>

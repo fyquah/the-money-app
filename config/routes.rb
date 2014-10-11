@@ -13,7 +13,10 @@ Rails.application.routes.draw do
     # Accounting Transactions
     resources :accounting_transactions , :only => [:update , :show , :destroy]
     # Debts
-    resources :debts, :only => [:update , :show , :index, :destroy]
+    resources :debts, :only => [:update , :show , :index, :create]
+    match "debts/active", :to => "debts#active", :via => "get"
+    match "debts/archive", :to => "debts#archive", :via => "get"
+    match "debts/:id/seen", :to => "debts#seen", :via => "patch"
   end
 
   # The client parts come here
