@@ -25,6 +25,10 @@ class UsersController < ApplicationController
 		end
 	end
 
+  def index
+    render :json => { :users => User.all.as_json(:except => "password_digest") }
+  end
+
 	def show
     @user = User.find params[:id]
     render :json => { :user => @user }

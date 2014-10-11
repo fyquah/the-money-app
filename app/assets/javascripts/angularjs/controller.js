@@ -256,3 +256,14 @@ app.controller("accountingTransactionsShowCtrl" , ["$scope", "$http", "alerts", 
         spinner.stop();
     });
 }]);
+
+app.controller('debtsNewCtrl', ['$scope', 'User', function($scope, User){
+    $scope.new_debt = {};
+    User.all().then(function(all_users){
+        $scope.all_users = all_users;
+    });
+
+    $scope.submit = function(){
+        
+    }
+}])

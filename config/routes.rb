@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 
   scope :format => true, :constraints => { :format => 'json' } do
-    resources :users , only: [:create , :update , :show] # get stuff dealed by angularjs
+    resources :users , only: [:create , :update , :show, :index] # get stuff dealed by angularjs
     resources :sessions , only: [:create]
     match "sessions/destroy" , :to => "sessions#destroy" , :via => "delete"
     match "sessions/current" , :to => "sessions#current" , :via => "get"

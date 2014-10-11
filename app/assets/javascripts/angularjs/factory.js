@@ -34,6 +34,21 @@ app.factory("User" , ["$q", "$http", "unkownErrorMessage", function($q, $http, u
             }
         });
         return deferred.promise;
+    };
+
+    User.all = function(){
+        var self = this, deferred = $q.defer();
+        $http({
+            method: "GET",
+            url: "/users.json"
+        }).success(function(data){
+            deferred.resolve(data.users.map(function(user_args){
+                return new User(user_args);
+            }));
+        }).error(function(){
+            deferred.reject(unkownErrorMessage);
+        });
+        return deferred.promise;
     }
 
     User.prototype.data = function(){

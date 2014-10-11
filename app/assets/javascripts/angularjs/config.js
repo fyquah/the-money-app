@@ -88,6 +88,10 @@ app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $l
         templateUrl: "/templates/accounting_transactions/show.html",
         controller: "accountingTransactionsShowCtrl"
     }).
+    when("/debts/new", {
+        templateUrl: "/templates/debts/new.html",
+        controller: "debtsNewCtrl"
+    }).
     when("/error", {
         templateUrl: "/templates/error.html"
     }).

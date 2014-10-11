@@ -1,0 +1,25 @@
+<h3>Request a new debt!</h3>
+
+<form ng-submit="submit()">
+    <div class="form-group">
+        <label>Describe your debt request!</label>
+        <textarea class="form-control" rows="2" ng-model="new_debt.description"></textarea>
+    </div>
+    <div class="form-group">
+        <label>How much do you want to borrow? (Something realistic please!)</label>
+        <input class="form-control" ng-model="new_debt.amount" placeholder="amount"/>
+    </div>
+
+    <div class="form-group">
+        <label>Select a Lender you wish to request from</label>
+        <select class="form-control" ng-model="new_debt.lender_id">
+            <option ng-repeat="user in all_users | orderBy:'name' " value="{{ user.id }}">{{ user.name }} - {{ user.email }}</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <input type="button" class="btn btn-default" value="request!"/>
+    </div>
+</form>
+
+{{ debug }}
