@@ -29,24 +29,9 @@ app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $l
     // }
 
     $routeProvider.when("/" , {
-        template: "<div ng-bind='loading_msg'></div>",
-        controller: ["page" , "$interval" , "session" , "$scope" , function(page , $interval , session , $scope){
-            $interval(function(){
-                var counter = 0;
-                return function(){
-                    var i;
-                    counter = (counter + 1) % 5;
-                    $scope.loading_msg = "Cooking up some awesomeness ";
-                    for(i = 0 ; i < counter + 1 ; i++) {
-                        $scope.loading_msg += ".";
-                    }
-                };
-            }() , 500);
-            if (session.currentUser()) {
-                page.redirect("home");
-            } else {
-                page.redirect("signin");
-            }
+        templateUrl: "/templates/home.html",
+        controller: ["page" , function(page){
+            page.redirectIfSignedIn("/dashboard");
         }]
     }).
     when("/signin" , {
@@ -65,12 +50,22 @@ app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $l
         templateUrl: "/templates/users/edit.html",
         controller: "usersEditCtrl"
     }).
-    when("/home" , {
-        templateUrl: "/templates/static_pages/home.html",
-        controller: ["page" , function(page){
-            page.redirectUnlessSignedIn("/signin", false);
-            page.redirectIfSignedIn("/account-books", false);
-        }]
+    when("/dashboard" , {
+        templateUrl: "/templates/dashboard.html",
+        controller: function(){
+            var boxes = [
+                { name: "Account Books", link: "/account-books" },
+                { name: "Debt Requests", link: "/debts" },
+                { name: "Shared Expenditure", link: "/shared-expenditures" }
+            ];
+            return ["page", "$scope" , function(page, $scope){
+                if(page.redirectUnlessSignedIn("/", false)){
+                    return;
+                }
+
+                $scope.boxes = boxes;
+            }]
+        }()
     }).
     when("/account-books" , {
         templateUrl: "/templates/account_books/index.html",

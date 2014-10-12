@@ -34,7 +34,7 @@ app.controller("usersNewCtrl" , ["page" , "User" , "$scope" , "session" , "$http
 
 app.controller("usersEditCtrl" , ["$scope", "$routeParams", "session", "User", "page", "alerts", "spinner", function($scope , $routeParams, session , User, page , alerts , spinner){
     if (session.currentUser().id.toString() !== $routeParams.id.toString()) {
-        page.redirect("/account-books");
+        page.redirect("/dashboard");
         alerts.push("danger", "You are not authorized to view that page!");
         return;
     }
@@ -57,10 +57,13 @@ app.controller("usersEditCtrl" , ["$scope", "$routeParams", "session", "User", "
 }]);
 
 app.controller("usersShowCtrl", ["$scope", "$routeParams", "User", "alerts", "spinner", function($scope, $routeParams, User, alerts, spinner){
+    spinner.start();
     User.find($routeParams.id).then(function(user){
         $scope.user = user;
     }, function(){ //fallback
 
+    }).finally(function(){
+        spinner.stop();
     });
 }])
 

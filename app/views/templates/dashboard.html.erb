@@ -1,0 +1,15 @@
+<div class="page-header">
+    <h2>Dashboard<br /><small>What do you want to do today?</small></h2>
+</div>
+
+<div class="row">
+    <div class="col-sm-4" ng-repeat="box in boxes">
+        <div class="row">
+            <a ng-href="{{ box.link }}">
+                <div class="dashboard-box col-sm-10 col-sm-offset-1">
+                    <p class="dashboard-box-content"><strong>{{ box.name }}</strong></p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>

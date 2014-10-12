@@ -1,3 +1,31 @@
 // Place all the styles related to the static_pages controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+.dashboard-box {
+    background-color: #5CADFF;
+    color: #00317A;
+    font-size: 16px;
+    font-weight: 700px;
+    text-align : center;
+    vertical-align: 50%;
+    min-height: 100px;
+    max-height: 500px;
+    height: 150px;
+}
+
+.dashboard-box:hover{
+    background-color: #00317A;
+    color: #5CADFF;
+    cursor: pointer;
+}
+
+.dashboard-box-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50% , -50%);
+    -webkit-transform: translate(-50% , -50%);
+    -moz-transform: translate(-50% , -50%);
+    -ms-transform: translate(-50% , -50%);
+    -o-transform: translate(-50% , -50%);
+}

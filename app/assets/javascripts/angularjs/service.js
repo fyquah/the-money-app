@@ -15,7 +15,7 @@ app.service("session" , [ "$location" , "User" , "$http" , "alerts", "$q", "$loc
             }
         }).success(function(data){
             self.currentUser(new User(data.user));
-            $location.path("/account-books");
+            $location.path("/dashboard");
             alerts.push("success" , "Log in successful! Welcome to the money app");
             deferred.resolve();
         }).error(function(){
@@ -114,7 +114,7 @@ app.service("page" , ["$location" , "$window" , "session" , "alerts" , function(
     this.redirectIfSignedIn = function(redirected_page , display_alert){
         display_alert = typeof display_alert === "undefined" ? true : display_alert;
         if (session.currentUser()) {
-            $location.path(redirected_page || "/home");
+            $location.path(redirected_page || "/dashboard");
             alerts.removeAll();
             if (display_alert){
                 alerts.push({ type: "info" , msg: "You are alredy logged in!"});
