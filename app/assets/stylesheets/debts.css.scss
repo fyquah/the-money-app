@@ -1,26 +1,48 @@
 // Place all the styles related to the debts controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+.debt-row {
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
 .debt-pending-row {
+    @extend .debt-row;
     color: #8a6d3b;
     background-color: #fcf8e3;
-    border-color: #faebcc;
-    padding-top : 10px;
-    padding-bottom: 10px;
 }
 
 .debt-pending-row:hover {
-    background-color: #FF9900;
+    background-color: #faebcc;
 }
 
 .debt-approved-row {
+    @extend .debt-row;
+    background-color: #dff0d8;
+    color: #3c763d;
+}
 
+.debt-approved-row:hover {
+    background-color: #d6e9c6;
 }
 
 .debt-rejected-row {
+    @extend .debt-row;
+    background-color: #f2dede;
+    color: #a94442;
+}
 
+.debt-rejected-row:hover {
+    background-color: #ebccd1;
 }
 
 .debt-resolved-row {
+    @extend .debt-row;
+    background-color: #d9edf7;
+    color: #31708f;
+}
 
+.debt-resolved-row:hover {
+    background-color: #bce8f1;
 }

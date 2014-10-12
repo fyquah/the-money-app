@@ -587,6 +587,24 @@ app.factory("Debt" , ["$http", "$q", "unkownErrorMessage", "User", function($htt
         return deferred.promise;
     };
 
+    Debt.find = function(id) {
+        var deferred = $q.defer();
+        $http({
+            method: "GET",
+            url: "/debts/" + id + ".json"
+        }).success(function(data){
+            console.log(data);
+            deferred.resolve(new Debt(data.debt));
+        }).error(function(data, status){
+            if(status === 404) {
+                deferred.reject({error: "debt request/record not found!"});
+            } else {
+                deferred.reject(unkownErrorMessage);
+            }
+        });
+        return deferred.promise;
+    }
+
     Debt.prototype.data = function(){
         var obj = {
             debt: {}
@@ -618,6 +636,45 @@ app.factory("Debt" , ["$http", "$q", "unkownErrorMessage", "User", function($htt
         })
         return deferred.promise;
     };
+
+    Debt.prototype.remove = function(){
+        var deferred = $q.defer(), self = this;
+        $http({
+            method: "DELETE",
+            url: "/debts/" + this.id + ".json"
+        }).success(function(){
+            deferred.resolve();
+        }).error(function(){
+            deferred.reject(unkownErrorMessage);
+        });
+        return deferred.promise;
+    };
+
+    ["approve", "reject", "resolve"].forEach(function(method){
+        Debt.prototype[method] = function(){
+            var deferred = $q.defer(), self = this;
+            $http({
+                method: "PATCH",
+                url: "/debts/" + self.id + "/" + method + ".json"
+            }).success(function(){
+                self.status = {
+                    approve: "approved",
+                    reject: "rejected",
+                    resolve: "resolved"
+                }[method];
+                console.log(self);
+                deferred.resolve();
+            }).error(function(data, status){
+                if (status === 401) {
+                    deferred.reject(data);
+                } else {
+                    deferred.reject(unkownErrorMessage);
+                }
+            })
+            return deferred.promise;
+        }
+    });
+    
 
     return Debt;
 }]);

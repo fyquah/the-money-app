@@ -1,0 +1,26 @@
+<div class="row">
+    <div class="col-sm-8 col-sm-offset-2 col-xs-12">
+        <h3>Debt description</h3>
+        <p>{{ debt.description }}</p>
+        <h3>Amount</h3>
+        <p>{{ debt.amount }}</p>
+        <h3>Status</h3>
+        <p>{{ debt.status }}</p>
+        <div ng-show="debt.borrower_id == session.currentUser().id">
+            <% # evil twin of == was used on purpose! (automatic convertion) %>
+            <h3>Requested lender</h3>
+            <p><a ng-href="/users/{{ debt.lender_id }}">{{ debt.lender.name }}</a></p>
+            <p><a class="btn btn-danger" ng-click="remove()">Delete request</a></p>
+        </div>
+        <div ng-show="debt.lender_id == session.currentUser().id">
+            <h3>Request creator / borrower</h3>
+            <p><a ng-href="/users/{{ debt.lender_id }}">{{ debt.borrower.name }}</a></p>
+            <p>
+                <a ng-hide="debt.status === 'approved'" ng-disabled="debt.status === 'approved'" style="margin-right : 10px" ng-click="approve()" class="btn btn-success">Approve</a>
+                <a ng-hide="debt.status === 'rejected'" ng-disabled="debt.status === 'rejected'" style="margin-right : 10px" ng-click="reject()" class="btn btn-danger">Reject</a>
+                <a ng-hide="debt.status === 'resolved'" ng-disabled="debt.status === 'resolved'" style="margin-right : 10px" ng-click="resolve()" class="btn btn-info">Resolve</a>
+            </p>
+        </div>
+    </div>
+</div>
+<h2>

@@ -8,6 +8,7 @@ $(document).on("page:load" , function(){
 var APPNAME = "theMoneyApp"
 var app = angular.module(APPNAME, ['ngResource' , "ngRoute"]);
 
-app.run(["$rootScope" , function($rootScope){
+app.run(["$rootScope", "session" , function($rootScope, session){
+    $rootScope.session = session;
     // run initializations here
 }]);

@@ -21,12 +21,12 @@
     Looks like you have no debt requests!
 </div>
 <div ng-repeat="debt in lent_debts">
-    <a ng-href="/debts/{{ debt.id }}" class="debt-{{ debt.status }}-row">
-        <div class="row">
+    <a ng-href="/debts/{{ debt.id }}">
+        <div class="row debt-{{ debt.status }}-row">
             <div class="col-xs-6">{{ debt.description }}</div>
             <div class="col-xs-1">{{ debt.amount }}</div>
             <div class="col-xs-2">{{ debt.borrower.name }}</div>
-            <div class="col-xs-1 alert-{{ status_color_class[debt.status] }}">{{ debt.status }}</div>
+            <div class="col-xs-1">{{ debt.status }}</div>
         </div>
     </a>
 </div>
