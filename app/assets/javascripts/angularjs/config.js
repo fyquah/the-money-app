@@ -57,6 +57,10 @@ app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $l
         templateUrl: "/templates/users/new.html",
         controller: "usersNewCtrl"
     }).
+    when("/users/:id", {
+        templateUrl: "/templates/users/show.html",
+        controller: "usersShowCtrl"
+    }).
     when("/users/:id/edit" , {
         templateUrl: "/templates/users/edit.html",
         controller: "usersEditCtrl"
