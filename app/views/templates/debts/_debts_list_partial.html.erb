@@ -1,0 +1,42 @@
+<div class="page-header">
+    <h3>All your borrowed debts</h3>
+</div>
+<div ng-show="borrowed_debts.length == 0">
+    <% if type == "archive" %>
+        No <strong>arvhiced</strong> borrowed debt records
+    <% else %>
+        Yay! No borrowed debts in record!
+    <% end %>
+</div>
+<div ng-repeat="debt in borrowed_debts">
+    <a ng-href="/debts/{{ debt.id }}" >
+        <div class="row debt-{{ debt.status }}-row">
+            <div class="col-xs-6">{{ debt.description }}</div>
+            <div class="col-xs-2">{{ debt.amount }}</div>
+            <div class="col-xs-2">{{ debt.lender.name }}</div>
+            <div class="col-xs-2">{{ debt.status }}</div>
+        </div>
+    </a>
+</div>
+
+<div class="page-header">
+    <h3>All your lent debts</h3>
+</div>
+    <div ng-show="lent_debts.length == 0">
+        <% if type == "archive" %>
+            No <strong>arvhiced</strong> lent debt records
+        <% else %>
+            No lent debts in record!
+        <% end %>
+    </div>
+<div ng-repeat="debt in lent_debts">
+
+    <a ng-href="/debts/{{ debt.id }}">
+        <div class="row debt-{{ debt.status }}-row">
+            <div class="col-xs-6">{{ debt.description }}</div>
+            <div class="col-xs-1">{{ debt.amount }}</div>
+            <div class="col-xs-2">{{ debt.borrower.name }}</div>
+            <div class="col-xs-1">{{ debt.status }}</div>
+        </div>
+    </a>
+</div>

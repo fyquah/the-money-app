@@ -1,0 +1,5 @@
+<h2>Debt Requests Archive</h2>
+<p><a href="/debts" class="btn btn-link">View active debt requests</a></p>
+<p>Note : archived debts are those which are already <em>resolved</em> or <em>rejected</em> as they should not be relevant anymore. In case you accidentally resolve or reject a request by accidnent, simply make ammendments by approving it</p>
+
+<%= render :partial => "/templates/debts/debts_list_partial" , :locals => { :type => "archive" } %>

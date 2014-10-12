@@ -8,8 +8,8 @@ class Debt < ActiveRecord::Base
   validate :lender_must_be_valid_user
   validate :borrower_and_lender_must_be_different
 
-  scope :active , -> { where(:status => ["pending" , "approved"]).order(:created_at => "desc") }
-  scope :archive , -> { where(:status => ["resolved", "rejected"]).order(:created_at => "desc") }
+  scope :active , -> { where(:status => ["pending" , "approved"]).order(:created_at => :desc) }
+  scope :archive , -> { where(:status => ["resolved", "rejected"]).order(:created_at => :desc) }
 
   def reject
     self.status = "rejected"

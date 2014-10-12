@@ -1,32 +1,4 @@
 <h2>Debt Requests Menu</h2>
-<a href="/debts/new" class="btn btn-link">Click here to make a new debt request!</a>
-<h3>All your borrowed debts</h3>
-
-    <div ng-show="borrowed_debts.length == 0">
-        Looks like you have no standing debts (Yay!)
-    </div>
-<div ng-repeat="debt in borrowed_debts">
-    <a ng-href="/debts/{{ debt.id }}" >
-        <div class="row debt-{{ debt.status }}-row">
-            <div class="col-xs-6">{{ debt.description }}</div>
-            <div class="col-xs-2">{{ debt.amount }}</div>
-            <div class="col-xs-2">{{ debt.lender.name }}</div>
-            <div class="col-xs-2">{{ debt.status }}</div>
-        </div>
-    </a>
-</div>
-
-<h3>All your lent debts</h3>
-<div ng-show="lent_debts.length == 0">
-    Looks like you have no debt requests!
-</div>
-<div ng-repeat="debt in lent_debts">
-    <a ng-href="/debts/{{ debt.id }}">
-        <div class="row debt-{{ debt.status }}-row">
-            <div class="col-xs-6">{{ debt.description }}</div>
-            <div class="col-xs-1">{{ debt.amount }}</div>
-            <div class="col-xs-2">{{ debt.borrower.name }}</div>
-            <div class="col-xs-1">{{ debt.status }}</div>
-        </div>
-    </a>
-</div>
+<p><a href="/debts/new" class="btn btn-link">Click here to make a new debt request!</a></p>
+<p><a href="/debts/archive" class="btn btn-link">Click here to view archived debts</a></p>
+<%= render :partial => "/templates/debts/debts_list_partial", :locals => { :type => "active" } %>

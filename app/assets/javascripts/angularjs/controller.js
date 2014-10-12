@@ -288,18 +288,12 @@ app.controller('debtsNewCtrl', ['$scope', 'User', 'Debt', 'alerts', 'session', f
 
 app.controller('debtsIndexCtrl', ['$scope', 'Debt', function($scope, Debt){
     var borrowed_debts , lent_debts;
-    Debt.all().then(function(r){
+    Debt.active().then(function(r){
         borrowed_debts = r.borrowed_debts;
         lent_debts = r.lent_debts;
 
         $scope.borrowed_debts = borrowed_debts;
         $scope.lent_debts = lent_debts;
-        $scope.status_color_class = {
-            pending: "warning",
-            rejected: "danger",
-            approved: "success",
-            resolved: "info"
-        }
     });
 }]);
 
@@ -329,4 +323,14 @@ app.controller('debtsShowCtrl', ["$scope", "$routeParams", "Debt", "alerts", "pa
             }
         });
     });
+}]);
+
+app.controller('debtsArchiveCtrl', ['$scope', 'Debt', function($scope, Debt){
+    Debt.archive().then(function(r){
+        borrowed_debts = r.borrowed_debts;
+        lent_debts = r.lent_debts;
+
+        $scope.borrowed_debts = borrowed_debts;
+        $scope.lent_debts = lent_debts;
+    }) 
 }])

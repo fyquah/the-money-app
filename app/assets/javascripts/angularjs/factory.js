@@ -587,6 +587,44 @@ app.factory("Debt" , ["$http", "$q", "unkownErrorMessage", "User", function($htt
         return deferred.promise;
     };
 
+    Debt.archive = function(){
+        var deferred = $q.defer();
+        $http({
+            method: "GET",
+            url: "/debts/archive.json"
+        }).success(function(data){
+            var obj = {};
+            angular.forEach(data, function(arr, key){
+                obj[key] = arr.map(function(debt_args){
+                    return new Debt(debt_args);
+                })
+            });
+            deferred.resolve(obj);
+        }).error(function(data, status){
+            deferred.reject(unkownErrorMessage);
+        });
+        return deferred.promise;
+    };
+
+    Debt.active = function(){
+        var deferred = $q.defer();
+        $http({
+            method: "GET",
+            url: "/debts/active.json"
+        }).success(function(data){
+            var obj = {};
+            angular.forEach(data, function(arr, key){
+                obj[key] = arr.map(function(debt_args){
+                    return new Debt(debt_args);
+                })
+            });
+            deferred.resolve(obj);
+        }).error(function(data, status){
+            deferred.reject(unkownErrorMessage);
+        });
+        return deferred.promise;
+    };
+
     Debt.find = function(id) {
         var deferred = $q.defer();
         $http({
