@@ -106,7 +106,7 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", "u
         var i, self = this;
         args = args || {};
         self.constructor.attributes().forEach(function(attr){
-            if (attr === "created_at") {
+            if (attr === "created_at" || attr === "updated_at") {
                 self[attr] = new Date(args[attr])
             } else {
                 self[attr] = args[attr];
@@ -142,7 +142,7 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", "u
     };
 
     AccountBook.attributes = function(){
-        return ["id", "name", "user_id", "accounting_transactions", "created_at"];
+        return ["id", "name", "user_id", "accounting_transactions", "created_at", 'updated_at'];
     };
 
     AccountBook.find = function(id){
@@ -554,7 +554,7 @@ app.factory("Debt" , ["$http", "$q", "unkownErrorMessage", "User", function($htt
         args = args || {};
         var self = this;
         Debt.attributes().forEach(function(attr){
-            if (angular.isDefined(args[attr]) && (attr === "created_at" || attr === "modified_at")) {
+            if (angular.isDefined(args[attr]) && (attr === "created_at" || attr === "updated_at")) {
                 self[attr] = new Date(args[attr]);
             } else if ((angular.isDefined(args[attr]) && attr === "lender") || (angular.isDefined(args[attr]) && attr === "borrower")) {
                 self[attr] = new User(args[attr])
@@ -565,7 +565,7 @@ app.factory("Debt" , ["$http", "$q", "unkownErrorMessage", "User", function($htt
     };
 
     Debt.attributes = function(){
-        return ["id", "amount", "borrower_id" , "lender_id", "status", "description", "seen_by_sender", "created_at", "modified_at", "borrower", "lender"];
+        return ["id", "amount", "borrower_id" , "lender_id", "status", "description", "seen_by_sender", "created_at", "updated_at", "borrower", "lender"];
     };
 
     Debt.all = function(){
@@ -610,7 +610,7 @@ app.factory("Debt" , ["$http", "$q", "unkownErrorMessage", "User", function($htt
             debt: {}
         }, self = this;
         Debt.attributes().forEach(function(attr){
-            if (attr !== "created_at" && attr !== "modified_at") {
+            if (attr !== "created_at" && attr !== "updated_at") {
                 obj.debt[attr] = self[attr];
             }
         });

@@ -1,0 +1,50 @@
+.small-row {
+    padding-bottom: 10px;
+    padding-top: 10px;
+    background-color : white;
+    color : #5e5e5e;
+}
+
+.small-row:hover {
+    background-color : #e0e0e0;
+}
+
+.small-row-warning {
+    @extend .small-row;
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+}
+
+.small-row-warning:hover {
+    background-color: #faebcc;
+}
+
+.small-row-success {
+    @extend .small-row;
+    background-color: #dff0d8;
+    color: #3c763d;
+}
+
+.small-row-success:hover {
+    background-color: #d6e9c6;
+}
+
+.small-row-danger {
+    @extend .small-row;
+    background-color: #f2dede;
+    color: #a94442;
+}
+
+.small-row-danger:hover {
+    background-color: #ebccd1;
+}
+
+.small-row-info {
+    @extend .small-row;
+    background-color: #d9edf7;
+    color: #31708f;
+}
+
+.small-row-info:hover {
+    background-color: #bce8f1;
+}

@@ -1,3 +1,24 @@
 // Place all the styles related to the account_books controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+.account-books-blue-row {
+    padding-bottom: 10px;
+    padding-top: 10px;
+    background-color: #d9edf7;
+    color: #31708f;
+}
+
+.account-books-blue-row:hover{
+    background-color: #bce8f1;
+}
+
+.account-books-green-row {
+    padding-bottom: 10px;
+    padding-top: 10px;
+    color: #3c763d;
+    background-color: #dff0d8;
+}
+
+.account-books-green-row:hover {
+    background-color: #d6e9c6;
+}

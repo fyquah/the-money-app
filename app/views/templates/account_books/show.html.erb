@@ -27,14 +27,13 @@
     Looks like you are still have to create any accounting transactions <strong>:(</strong>, go on and create one!
 </div>
 <div ng-repeat="transaction in account_book.accounting_transactions | orderBy: 'date':true">
-    <div class="row" style="background-color : {{ $index % 2 == 0 ? 'white' : '#46b8da' }} ; padding-top : 10px; padding-bottom : 10px">
+    <div class="row small-row{{ $index % 2 == 0 ? '-info' :'' }}">
         <div class="col-xs-3 col-sm-2">{{ transaction.date }}</div>
         <div class="col-xs-9 col-sm-4">{{ transaction.description | limitWordsLength:50 }}</div>
         <div class="col-xs-6 col-sm-2"><strong>{{ transaction.amount() | currency:"$ " }}</strong></div>
-        <div class="col-xs-3 col-sm-2"><a ng-href="/accounting-transactions/{{ transaction.id }}" class="btn btn-{{ ($index % 2 == 0 ? 'info' : 'default') }}" >View</a></div>
+        <div class="col-xs-3 col-sm-2"><a ng-href="/accounting-transactions/{{ transaction.id }}" class="btn btn-{{ ($index % 2 == 0 ? 'default' : 'info') }}" >View</a></div>
         <div class="col-xs-3 col-sm-2"><a style="cursor: pointer" ng-click="removeTransaction(transaction.id)" class="btn btn-danger">Delete</a></div>
     </div>
-    <br />
 </div>
 
 <app-pop-up-window ng-show="edit.rename_account_book">

@@ -31,7 +31,7 @@ app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $l
     $routeProvider.when("/" , {
         templateUrl: "/templates/home.html",
         controller: ["page" , function(page){
-            page.redirectIfSignedIn("/dashboard");
+            page.redirectIfSignedIn("/dashboard", false);
         }]
     }).
     when("/signin" , {
