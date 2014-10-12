@@ -4,8 +4,8 @@ class Debt < ActiveRecord::Base
   validates :status, :inclusion => ["rejected", "pending", "resolved", "approved"]
   validates :description, :presence => true
   validates :amount, :presence => true , :numericality => true
-  validates :borrower, :presence => true
-  validates :lender, :presence => true
+  validate :borrower_must_be_valid_user
+  validate :lender_must_be_valid_user
   validate :borrower_and_lender_must_be_different
 
   scope :active , -> { where(:status => ["pending" , "approved"]).order(:created_at => "desc") }
@@ -29,7 +29,19 @@ class Debt < ActiveRecord::Base
   # validations
   def borrower_and_lender_must_be_different
     if borrower_id == lender_id || (borrower == lender && borrower != nil)
-      errors.add(:lender, "You probably can't lend money to yourself!")
+      errors.add(:lender_and_borrower, "must not be equal!")
+    end
+  end
+
+  def lender_must_be_valid_user
+    if lender.nil? && User.find_by(:id => lender_id).nil?
+      errors.add(:lender , "must be a valid user!")
+    end
+  end
+
+  def borrower_must_be_valid_user
+    if borrower.nil? && User.find_by(:id => borrower_id).nil?
+      errors.add(:borrower, "must be a valid user!")
     end
   end
 end
