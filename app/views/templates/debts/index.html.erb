@@ -6,12 +6,14 @@
         Looks like you have no standing debts (Yay!)
     </div>
 <div ng-repeat="debt in borrowed_debts">
-    <div class="row">
-        <div class="col-xs-6">{{ debt.description }}</div>
-        <div class="col-xs-2">{{ debt.amount }}</div>
-        <div class="col-xs-2">{{ debt.lender.name }}</div>
-        <div class="col-xs-2 alert-{{ status_color_class[debt.status] }}">{{ debt.status }}</div>
-    </div>
+    <a ng-href="/debts/{{ debt.id }}" >
+        <div class="row debt-{{ debt.status }}-row">
+            <div class="col-xs-6">{{ debt.description }}</div>
+            <div class="col-xs-2">{{ debt.amount }}</div>
+            <div class="col-xs-2">{{ debt.lender.name }}</div>
+            <div class="col-xs-2">{{ debt.status }}</div>
+        </div>
+    </a>
 </div>
 
 <h3>All your lent debts</h3>
@@ -19,10 +21,12 @@
     Looks like you have no debt requests!
 </div>
 <div ng-repeat="debt in lent_debts">
-    <div class="row">
-        <div class="col-xs-6">{{ debt.description }}</div>
-        <div class="col-xs-1">{{ debt.amount }}</div>
-        <div class="col-xs-2">{{ debt.borrower.name }}</div>
-        <div class="col-xs-1 alert-{{ status_color_class[debt.status] }}">{{ debt.status }}</div>
-    </div>
+    <a ng-href="/debts/{{ debt.id }}" class="debt-{{ debt.status }}-row">
+        <div class="row">
+            <div class="col-xs-6">{{ debt.description }}</div>
+            <div class="col-xs-1">{{ debt.amount }}</div>
+            <div class="col-xs-2">{{ debt.borrower.name }}</div>
+            <div class="col-xs-1 alert-{{ status_color_class[debt.status] }}">{{ debt.status }}</div>
+        </div>
+    </a>
 </div>

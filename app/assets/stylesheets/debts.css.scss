@@ -1,3 +1,26 @@
 // Place all the styles related to the debts controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+.debt-pending-row {
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+    padding-top : 10px;
+    padding-bottom: 10px;
+}
+
+.debt-pending-row:hover {
+    background-color: #FF9900;
+}
+
+.debt-approved-row {
+
+}
+
+.debt-rejected-row {
+
+}
+
+.debt-resolved-row {
+
+}
