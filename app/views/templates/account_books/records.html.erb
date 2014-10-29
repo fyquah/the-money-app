@@ -1,5 +1,28 @@
 <p style="text-align : right" ng-show="display_back_link"><a style="color: blue" ng-href="/account-books/{{ account_book.id }}/records">Back to all records</a></p>
 <p style="text-align : right"><a ng-href="/account-books/{{ account_book.id }}">Back to account book</a></p>
+<div>
+    <p>Want to check for particular account, year or month?</p>
+    <form class="form-inline" ng-submit="get_particular_accounts()">
+        <div class="form-group">
+            <label>Month</label>
+            <input ng-model="particular_month" type="text" />
+        </div>
+        <div class="form-group">
+            <label>Year</label>
+            <input ng-model="particular_year" type="text" />
+        </div>
+        <div class="form-group">
+            <label>Account Name</label>
+            <input ng-model="particular_account_name" type="text" />
+        </div>
+        <div class="form-group">
+            <input type="submit" class="btn-info btn" />
+        </div>
+    </form>
+</div>
+<div class="page-header">
+    <h3>Your record summary</h3>
+</div>
 <div ng-repeat="account_obj in accounts | orderObjectBy:'account_type' ">
     <div class="page-header">
         <h3 style="text-align : center"><a ng-href="/account-books/{{ account_book.id }}/records?account={{ account_name }}">{{ account_obj.account_name }}</a><small> {{ account_obj.account_type }}</small></h3>

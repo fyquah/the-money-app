@@ -326,13 +326,24 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", "u
 
     };
 
-    AccountBook.prototype.records = function(acc_name){
+    AccountBook.prototype.records = function(acc_name, month, year){
         var accounts = {},
-            deferred = $q.defer();
-        console.log("/account_books/" + this.id + "/records.json" + (typeof acc_name === "string" ? ("?account=" + unescape(acc_name)) : ""));
+            deferred = $q.defer(),
+            query_string_array = [];
+
+        if (typeof acc_name === "string") {
+            query_string_array.push("account=" + unescape(acc_name));
+        }
+        if (typeof month === 'string') {
+            query_string_array.push("month=" + unescape(month));
+        }
+        if (typeof year === "string") {
+            query_string_array.push("year=" + unescape(year));
+        }
+
         $http({
             method: "GET",
-            url: "/account_books/" + this.id + "/records.json" + (typeof acc_name === "string" ? ("?account=" + unescape(acc_name)) : "")
+            url: "/account_books/" + this.id + "/records.json" + (query_string_array.length === 0 ? "" : "?" + query_string_array.join("&"))
         }).success(function(data){
             accounts = data.account_book_records
             var sum_fnc = function(memo, record, index){

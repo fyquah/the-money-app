@@ -26,6 +26,10 @@ class AccountingRecord < ActiveRecord::Base
     super(arg.to_s.downcase)
   end
 
+  def in_query_range opt
+    return (opt[:year].nil? || accounting_transaction.date.year.to_s == opt[:year].to_s) && (opt[:month].nil? || accounting_transaction.date.month.to_s == opt[:month].to_s) && (opt[:account_name].nil? || account_name.to_s == opt[:account_name].to_s)
+  end
+
   def self.account_records_iterator
     # To be used with inject
     Proc.new do |obj , record|

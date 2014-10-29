@@ -186,7 +186,7 @@ app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" ,
     }, null, null);
 }]);
 
-app.controller('accountBooksRecordsCtrl', ['$scope', "$http", "alerts", "session", "$routeParams", "page", "spinner", "AccountBook", function($scope, $http, alerts, session, $routeParams, page, spinner, AccountBook){
+app.controller('accountBooksRecordsCtrl', ['$scope', "$http", "alerts", "session", "$routeParams", "page", "spinner", "AccountBook", "$location", function($scope, $http, alerts, session, $routeParams, page, spinner, AccountBook, $location){
     if(page.redirectUnlessSignedIn()){
         return;
     }
@@ -195,10 +195,29 @@ app.controller('accountBooksRecordsCtrl', ['$scope', "$http", "alerts", "session
     AccountBook.find($routeParams.id).
     then(function(acc_book){
         $scope.account_book = acc_book; 
-        return acc_book.records($routeParams.account) 
+        return acc_book.records($routeParams.account, $routeParams.month, $routeParams.year); 
     }).
     then(function(accounts){
         $scope.accounts = accounts;
+        $scope.get_particular_accounts = function(){
+            var query_string_array = [];
+            if (typeof $scope.particular_account_name === "string") {
+                query_string_array.push("account=" + unescape($scope.particular_account_name));
+            }
+            if (typeof $scope.particular_month === 'string') {
+                query_string_array.push("month=" + unescape($scope.particular_month));
+            }
+            if (typeof $scope.particular_year === "string") {
+                query_string_array.push("year=" + unescape($scope.particular_year));
+            }
+            console.log(query_string_array);
+            if (query_string_array.length === 0) {
+                alerts.push("danger", "You must select at least one restriction!");
+            } else {
+                console.log("/account-books/" + $routeParams.id + "/records?" + query_string_array.join("&"));
+                window.location.replace("/account-books/" + $routeParams.id + "/records?" + query_string_array.join("&"));
+            }
+        }
     }, function(err){
         alerts.push("danger", err.error);
     }).

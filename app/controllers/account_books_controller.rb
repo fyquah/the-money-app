@@ -54,7 +54,8 @@ class AccountBooksController < ApplicationController
   end
 
   def records
-    render :status => 200, :json => { :account_book_records => @account_book.accounts_based_records(params[:account]).as_json(:methods => [:accounting_transaction]) }
+    puts params[:account] , params[:year], params[:month]
+    render :status => 200, :json => { :account_book_records => @account_book.accounts_based_records(params[:account], params[:month], params[:year]).as_json(:methods => [:accounting_transaction]) }
   end
 
   private

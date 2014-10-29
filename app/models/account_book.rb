@@ -47,15 +47,17 @@ class AccountBook < ActiveRecord::Base
     end
   end
 
-  def accounts_based_records acc_name
+  def accounts_based_records acc_name , month, year
     all_records(acc_name).inject({}) do |memo, record|
       if acc_name == nil || acc_name.strip == record.account_name.strip
-        memo[record.account_name.to_sym] ||= Hash[:debit_records, [], :credit_records, []]
-        memo[record.account_name.to_sym][:account_type] ||= record.account_type
-        if record.record_type == "debit"
-          memo[record.account_name.to_sym][:debit_records] << record
-        elsif record.record_type == "credit"
-          memo[record.account_name.to_sym][:credit_records] << record
+        if record.in_query_range({:account_name => acc_name, :month => month, :year => year})
+          memo[record.account_name.to_sym] ||= Hash[:debit_records, [], :credit_records, []]
+          memo[record.account_name.to_sym][:account_type] ||= record.account_type
+          if record.record_type == "debit"
+            memo[record.account_name.to_sym][:debit_records] << record
+          elsif record.record_type == "credit"
+            memo[record.account_name.to_sym][:credit_records] << record
+          end
         end
       end
       memo
