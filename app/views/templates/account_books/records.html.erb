@@ -25,7 +25,7 @@
 </div>
 <div ng-repeat="account_obj in accounts | orderObjectBy:'account_type' ">
     <div class="page-header">
-        <h3 style="text-align : center"><a ng-href="/account-books/{{ account_book.id }}/records?account={{ account_name }}">{{ account_obj.account_name }}</a><small> {{ account_obj.account_type }}</small></h3>
+        <h3 style="text-align : center"><a ng-href="/account-books/{{ account_book.id }}/records?account={{ account_obj.account_name }}">{{ account_obj.account_name }}</a><small> {{ account_obj.account_type }}</small></h3>
     </div>
     <div class="row">
         <div class="col-xs-5">
