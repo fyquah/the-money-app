@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141011201244) do
+ActiveRecord::Schema.define(version: 20141108101034) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -41,7 +41,7 @@ ActiveRecord::Schema.define(version: 20141011201244) do
   add_index "accounting_records", ["accounting_transaction_id"], name: "index_accounting_records_on_accounting_transaction_id", using: :btree
 
   create_table "accounting_transactions", force: true do |t|
-    t.string   "description"
+    t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "account_book_id"
