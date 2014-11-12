@@ -245,7 +245,6 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", "u
         }).
         success(function(data, status){
             var lo, hi, mid;
-            deferred.resolve();
             self.accounting_transactions.push(new AccountingTransaction(data.accounting_transaction));
             self.accounting_transactions.sort(function(a,b){
                 if (a.date == b.date) {
@@ -253,7 +252,8 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", "u
                 } else {
                     return a.date > b.date ? 1 : -1;
                 }
-            })      
+            });
+            deferred.resolve(data.accounting_transaction);
         }).
         error(function(data, status){
             if (status === 401) {

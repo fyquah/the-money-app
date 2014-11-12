@@ -2,16 +2,33 @@
     <h2>{{ account_book.name }}</h2>
 </div>
 <div class="jumbotron">
-    <p>What would you like to do with your account book {{ account_book.name }} today ?</p>
-    <ul>
-        <li><a class="btn btn-link" ng-href="/account-books/{{ account_book.id }}/records">
-            View ledger records
-        </a></li>
-        <li><a class="btn btn-link" ng-href="/account-books/{{ account_book.id }}/transactions">
-            View all transactions
-        </a></li>
-        <li><a class="btn btn-link" ng-href="/account-books/{{ account_book.id }}/balance-sheet">
-            View balance sheet
-        </a></li>
-    </ul>
+    <div class="row">
+        <div class="col-sm-9 col-sm-push-3">
+            <p>What would you like to do with your account book <strong><em>{{ account_book.name }}</em></strong> today ?</p>
+            <ul>
+                <li><a class="btn btn-link" ng-href="/account-books/{{ account_book.id }}/records">
+                    View ledger records
+                </a></li>
+                <li><a class="btn btn-link" ng-href="/account-books/{{ account_book.id }}/transactions">
+                    View all transactions
+                </a></li>
+                <li><a class="btn btn-link" ng-href="/account-books/{{ account_book.id }}/balance-sheet">
+                    View balance sheet
+                </a></li>
+            </ul>
+        </div>
+        <div class="col-sm-3 col-sm-pull-9">
+            <h4>Create Something</h4>
+            <ul style="padding-left : 0px ; list-style-type : none;">
+                <p><a ng-click="edit.add_new_transaction = true" class="btn btn-success">Transaction</a>
+                <p><a ng-click="edit.add_new_expenditure = true" class="btn btn-info">Expenditure</a>
+                <p><a ng-click="edit.add_new_income = true" class="btn btn-default">Income</a>
+            </ul>
+        </div>
+    </div>
+
 </div>
+
+<%= render :partial => "/templates/account_books/add_new_transaction_pop_up" %>
+<%= render :partial => "/templates/account_books/add_new_expenditure_pop_up" %>
+<%= render :partial => "/templates/account_books/add_new_income_pop_up" %>

@@ -104,7 +104,7 @@ app.controller("accountBooksIndexCtrl" , ["alerts" , "page" , "$http", "$scope" 
     })
 }]);
 
-app.controller("accountBooksShowCtrl" , ["$scope", "$http", "AccountBook", "page", "spinner", "$routeParams" , function($scope, $http, AccountBook, page, spinner, $routeParams){
+app.controller("accountBooksShowCtrl" , ["$scope", "$http", "AccountBook", "page", "spinner", "$routeParams", "alerts" , function($scope, $http, AccountBook, page, spinner, $routeParams, alerts){
     if (page.redirectUnlessSignedIn()) {
         return;
     }
@@ -112,6 +112,48 @@ app.controller("accountBooksShowCtrl" , ["$scope", "$http", "AccountBook", "page
 
     AccountBook.find($routeParams.id, false).then(function(account_book){
         $scope.account_book = account_book;
+        $scope.edit = {};
+        $scope.new_accounting_transaction = {};
+        $scope.new_expenditure = {};
+        $scope.new_income = {};
+
+        $scope.addNewTransaction = function(){
+            account_book.addNewTransaction({
+                description: $scope.new_accounting_transaction.description,
+                date: $scope.new_accounting_transaction.date
+            }).then(function(transaction){
+                alerts.push("success", "A new transaction has been created!");
+                page.redirect("/accounting-transactions/" + transaction.id)
+            }, function(err){
+                alerts.push("danger", err.error);
+            }).finally(function(){
+                $scope.edit.add_new_transaction = false;
+            });
+        };
+
+        $scope.addNewExpenditure = function(){
+            account_book.addNewExpenditure($scope.new_expenditure).
+            then(function(){
+                alerts.push("success", "Created a new expenditure record!");
+            }, function(err){
+                alerts.push("danger", err.error);
+            }).
+            finally(function(){
+                $scope.edit.add_new_expenditure = false;
+            });
+        };
+
+        $scope.addNewIncome = function(){
+            account_book.addNewIncome($scope.new_income).
+            then(function(){
+                alerts.push("success", "Created a new income record!");
+            }, function(err){
+                alerts.push("danger", err.error);
+            }).
+            finally(function(){
+                $scope.edit.add_new_income = false;
+            });
+        };
 
         spinner.stop();
     });
@@ -151,6 +193,30 @@ app.controller("accountBooksTransactionsCtrl" , ["alerts" , "page" , "$http", "$
             })
         };
 
+        $scope.addNewExpenditure = function(){
+            account_book.addNewExpenditure($scope.new_expenditure).
+            then(function(){
+                alerts.push("success", "Created a new expenditure record!");
+            }, function(err){
+                alerts.push("danger", err.error);
+            }).
+            finally(function(){
+                $scope.edit.add_new_expenditure = false;
+            });
+        };
+
+        $scope.addNewIncome = function(){
+            account_book.addNewIncome($scope.new_income).
+            then(function(){
+                alerts.push("success", "Created a new income record!");
+            }, function(err){
+                alerts.push("danger", err.error);
+            }).
+            finally(function(){
+                $scope.edit.add_new_income = false;
+            });
+        };
+
         $scope.renameAccountBook = function(){
             console.log($scope.new_account_book_name)
             var save_promise = account_book.updateAttribute("name", $scope.account_book.name).
@@ -175,29 +241,6 @@ app.controller("accountBooksTransactionsCtrl" , ["alerts" , "page" , "$http", "$
             }
         }
 
-        $scope.addNewExpenditure = function(){
-            account_book.addNewExpenditure($scope.new_expenditure).
-            then(function(){
-                alerts.push("success", "Created a new expenditure record!");
-            }, function(err){
-                alerts.push("danger", err.error);
-            }).
-            finally(function(){
-                $scope.edit.add_new_expenditure = false;
-            });
-        };
-
-        $scope.addNewIncome = function(){
-            account_book.addNewIncome($scope.new_income).
-            then(function(){
-                alerts.push("success", "Created a new income record!");
-            }, function(err){
-                alerts.push("danger", err.error);
-            }).
-            finally(function(){
-                $scope.edit.add_new_income = false;
-            });
-        };
     }, null, null);
 }]);
 
@@ -384,4 +427,4 @@ app.controller('debtsArchiveCtrl', ['$scope', 'Debt', function($scope, Debt){
         $scope.borrowed_debts = borrowed_debts;
         $scope.lent_debts = lent_debts;
     }) 
-}])
+}]);
