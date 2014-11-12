@@ -39,7 +39,38 @@ class AccountBook < ActiveRecord::Base
     end
   end
 
-  def all_records acc_name
+  def get_account_type account_name
+    if asset_records.where(:account_name => account_name).count > 0
+      "asset"
+    elsif equity_records.where(:account_name => account_name).count > 0
+      "equity"
+    elsif liability_records.where(:account_name => account_name).count > 0
+      "liability"
+    end
+  end
+
+  def balance_sheet
+    asset_amounts = {}
+    equity_amounts = {}
+    liability_amounts = {}
+    accounts_amount.each do |acc_name, amount|
+      acc_type = get_account_type(acc_name)
+      if acc_type == "asset"
+        asset_amounts[acc_name.to_sym] = amount
+      elsif acc_type == "equity"
+        equity_amounts[acc_name.to_sym] = amount
+      elsif acc_type == "liability"
+        liability_amounts[acc_name.to_sym] = amount
+      end
+    end
+    {
+      :asset => asset_amounts,
+      :equity => equity_amounts,
+      :liability => liability_amounts
+    }
+  end
+
+  def all_records acc_name = nil
     if acc_name
       (asset_records.where(:account_name => acc_name) + liability_records.where(:account_name => acc_name) + equity_records.where(:account_name => acc_name))
     else

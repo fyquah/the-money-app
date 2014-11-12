@@ -20,6 +20,12 @@ class AccountBooksController < ApplicationController
     })
   end
 
+  def balance_sheet
+    render :json => {
+      :balance_sheet => @account_book.balance_sheet.as_json
+    }
+  end
+
   def create
     @account_book = current_user.account_books.build(account_book_params)
     if @account_book.save
