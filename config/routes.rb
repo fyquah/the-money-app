@@ -6,10 +6,12 @@ Rails.application.routes.draw do
     match "sessions/destroy" , :to => "sessions#destroy" , :via => "delete"
     match "sessions/current" , :to => "sessions#current" , :via => "get"
     match "sessions/clear_all_but_current" , :to => "sessions#clear_all_but_current" , :via => "delete"
+    
     # For account_books
     resources :account_books
     match "account_books/:id/create_accounting_transaction", :to => "account_books#create_accounting_transaction", :via => "post"
     match "account_books/:id/records", :to => "account_books#records", :via => "get"
+    match "account_books/:id/balance_sheet", :to => "account_books#balance_sheet", :via => "get"
     # Accounting Transactions
     
     resources :accounting_transactions , :only => [:update , :show , :destroy]

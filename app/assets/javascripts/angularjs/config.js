@@ -87,6 +87,10 @@ app.config([ "$routeProvider", "$locationProvider", function($routeProvider , $l
         templateUrl: "/templates/account_books/records.html",
         controller: "accountBooksRecordsCtrl"
     }).
+    when("/account-books/:id/balance-sheet", {
+        templateUrl: "/templates/account_books/balance-sheet.html.erb",
+        controller: "accountBooksBalanceSheetCtrl"
+    }).
     when("/accounting-transactions/:id", {
         templateUrl: "/templates/accounting_transactions/show.html",
         controller: "accountingTransactionsShowCtrl"

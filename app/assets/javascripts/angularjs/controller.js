@@ -241,6 +241,23 @@ app.controller('accountBooksRecordsCtrl', ['$scope', "$http", "alerts", "session
     });
 }]);
 
+app.controller("accountBooksBalanceSheetCtrl",  ["$scope", "$http", "alerts", "session","$routeParams", "page", "spinner", "AccountBook", function($scope, $http, alerts, session, $routeParams, page, spinner, AccountBook){
+    spinner.start();
+    AccountBook.find($routeParams.id).then(function(account_book){
+        $scope.account_book = account_book;
+        return account_book.balanceSheet();
+    
+    }).then(function(data){
+        console.log(data);
+        $scope.account_book.balance_sheet = data;
+        $scope.account_book.updated_time = Date();
+        console.log($scope.account_book);
+
+    }).finally(function(){
+        spinner.stop();
+    });
+}]);
+
 app.controller("accountingTransactionsShowCtrl" , ["$scope", "$http", "alerts", "session","$routeParams", "page", "spinner", "AccountingTransaction", function($scope, $http, alerts, session, $routeParams, page, spinner, AccountingTransaction){
     if(page.redirectUnlessSignedIn()){
         return;

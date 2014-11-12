@@ -375,7 +375,28 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", "u
         });
 
         return deferred.promise;
-    }
+    };
+
+    AccountBook.prototype.balanceSheet = function(){
+        var deferred = $q.defer();
+        $http({
+            method: "GET",
+            url: "/account_books/" + this.id + "/balance_sheet.json"
+        }).success(function(data){
+            var balance_sheet = data.balance_sheet;
+            ["asset", "equity", "liability"].forEach(function(type){
+                balance_sheet[type + "_total"] = 0;
+                console.log(balance_sheet);
+                angular.forEach(balance_sheet[type], function(value, _){
+                    balance_sheet[type + "_total"] += Number(value);
+                })
+            });
+            deferred.resolve(balance_sheet);
+        }).error(function(){
+            deferred.reject(unkownErrorMessage);
+        });
+        return deferred.promise;
+    };
 
     return AccountBook;
 }]);

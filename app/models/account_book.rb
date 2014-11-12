@@ -58,9 +58,9 @@ class AccountBook < ActiveRecord::Base
       if acc_type == "asset"
         asset_amounts[acc_name.to_sym] = amount
       elsif acc_type == "equity"
-        equity_amounts[acc_name.to_sym] = amount
+        equity_amounts[acc_name.to_sym] = -amount
       elsif acc_type == "liability"
-        liability_amounts[acc_name.to_sym] = amount
+        liability_amounts[acc_name.to_sym] = -amount
       end
     end
     {

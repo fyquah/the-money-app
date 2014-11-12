@@ -1,0 +1,40 @@
+<p style="text-align : right"><a href="/account-books/{{ account_book.id }}">Back to Account Book</a></p>
+<div class="page-header">
+    <h3>Balance Sheet for <a ng-href="/account-books/{{ account_book.id }}">{{ account_book.name }}</a> at {{ account_book.updated_time }}</h3>
+</div>
+
+<div class="row">
+    <div class="col-xs-5">
+        <p><strong>Assets</strong></p>
+        <div ng-repeat="(account, amount) in account_book.balance_sheet.asset" class="row">
+            <div class="col-xs-7">{{ account }}</div>
+            <div style="text-align : right" class="col-xs-5">{{ amount | currency:"" }}</div>
+        </div>
+        <p ng-hide="account_book.balance_sheet.asset.length !== 0">nil</p>
+    </div>
+
+    <div class="col-xs-5 col-xs-offset-2">
+        <p><strong>Equity</strong></p>
+        <div ng-repeat="(account, amount) in account_book.balance_sheet.equity" class="row">
+            <div class="col-xs-7">{{ account }}</div>
+            <div style="text-align : right" class="col-xs-5">{{ amount | currency:"" }}</div>
+        </div>
+        <p ng-hide="account_book.balance_sheet.equity.length !== 0">nil</p>
+        <br />
+        <p><strong>Liability</strong></p>
+        <div ng-repeat="(account, amount) in account_book.balance_sheet.liability" class="row">
+            <div class="col-xs-7">{{ account }}</div>
+            <div style="text-align : right" class="col-xs-5">{{ amount | currency:"" }}</div>
+        </div>
+        <p ng-hide="account_book.balance_sheet.liability.length !== 0">nil</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-5">
+        <p style="text-align : right"><strong>{{ account_book.balance_sheet.asset_total | currency:"$ " }}</strong></p>
+    </div>
+    <div class="col-xs-offset-2 col-xs-5">
+        <p style="text-align : right"><strong>{{ account_book.balance_sheet.liability_total + account_book.balance_sheet.equity_total | currency:"$ " }}</strong></p>
+    </div>        
+</div>
