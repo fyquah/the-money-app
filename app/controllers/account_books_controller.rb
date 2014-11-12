@@ -13,12 +13,10 @@ class AccountBooksController < ApplicationController
       :editable_account_books => current_user.editable_account_books.as_json
     })
   end
-  
+
   def show # Fancy functions should come her
     render(:json => {
-      :account_book => @account_book.as_json(:include => {
-          :accounting_transactions => { :methods => [:amount] }
-      })
+      :account_book => @account_book.as_json(account_books_as_json_params(params[:transaction]))
     })
   end
 
@@ -87,5 +85,15 @@ class AccountBooksController < ApplicationController
 
     def accounting_transaction_params
       params.require(:accounting_transaction).permit(:id , :description, :date , :debit_records_attributes => [:id , :account_name , :amount , :account_type , :_destroy] , :credit_records_attributes => [:id , :account_name , :amount , :account_type , :_destroy])
+    end
+
+    def account_books_as_json_params with_transaction
+      if with_transaction
+        {
+          :include => { :accounting_transactions => { :methods => [:amount] } }
+        }
+      else
+        nil
+      end
     end
 end

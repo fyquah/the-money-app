@@ -11,6 +11,7 @@ Rails.application.routes.draw do
     match "account_books/:id/create_accounting_transaction", :to => "account_books#create_accounting_transaction", :via => "post"
     match "account_books/:id/records", :to => "account_books#records", :via => "get"
     # Accounting Transactions
+    
     resources :accounting_transactions , :only => [:update , :show , :destroy]
     # Debts
     match "debts/active", :to => "debts#active", :via => "get"

@@ -104,16 +104,31 @@ app.controller("accountBooksIndexCtrl" , ["alerts" , "page" , "$http", "$scope" 
     })
 }]);
 
-app.controller("accountBooksShowCtrl" , ["alerts" , "page" , "$http", "$scope" , "spinner" , "$routeParams", "AccountBook" , function(alerts , page, $http, $scope, spinner , $routeParams, AccountBook){
+app.controller("accountBooksShowCtrl" , ["$scope", "$http", "AccountBook", "page", "spinner", "$routeParams" , function($scope, $http, AccountBook, page, spinner, $routeParams){
+    if (page.redirectUnlessSignedIn()) {
+        return;
+    }
+    spinner.start();
+
+    AccountBook.find($routeParams.id, false).then(function(account_book){
+        $scope.account_book = account_book;
+
+        spinner.stop();
+    });
+
+}]);
+
+app.controller("accountBooksTransactionsCtrl" , ["alerts" , "page" , "$http", "$scope" , "spinner" , "$routeParams", "AccountBook" , function(alerts , page, $http, $scope, spinner , $routeParams, AccountBook){
     if(page.redirectUnlessSignedIn()){
         return;
     }
     spinner.start();
     $scope.edit = {};
 
-    AccountBook.find($routeParams.id).then(function(account_book){
+    AccountBook.find($routeParams.id, true).then(function(account_book){
         $scope.account_book = account_book;
         spinner.stop();
+        console.log(account_book);
 
         $scope.removeTransaction = function(id){
             if (confirm("Are you sure you want to remove transaction?")) {

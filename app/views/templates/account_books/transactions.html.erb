@@ -1,0 +1,126 @@
+<div class="page-header">
+    <div class="row">
+        <div class="col-sm-8"><h2>{{ account_book.name }}</h2></div>
+        <div class="col-sm-4">
+            <p style="margin-top: 20px; text-align :right"><a ng-click="new_account.name = ''; edit.rename_account_book = true;">Change your account book name</a></p>
+            <p style="margin-top: 20px; text-align :right"><a style="color: red" ng-click="removeAccountBook()">Remove this account book</a></p>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-4 col-sm-offset-2 col-sm-2">
+        <a ng-click="new_accounting_transaction = {}; edit.add_new_transaction = true;">Create new transaction</a>
+    </div>
+    <div class="col-xs-4 col-sm-2">
+        <a ng-click="new_expenditure = {}; edit.add_new_expenditure = true;">Create new expenditure</a>        
+    </div>
+    <div class="col-xs-4 col-sm-2">
+        <a ng-click="new_income = {}; edit.add_new_income = true;">Create new income</a>        
+    </div>
+    <div class="col-xs-4 col-sm-2">
+        <a ng-href="/account-books/{{ account_book.id }}/records">View Account Records Summary</a>        
+    </div>
+</div>
+
+<h2>Transactions</h2>
+<div ng-show="account_book.accounting_transactions.length === 0">
+    Looks like you are still have to create any accounting transactions <strong>:(</strong>, go on and create one!
+</div>
+<div ng-repeat="transaction in account_book.accounting_transactions | orderBy: 'date':true">
+    <div class="row small-row{{ $index % 2 == 0 ? '-info' :'' }}">
+        <div class="col-xs-3 col-sm-2">{{ transaction.date }}</div>
+        <div class="col-xs-9 col-sm-4">{{ transaction.description | limitWordsLength:50 }}</div>
+        <div class="col-xs-6 col-sm-2"><strong>{{ transaction.amount() | currency:"$ " }}</strong></div>
+        <div class="col-xs-3 col-sm-2"><a ng-href="/accounting-transactions/{{ transaction.id }}" class="btn btn-{{ ($index % 2 == 0 ? 'default' : 'info') }}" >View</a></div>
+        <div class="col-xs-3 col-sm-2"><a style="cursor: pointer" ng-click="removeTransaction(transaction.id)" class="btn btn-danger">Delete</a></div>
+    </div>
+</div>
+
+<app-pop-up-window ng-show="edit.rename_account_book">
+    <p style="text-align : right"><a style="cursor: pointer" ng-click="edit.rename_account_book = false">X</a></p>
+    <h2>Rename Account Book</h2>
+    <form role="form" ng-submit="renameAccountBook()">
+        <div class="form-group">
+            <label>New Account Name</label>
+            <input required class="form-control" ng-model="account_book.name" placeholder="Enter new account name" />
+        </div>
+        <div class="form-group">
+            <input required type="submit" value="Rename Account Book" class="btn btn-info form-control" />
+        </div>
+    </form>
+</app-pop-up-window>
+
+<app-pop-up-window ng-show="edit.add_new_transaction">
+    <p style="text-align : right"><a style="cursor: pointer" ng-click="edit.add_new_transaction = false">X</a></p>
+    <h2>Add new transaction</h2>
+    <form role="form" ng-submit="addNewTransaction()">
+        <div class="form-group">
+            <label>Transaction Description</label>
+            <input required class="form-control" ng-model="new_accounting_transaction.description" placeholder="Enter transaction description" />
+        </div>
+        <div class="form-group">
+            <label>Date of Transaction</label>
+            <input required class="form-control" ng-model="new_accounting_transaction.date" placeholder="Enter transaction date" />
+        </div>
+        <div class="form-group">
+            <input required class="form-control" type="submit" value="Add transaction" class="btn btn-info" />
+        </div>
+        
+    </form>
+</app-pop-up-window>
+
+<app-pop-up-window ng-show="edit.add_new_expenditure">
+    <p style="text-align : right"><a style="cursor: pointer" ng-click="edit.add_new_expenditure = false">X</a></p>
+    <h2>Create a new expenditure</h2>
+    <p>Note, this automagically credits the cash component</p>
+    <form role="form" ng-submit="addNewExpenditure()">
+        <div class="form-group">
+            <label>Expenditure Description</label>
+            <input required class="form-control" ng-model="new_expenditure.description" placeholder="Enter expenditure description" />
+        </div>
+        <div class="form-group">
+            <label>Date of Expenditure</label>
+            <input required class="form-control" type="date" ng-model="new_expenditure.date" placeholder="Enter expenditure date" />
+        </div>
+        <div class="form-group">
+            <label>Amount</label>
+            <input required class="form-control" ng-model="new_expenditure.amount" placeholder="Enter expenditure amount" />
+        </div>
+        <div class="form-group">
+            <label>Name of Account</label>
+            <input required class="form-control" ng-model="new_expenditure.account_name" placeholder="Enter expenditure account name" />
+        </div>
+        <div class="form-group">
+            <input required class="form-control" type="submit" value="Add expenditure" class="btn btn-info" />
+        </div>
+        
+    </form>
+</app-pop-up-window>
+
+<app-pop-up-window ng-show="edit.add_new_income">
+    <p style="text-align : right"><a style="cursor: pointer" ng-click="edit.add_new_income = false">X</a></p>
+    <h2>Create a new income</h2>
+    <p>Note, this automagically debits the cash component</p>
+    <form role="form" ng-submit="addNewIncome()">
+        <div class="form-group">
+            <label>Income Description</label>
+            <input required class="form-control" ng-model="new_income.description" placeholder="Enter income description" />
+        </div>
+        <div class="form-group">
+            <label>Date of Income</label>
+            <input required class="form-control" type="date" ng-model="new_income.date" placeholder="Enter income date" />
+        </div>
+        <div class="form-group">
+            <label>Amount</label>
+            <input required class="form-control" required ng-model="new_income.amount" placeholder="Enter income amount" />
+        </div>
+        <div class="form-group">
+            <label>Name of Account</label>
+            <input required class="form-control" ng-model="new_income.account_name" placeholder="Enter income account name" />
+        </div>
+        <div class="form-group">
+            <input required class="form-control" type="submit" value="Add income" class="btn btn-info" />
+        </div>
+        
+    </form>
+</app-pop-up-window>

@@ -145,11 +145,11 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", "u
         return ["id", "name", "user_id", "accounting_transactions", "created_at", 'updated_at'];
     };
 
-    AccountBook.find = function(id){
+    AccountBook.find = function(id, with_transaction){
         var deferred = $q.defer();
         $http({
             method: "GET",
-            url: "/account_books/" + id + ".json"
+            url: "/account_books/" + id + ".json" + (with_transaction ? "?transaction=true" : "") 
         }).success(function(data){
             
             deferred.resolve(new AccountBook(data.account_book));
