@@ -42,6 +42,13 @@ app.controller("accountBooksShowCtrl" , ["$scope", "$http", "AccountBook", "page
         $scope.new_expenditure = {};
         $scope.new_income = {};
 
+        $scope.choose = function(prop) {
+            ["add_new_transaction", "add_new_expenditure", "add_new_income"].forEach(function(x){
+                $scope.edit[x] = false;
+            });
+            $scope.edit[prop] = true;
+        };
+
         $scope.addNewTransaction = function(){
             account_book.addNewTransaction({
                 description: $scope.new_accounting_transaction.description,

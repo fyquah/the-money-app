@@ -54,12 +54,13 @@ app.directive("appTransactionRecords" , function(){
     };
 });
 
-app.directive("appPopUpWindow" , function(){
+app.directive("appPopUpWindow" , [ "$window", function($window){
     return {
         restrict: "E",
         transclude: true,
-        template: "<div style='width: 500px ; height: 500px ; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) ; webkit-transform: translate(-50%, -50%); moz-transform: translate(-50%, -50%) ; ms-transform: (-50%, -50%); -o-transform: translate(-50%, -50%); background-color: rgba(255, 255, 255, 1);'><div style='padding: 10px' ng-transclude></div></div>",
+        template: "<div class='popupwindow' style='position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) ; webkit-transform: translate(-50%, -50%); moz-transform: translate(-50%, -50%) ; ms-transform: (-50%, -50%); -o-transform: translate(-50%, -50%); background-color: rgba(255, 255, 255, 1);overflow: scroll;'><div style='padding: 10px' ng-transclude></div></div>",
         link: function(scope, element, attr){
+
             element.css({
                 height: "100%",
                 width: "100%",
@@ -68,7 +69,25 @@ app.directive("appPopUpWindow" , function(){
                 left: "0px",
                 "z-index": 9999,
                 "background-color": "rgba(0,0,0,0.7)"
-            })
+            });
+
+            var resizeFunction = function() {
+                var i, child;
+                for (i = 0 ; i < element.children().length ; i++) {
+                    child = element.children()[i];
+                    console.log(child);
+                    if (angular.element(child).hasClass("popupwindow")) {
+                        angular.element(child).css({
+                            "width" : ($(window).width() - 20) + "px",
+                            "max-height" : ($(window).height() - 20)  +"px",
+                            "max-width" : "500px"
+                        })
+                    }
+                }                
+            };
+
+            angular.element($window).on("resize", resizeFunction);
+            resizeFunction();
         }
     }
-})
+}])
