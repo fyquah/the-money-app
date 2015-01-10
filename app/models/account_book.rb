@@ -91,6 +91,13 @@ class AccountBook < ActiveRecord::Base
           end
         end
       end
+      memo.each do |key, h|
+        [:debit_records, :credit_records].each do |t|
+          h[t].sort! do |a, b|
+            a.accounting_transaction.date < b.accounting_transaction.date ? 1 : -1
+          end
+        end
+      end
       memo
     end
   end
