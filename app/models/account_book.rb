@@ -79,7 +79,7 @@ class AccountBook < ActiveRecord::Base
   end
 
   def accounts_based_records acc_name , month, year
-    all_records(acc_name).inject({}) do |memo, record|
+    records = all_records(acc_name).inject({}) do |memo, record|
       if acc_name == nil || acc_name.strip == record.account_name.strip
         if record.in_query_range({:account_name => acc_name, :month => month, :year => year})
           memo[record.account_name.to_sym] ||= Hash[:debit_records, [], :credit_records, []]
@@ -91,15 +91,18 @@ class AccountBook < ActiveRecord::Base
           end
         end
       end
-      memo.each do |key, h|
-        [:debit_records, :credit_records].each do |t|
-          h[t].sort! do |a, b|
-            a.accounting_transaction.date < b.accounting_transaction.date ? 1 : -1
-          end
-        end
-      end
       memo
     end
+
+    records.each do |key, h|
+      [:debit_records, :credit_records].each do |t|
+        h[t].sort! do |a, b|
+          a.accounting_transaction.date < b.accounting_transaction.date ? 1 : -1
+        end
+      end
+    end
+
+    records
   end
   # General accounting methods
   def accounts_are_balance?
