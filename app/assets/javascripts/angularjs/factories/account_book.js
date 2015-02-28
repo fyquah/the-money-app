@@ -193,7 +193,7 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", "u
             description: args.description,
             date: args.date,
             credit_records_attributes: [{
-                account_name: "cash",
+                account_name: (args.source_account || "cash"),
                 account_type: "asset",
                 amount: args.amount
             }],
@@ -211,7 +211,7 @@ app.factory("AccountBook", ["$http", "$q", "AccountingTransaction", "alerts", "u
             description: args.description,
             date: args.date,
             debit_records_attributes: [{
-                account_name: "cash",
+                account_name: (args.source_account || "cash"),
                 account_type: "asset",
                 amount: args.amount
             }],

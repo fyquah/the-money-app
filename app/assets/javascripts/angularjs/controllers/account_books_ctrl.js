@@ -47,6 +47,9 @@ app.controller("accountBooksShowCtrl" , ["$scope", "$http", "AccountBook", "page
                 $scope.edit[x] = false;
             });
             $scope.edit[prop] = true;
+            $scope.new_accounting_transaction = {};
+            $scope.new_expenditure = {};
+            $scope.new_income = {};
         };
 
         $scope.addNewTransaction = function(){

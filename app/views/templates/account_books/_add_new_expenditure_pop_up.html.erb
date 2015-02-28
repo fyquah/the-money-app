@@ -3,6 +3,7 @@
     <h2>Create a new expenditure</h2>
     <p>Note, this automagically credits the cash component</p>
     <form role="form" ng-submit="addNewExpenditure()">
+
         <div class="form-group">
             <label>Expenditure Description</label>
             <input required class="form-control" ng-model="new_expenditure.description" placeholder="Enter expenditure description" />
@@ -18,6 +19,10 @@
         <div class="form-group">
             <label>Name of Account</label>
             <input required class="form-control" ng-model="new_expenditure.account_name" placeholder="Enter expenditure account name" />
+        </div>
+        <div class="form-group">
+            <label>Source Account</label>
+            <input class="form-control" ng-model="new_expenditure.source_account" placeholder="source account, leave blank for cash" />
         </div>
         <div class="form-group">
             <input required class="form-control" type="submit" value="Add expenditure" class="btn btn-info" />
