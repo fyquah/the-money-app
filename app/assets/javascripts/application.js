@@ -18,5 +18,7 @@
 //= require angular-resource
 //= require turbolinks
 //= require twitter/bootstrap
+//= require ./Chart.min.js
+//= require ./angular-chart.min.js
 //= require ./main.js
 //= require_tree . 

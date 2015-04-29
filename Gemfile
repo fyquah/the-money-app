@@ -1,8 +1,7 @@
 source 'https://rubygems.org'
 ruby '2.2.2'
-#ruby-gemset=rails
 
-gem 'rails', '4.1.4'
+gem 'rails', '4.2.1'
 gem 'bootstrap-sass'
 gem 'sprockets', '2.11.0'
 gem 'bcrypt-ruby', '3.1.2'
